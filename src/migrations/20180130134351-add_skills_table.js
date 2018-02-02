@@ -19,7 +19,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       parent_id: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.BIGINT,
         references: {
           model: "skills",

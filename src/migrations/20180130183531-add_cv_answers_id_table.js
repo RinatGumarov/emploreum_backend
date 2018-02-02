@@ -17,9 +17,13 @@ module.exports = {
                     key: "id"
                 }
             },
-            answer_date: {
+            cv_id: {
                 allowNull: false,
-                type: Sequelize.DATE
+                type: Sequelize.BIGINT,
+                references: {
+                    model: "cv",
+                    key: "id"
+                }
             }
         });
     },
