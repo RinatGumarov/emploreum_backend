@@ -30,7 +30,7 @@ module.exports = {
     },
 
 
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('achievements');
+    down: (queryInterface) => {
+        return queryInterface.dropTable('achievements', {});
     }
 };

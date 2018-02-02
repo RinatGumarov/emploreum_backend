@@ -9,11 +9,11 @@ module.exports = {
                 autoIncrement: true,
                 type: Sequelize.BIGINT
             },
-            proffile_id: {
+            profile_id: {
                 allowNull: false,
                 type: Sequelize.BIGINT,
                 references: {
-                    model: "proffiles",
+                    model: "profiles",
                     key: "id"
                 }
             },
@@ -28,7 +28,7 @@ module.exports = {
         });
     },
 
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('cv');
+    down: (queryInterface) => {
+        return queryInterface.dropTable('cv', {});
     }
 };

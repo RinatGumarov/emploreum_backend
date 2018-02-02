@@ -5,7 +5,7 @@ const logger = require('../utils/logger');
 const config = require('../utils/config');
 const models = require("./models");
 const ip = require('ip');
-var appInstance;
+let appInstance;
 
 class Application {
 
@@ -22,7 +22,7 @@ class Application {
     start() {
         this.server.listen(this.port, this.host, (err) => {
             if (err) {
-                return logger.error(err.message);
+                return Logger.error(err.message);
             }
             logger.log("Server started");
             logger.log(`Localhost: http://${this.host}:${this.port}`);
@@ -45,7 +45,7 @@ class Application {
 }
 
 // singelton
-if (typeof app != Application) {
+if (typeof app !== Application) {
     appInstance = new Application();
 }
 

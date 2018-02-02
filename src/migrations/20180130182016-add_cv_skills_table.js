@@ -24,7 +24,7 @@ module.exports = {
         });
     },
 
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('cv_skills');
+    down: (queryInterface) => {
+        return queryInterface.dropTable('cv_skills', {});
     }
 };

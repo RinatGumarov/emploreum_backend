@@ -2,13 +2,13 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('proffile_skills', {
-      proffile_id: {
+    return queryInterface.createTable('profile_skills', {
+      profile_id: {
         primaryKey: true,
         allowNull: false,
         type: Sequelize.BIGINT,
         references: {
-          model: "proffiles",
+          model: "profiles",
           key: "id"
         }
       },
@@ -24,7 +24,7 @@ module.exports = {
     });
   },
 
-  down: (queryInterface, Sequelize) => {
-      return queryInterface.dropTable('proffile_skills');
+  down: (queryInterface) => {
+      return queryInterface.dropTable('profile_skills', {});
   }
 };

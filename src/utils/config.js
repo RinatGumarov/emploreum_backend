@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-var configInstance;
+let configInstance;
 
 class Config {
 
@@ -17,22 +17,22 @@ class Config {
     }
 
     /**
-     * @param patToConfig:string
+     * @param pathToConfig:string
      * считывает указанную папку и достает от туда конфиги
      * с расширением .json
      */
-    constructor(patToConfig = `${__dirname}/../../configs/`) {
+    constructor(pathToConfig = `${__dirname}/../../configs/`) {
 
         this.config = {};
 
-        fs.readdirSync(patToConfig).filter(function (configName) {
+        fs.readdirSync(pathToConfig).filter(function (configName) {
 
-            let filePath = path.resolve(patToConfig, configName);
+            let filePath = path.resolve(pathToConfig, configName);
             return path.parse(filePath).ext === '.json';
 
         }).forEach((configName) => {
 
-            let pathToConfigFile = path.resolve(patToConfig, configName);
+            let pathToConfigFile = path.resolve(pathToConfig, configName);
             let configStr = fs.readFileSync(pathToConfigFile);
             // имя файла без расширения
             let filename = path.parse(pathToConfigFile).name;
@@ -44,7 +44,7 @@ class Config {
 }
 
 // singelton
-if (typeof configInstance != Config) {
+if (typeof configInstance !== Config) {
     configInstance = new Config();
 }
 

@@ -2,7 +2,7 @@
 
 const Sequelize = require('sequelize');
 const config = require('../utils/config');
-var modelsInstance;
+let modelsInstance;
 
 class Models {
 
@@ -15,7 +15,7 @@ class Models {
     }
 
     addModel(pathToModel) {
-        var model = this.sequelize.import(pathToModel);
+        const model = this.sequelize.import(pathToModel);
         this[model.name] = model;
     }
 
@@ -32,7 +32,7 @@ class Models {
 }
 
 // singelton
-if (typeof app != Models) {
+if (typeof app !== Models) {
     modelsInstance = new Models();
 }
 

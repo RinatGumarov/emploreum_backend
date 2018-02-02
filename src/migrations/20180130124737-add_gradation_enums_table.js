@@ -17,7 +17,7 @@ module.exports = {
             }
         });
     },
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('gradation_enums');
+    down: (queryInterface) => {
+        return queryInterface.dropTable('gradation_enums', {});
     }
 };

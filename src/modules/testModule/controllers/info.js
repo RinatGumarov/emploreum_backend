@@ -1,4 +1,4 @@
-var models = require('../../../core/models');
+const models = require('../../../core/models');
 
 module.exports.func = (router) => {
 

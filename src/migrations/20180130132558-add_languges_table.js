@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT
       },
-      languge: {
+      language: {
         unique: true,
         allowNull: false,
         type: Sequelize.STRING,
@@ -17,7 +17,7 @@ module.exports = {
       }
     });
   },
-  down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('languages');
+  down: (queryInterface) => {
+    return queryInterface.dropTable('languages', {});
   }
 };

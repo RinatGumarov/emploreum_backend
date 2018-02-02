@@ -1,7 +1,7 @@
 "use strict";
 
 const chalk = require('chalk');
-var loggerInstance;
+let loggerInstance;
 
 class Logger {
 
@@ -27,7 +27,7 @@ class Logger {
 }
 
 // singelton
-if (typeof loggerInstance != Logger) {
+if (typeof loggerInstance !== Logger) {
     loggerInstance = new Logger();
 }
 module.exports = loggerInstance;

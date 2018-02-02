@@ -30,7 +30,7 @@ module.exports = {
     });
   },
 
-  down: (queryInterface, Sequelize) => {
-      return queryInterface.dropTable('skills');
+  down: (queryInterface) => {
+      return queryInterface.dropTable('skills', {});
   }
 };

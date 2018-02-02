@@ -24,7 +24,7 @@ module.exports = {
 
         });
     },
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('user_languages');
+    down: (queryInterface) => {
+        return queryInterface.dropTable('user_languages', {});
     }
 };

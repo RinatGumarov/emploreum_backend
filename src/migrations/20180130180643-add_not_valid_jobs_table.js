@@ -37,7 +37,7 @@ module.exports = {
     });
   },
 
-  down: (queryInterface, Sequelize) => {
-      return queryInterface.dropTable('not_valid_jobs');
+  down: (queryInterface) => {
+      return queryInterface.dropTable('not_valid_jobs', {});
   }
 };
