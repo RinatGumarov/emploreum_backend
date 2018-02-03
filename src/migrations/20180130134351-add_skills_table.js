@@ -31,6 +31,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-      return queryInterface.dropTable('skills', {});
+      return queryInterface.dropTable('skills', {cascade: true});
   }
 };

@@ -52,8 +52,14 @@ module.exports = class Module {
 
     init() {
         this.router = app.getRouter();
-        this.initFiles(this.pathToMiddlewares);
-        this.initFiles(this.pathToControllers);
-        this.initModels(this.pathToModels);
+        if (this.pathToMiddlewares) {
+            this.initFiles(this.pathToMiddlewares);
+        }
+        if (this.pathToControllers) {
+            this.initFiles(this.pathToControllers);
+        }
+        if (this.pathToModels) {
+            this.initModels(this.pathToModels);
+        }
     }
 };

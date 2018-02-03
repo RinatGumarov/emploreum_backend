@@ -34,7 +34,7 @@ class Models {
 }
 
 // singelton
-if (typeof app !== Models) {
+if (typeof modelsInstance !== Models) {
     modelsInstance = new Models();
 }
 
