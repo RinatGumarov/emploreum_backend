@@ -16,6 +16,7 @@ class Application {
 
     initReqRes() {
         this.server.use(cors);
+        console.log('cors finished');
         this.server.use(bodyParser.json());
         this.server.use(bodyParser.urlencoded({ extended: false }));
         this.server.use(cookieParser());

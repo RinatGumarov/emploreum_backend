@@ -19,7 +19,7 @@ class Passport {
                 passwordField: 'password',
             },
             (email, password, done) => {
-                // console.log('0987');
+                console.log('0987');
                 Users.findOne({
                     where: { email: email },
                 }).then((user, err) => {
@@ -29,7 +29,7 @@ class Passport {
                     if (!user) {
                         done(null, false, { message: 'Incorrect username.' });
                     }
-                    if (!user.validPassword(password,user.password)) {
+                    if (!user.validPassword(password, user.password)) {
                         done(null, false, { message: 'Incorrect password.' });
                     }
                     done(null, user);
