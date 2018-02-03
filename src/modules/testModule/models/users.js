@@ -1,6 +1,9 @@
+const bcrypt = require('bcrypt-nodejs');
+
 module.exports = (sequelize, DataTypes) => {
     let users = sequelize.define('users', {
         email: DataTypes.STRING,
+        password: DataTypes.STRING,
         phone: DataTypes.STRING,
         sex: DataTypes.BOOLEAN,
         name: DataTypes.STRING,
@@ -29,6 +32,14 @@ module.exports = (sequelize, DataTypes) => {
         users.hasMany(models.not_valid_jobs, {
             foreignKey: 'user_id'
         });
+    };
+
+    users.beforeCreate((user, options) => {
+        user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10));
+    });
+
+    users.prototype.validPassword = (password, validPass) => {
+        return bcrypt.compareSync(password, validPass);
     };
 
     return users;

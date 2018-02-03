@@ -4,22 +4,43 @@ const express = require('express');
 const logger = require('../utils/logger');
 const config = require('../utils/config');
 const models = require("./models");
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const passport = require('passport');
 const ip = require('ip');
+const cors = require('./middlewares/cors');
 let appInstance;
 
 class Application {
 
+    initReqRes() {
+        this.server.use(cors);
+        this.server.use(bodyParser.json());
+        this.server.use(bodyParser.urlencoded({ extended: false }));
+        this.server.use(cookieParser());
+        this.server.use(session({
+            secret: 'keyboard cat',
+        }));
+        this.server.use(passport.initialize());
+        this.server.use(passport.session());
+    }
+
     constructor() {
 
-        let serverConfig = config.get("server");
+        this.config = config.get("server");
         this.express = express;
-        this.server = this.express();
-        this.port = serverConfig.port;
-        this.host = serverConfig.host;
 
+        this.server = this.express();
+        this.port = this.config.port;
+        this.host = this.config.host;
+
+        this.initReqRes();
     }
 
     start() {
+        //инициализация ассоциаций в моделях
+        models.associateModels();
         this.server.listen(this.port, this.host, (err) => {
             if (err) {
                 return Logger.error(err.message);
@@ -29,8 +50,6 @@ class Application {
             logger.log(`LAN: http://${ip.address()}:${this.port}`);
             logger.log("Press CTRL-C to stop");
         });
-        //инициализация ассоциаций в моделях
-        models.associateModels();
     }
 
     getServer() {

@@ -4,19 +4,31 @@
   "description": "server from emloreum app",
   "main": "index.js",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.18.2",
     "chalk": "^1.1.3",
+    "cookie-parser": "^1.4.3",
+    "cross-env": "5.0.0",
     "express": "^4.16.2",
+    "express-session": "^1.15.6",
     "ip": "1.1.5",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
     "pg": "^6.4.2",
     "pg-hstore": "^2.3.2",
     "sequelize": "^4.32.2",
-    "sequelize-cli": "^3.2.0",
-    "cross-env": "5.0.0"
+    "sequelize-cli": "^3.2.0"
   },
   "dependenciesComments": {
+    "bcrypt-nodejs": "либа для хеширования пароля",
     "express": "фреймворк для nodeJs",
+    "body-parser": "парсер тела запроса",
+    "cookie-parser": "парсер кук",
+    "express-session": "Работа с сессиями в express",
     "chalk": "необходимо для подсветки текста в консоли",
     "ip": "необходимо для определения ip адреса машины",
+    "passport": "нужен для авторизации пользователя",
+    "passport-local": "стратегия для пасспорта, вход по логину и паролю",
     "sequelize": "orm для работы с реляционными бд",
     "sequelize-cli": "консольная утилита для генерации миграций модейлей и.т.д.",
     "cross-env": "для установки env переменных при запуске скриптов",
@@ -26,13 +38,17 @@
   "devDependencies": {},
   "scripts": {
     "start": "node src/index.js",
+    "debug": "node $NODE_DEBUG_OPTION src/index.js",
     "migrate:up": "cross-env NODE_ENV=production sequelize db:migrate",
-    "migrate:down": "cross-env NODE_ENV=production sequelize db:migrate:undo"
+    "migrate:down": "cross-env NODE_ENV=production sequelize db:migrate:undo",
+    "migrate:down:all": "cross-env NODE_ENV=production sequelize db:migrate:undo:all"
   },
   "scriptsComments": {
     "start": "стартует сервер",
+    "debug": "старт сервера в режиме отладки",
     "migrate:up": "накатывание миграций",
-    "migrate:down": "откат последних миграций"
+    "migrate:down": "откат последних миграций",
+    "migrate:down:all": "откат всех последних миграций"
   },
   "author": "",
   "license": "MIT"
