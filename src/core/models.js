@@ -2,11 +2,12 @@
 
 const Sequelize = require('sequelize');
 const config = require('../utils/config');
+const logger = require('../utils/logger');
 let modelsInstance;
 
 class Models {
 
-    associateModels(){
+    associateModels() {
         Object.keys(this).forEach((modelName) => {
             if (this[modelName].associate) {
                 this[modelName].associate(this);
@@ -15,6 +16,7 @@ class Models {
     }
 
     addModel(pathToModel) {
+        logger.log(`Инициализирую ${pathToModel} модель`);
         const model = this.sequelize.import(pathToModel);
         this[model.name] = model;
     }
