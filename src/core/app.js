@@ -27,7 +27,7 @@ class Application {
     start() {
         //инициализация ассоциаций в моделях
         models.associateModels();
-        this.server.listen(this.port, this.host, (err) => {
+        this.server.listen(this.port, (err) => {
             if (err) {
                 return Logger.error(err.message);
             }
