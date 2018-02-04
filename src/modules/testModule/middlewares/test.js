@@ -1,5 +1,5 @@
 const passport = require('passport');
-const authMiddleware = require('../../login/middlewares/authMiddleware');
+const authMiddleware = require('../../auth/middlewares/authMiddleware');
 
 
 module.exports.func = (router) => {
