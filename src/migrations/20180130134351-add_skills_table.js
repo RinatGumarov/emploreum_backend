@@ -19,7 +19,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       parent_id: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.BIGINT,
         references: {
           model: "skills",
@@ -31,6 +31,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-      return queryInterface.dropTable('skills', {});
+      return queryInterface.dropTable('skills', {cascade: true});
   }
 };

@@ -15,22 +15,24 @@ module.exports = {
                 type: Sequelize.STRING,
                 comment: 'Почта - логин пользователя'
             },
+            password: {
+              type: Sequelize.STRING,
+              allowNull: false,
+              comment: 'Пароль'
+            },
             phone: {
                 type: Sequelize.INTEGER,
                 comment: 'Телефон'
             },
             sex: {
-                allowNull: false,
                 type: Sequelize.BOOLEAN,
                 comment: 'пол'
             },
             name: {
-                allowNull: false,
                 type: Sequelize.STRING,
                 comment: 'имя'
             },
             surname: {
-                allowNull: false,
                 type: Sequelize.STRING,
                 comment: 'Фамилия'
             },
@@ -45,6 +47,12 @@ module.exports = {
             birthday: {
                 type: Sequelize.DATE,
                 comment: 'день рождения'
+            },
+            status: {
+                allowNull: false,
+                defaultValue: 1,
+                type: Sequelize.INTEGER,
+                comment: 'статус регистрации'
             },
             gradation: {
                 type: Sequelize.BIGINT,

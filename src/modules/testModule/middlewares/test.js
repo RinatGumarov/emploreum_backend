@@ -1,9 +1,10 @@
+const passport = require('passport');
+const authMiddleware = require('../../auth/middlewares/authMiddleware');
+
+
 module.exports.func = (router) => {
 
-    router.get('/', (req, res, next) => {
-        console.log(1);
-        next();
-    });
+    router.get('*', authMiddleware);
 
     return router;
 };

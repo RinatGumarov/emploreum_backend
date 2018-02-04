@@ -3,24 +3,31 @@
 const express = require('express');
 const logger = require('../utils/logger');
 const config = require('../utils/config');
+const MiddlewaresIniter = require('./middlewaresIniter');
 const models = require("./models");
 const ip = require('ip');
 let appInstance;
 
 class Application {
 
+
     constructor() {
 
-        let serverConfig = config.get("server");
+        this.config = config.get("server");
         this.express = express;
         this.server = this.express();
-        this.port = serverConfig.port;
-        this.host = serverConfig.host;
+        this.port = this.config.port;
+        this.host = this.config.host;
+        this.middlewaresIniter = new MiddlewaresIniter(this.server);
+        // добавление нв все роуты фильторв для корректировки запросов
+        this.middlewaresIniter.correctRequest();
 
     }
 
     start() {
-        this.server.listen(this.port, this.host, (err) => {
+        //инициализация ассоциаций в моделях
+        models.associateModels();
+        this.server.listen(this.port, (err) => {
             if (err) {
                 return Logger.error(err.message);
             }
@@ -29,8 +36,6 @@ class Application {
             logger.log(`LAN: http://${ip.address()}:${this.port}`);
             logger.log("Press CTRL-C to stop");
         });
-        //инициализация ассоциаций в моделях
-        models.associateModels();
     }
 
     getServer() {
