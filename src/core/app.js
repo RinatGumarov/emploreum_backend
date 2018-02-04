@@ -3,39 +3,25 @@
 const express = require('express');
 const logger = require('../utils/logger');
 const config = require('../utils/config');
+const MiddlewaresIniter = require('./middlewaresIniter');
 const models = require("./models");
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const session = require('express-session');
-const passport = require('passport');
 const ip = require('ip');
-const cors = require('./middlewares/cors');
 let appInstance;
 
 class Application {
 
-    initReqRes() {
-        this.server.use(cors);
-        this.server.use(bodyParser.json());
-        this.server.use(bodyParser.urlencoded({ extended: false }));
-        this.server.use(cookieParser());
-        this.server.use(session({
-            secret: 'keyboard cat',
-        }));
-        this.server.use(passport.initialize());
-        this.server.use(passport.session());
-    }
 
     constructor() {
 
         this.config = config.get("server");
         this.express = express;
-
         this.server = this.express();
         this.port = this.config.port;
         this.host = this.config.host;
+        this.middlewaresIniter = new MiddlewaresIniter(this.server);
+        // добавление нв все роуты фильторв для корректировки запросов
+        this.middlewaresIniter.correctRequest();
 
-        this.initReqRes();
     }
 
     start() {

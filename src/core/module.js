@@ -24,7 +24,9 @@ module.exports = class Module {
         }).forEach((filename) => {
 
             let initFunc = require(path.resolve(pathToFiles, filename)).func;
-            app.getServer().use(`/${this.moduleName}`, initFunc(this.router));
+            if (typeof initFunc === "function") {
+                app.getServer().use(`/${this.moduleName}`, initFunc(this.router));
+            }
         });
     }
 
