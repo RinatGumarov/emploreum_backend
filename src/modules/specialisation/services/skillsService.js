@@ -7,6 +7,11 @@ let instance;
 class SkillService {
 
 
+    /**
+     * поиск навыка по профилю
+     * @param id
+     * @returns {Promise.<Array.<Model>>}
+     */
     findByProfileId(id) {
         return Skills.findAll({
             include: [{
