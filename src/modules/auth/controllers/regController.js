@@ -1,15 +1,9 @@
+const loginService = require('../services/loginService');
+const employeesService = require('../../employe/services/employeesService');
 const passport = require('passport');
+const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
-
-    router.post('/login',
-        passport.authenticate('local'),
-        function (req, res) {
-            res.json({
-                role: req.user.role,
-                registrationStep: req.user.status
-            });
-        });
 
     router.post('/signup/1', (req, res) => {
         loginService.isEmailFree(req.body.email).then((isFree) => {
@@ -40,7 +34,7 @@ module.exports.func = (router) => {
                         } else {
                             res.send({
                                 registrationStep: user.status,
-                                role: user.role,
+                                role: user.role
                             })
                         }
                     });
@@ -54,12 +48,11 @@ module.exports.func = (router) => {
         }
     });
 
+    //toDo req.user.status + 1
     router.post('/signup/3', (req, res) => {
-        loginService.findOrCreateEmployee(req.user).then((employee) => {
-            loginService.saveEmployeesProfiles(employee, req.body);
-        });
+        employeesService.saveEmploye(req.user, req.body);
         res.send({
-            registrationStep: req.user.status + 1,
+            registrationStep: req.user.status + 1
         });
     });
 
