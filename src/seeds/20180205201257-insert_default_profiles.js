@@ -1,14 +1,22 @@
 'use strict';
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+    up: (queryInterface, Sequelize) => {
 
-      return queryInterface.bulkInsert('profiles', [{
-        name: 'Web',
-      }], {});
-  },
+        return queryInterface.bulkInsert('profiles', [
+            {
+                name: 'web'
+            },
+            {
+                name: 'mobile'
+            },
+            {
+                name: 'desktop'
+            }
+        ], {});
 
-  down: (queryInterface, Sequelize) => {
-      return queryInterface.bulkDelete('Person', null, {});
-  }
+    },
+
+    down: (queryInterface, Sequelize) => {
+    }
 };
