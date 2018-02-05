@@ -1,5 +1,5 @@
 const loginService = require('../services/loginService');
-const employeesService = require('../../employe/services/employeesService');
+const employeesService = require('../../employee/services/employeesService');
 const passport = require('passport');
 const logger = require('../../../utils/logger');
 

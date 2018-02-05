@@ -1,5 +1,6 @@
-const Skills = require('../../../core/models').skills;
-const Profiles = require('../../../core/models').profiles;
+const models = require('../../../core/models');
+const Skills = models.skills;
+const Profiles = models.profiles;
 const Op = require('sequelize').Op;
 
 let instance;

@@ -1,4 +1,5 @@
-const Profiles = require('../../../core/models').profiles;
+const models = require('../../../core/models');
+const Profiles = models.profiles;
 
 console.log(Profiles);
 
