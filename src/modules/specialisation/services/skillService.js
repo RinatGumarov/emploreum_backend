@@ -6,8 +6,9 @@ let instance;
 
 class SkillService {
 
+
     findByProfileId(id) {
-        return Profiles.findAll({
+        return Skills.findAll({
             include: [{
                 model: Profiles,
                 where: {id: {[Op.eq]: id}}

@@ -1,6 +1,6 @@
 const Profiles = require('../../../core/models').profiles;
 
-let instance;
+console.log(Profiles);
 
 class ProfileService {
 
@@ -10,7 +10,8 @@ class ProfileService {
 
 }
 
-if (typeof instance !== ProfileService)
+if (typeof instance !== ProfileService) {
     instance = new ProfileService();
+}
 
 module.exports = instance;
