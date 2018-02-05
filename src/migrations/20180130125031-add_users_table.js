@@ -20,49 +20,17 @@ module.exports = {
               allowNull: false,
               comment: 'Пароль'
             },
-            phone: {
-                type: Sequelize.INTEGER,
-                comment: 'Телефон'
-            },
-            sex: {
-                type: Sequelize.BOOLEAN,
-                comment: 'пол'
-            },
-            name: {
-                type: Sequelize.STRING,
-                comment: 'имя'
-            },
-            surname: {
-                type: Sequelize.STRING,
-                comment: 'Фамилия'
-            },
-            photo_path: {
-                type: Sequelize.STRING,
-                comment: 'путь кортинки для аватар'
-            },
-            city: {
-                type: Sequelize.STRING,
-                comment: 'место жительства или нахождения'
-            },
-            birthday: {
-                type: Sequelize.DATE,
-                comment: 'день рождения'
-            },
             status: {
                 allowNull: false,
                 defaultValue: 1,
                 type: Sequelize.INTEGER,
                 comment: 'статус регистрации'
             },
-            gradation: {
-                type: Sequelize.BIGINT,
-                references: {
-                    model: "gradation_enums",
-                    key: "id"
-                },
-                comment: 'уровень образования'
+            role: {
+                allowNull: false,
+                type: Sequelize.STRING,
+                comment: 'employee или company'
             }
-
         });
     },
     down: (queryInterface) => {

@@ -9,11 +9,11 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.BIGINT
             },
-            user_id: {
+            employee_id: {
                 allowNull: false,
                 type: Sequelize.BIGINT,
                 references: {
-                    model: "users",
+                    model: "employees",
                     key: "id"
                 }
             },

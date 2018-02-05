@@ -20,7 +20,7 @@ module.exports.func = (router) => {
             if (!isFree) {
                 return res.status(400).send('email is already in use');
             } else {
-                if (req.body.password != req.body.passwordConfirmation) {
+                if (String(req.body.password) !== String(req.body.passwordConfirmation)) {
                     return res.status(400).send("passwords not equal");
                 }
                 req.session.email = req.body.email;
@@ -28,6 +28,7 @@ module.exports.func = (router) => {
                 req.session.role = req.body.role;
                 req.session.verifyCode = loginService.sendCodeToUser(req.body.email);
                 res.status(200).send();
+                logger.log(req.session.verifyCode);
             }
         });
     });
@@ -36,18 +37,38 @@ module.exports.func = (router) => {
         logger.log(req.session.email);
         if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
             users
-                .build({email: req.session.email, password: req.session.password})
+                .build({
+                    email: req.session.email,
+                    password: req.session.password,
+                    role: req.session.role,
+                    status: 2,
+                })
                 .save()
-                .then((savedEmployee) => {
-                    return res.send(savedEmployee);
+                .then((user) => {
+                    req.login(user, (err) => {
+                        if (err) {
+                            res.status(401).send({error: 'Unauthorized'});
+                        } else {
+                            res.send({
+                                user: user
+                            })
+                        }
+                    });
                 })
                 .catch((error) => {
-                    console.log(error);
+                    logger.log(error);
                     return res.status(500).send(error);
                 });
         } else {
-          res.status(400).send({ error: 'code mismatch' })
+            res.status(400).send({error: 'code mismatch'})
         }
+    });
+
+    router.post('/signup/3', (req, res) => {
+        Object.keys(req.body).forEach(function(item, i, arr){
+            logger.log(item);
+        });
+       res.end();
     });
 
     return router;
