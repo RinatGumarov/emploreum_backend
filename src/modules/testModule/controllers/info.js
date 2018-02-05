@@ -22,6 +22,10 @@ module.exports.func = (router) => {
         })
     });
 
+    router.get('/1', (req, res) => {
+        res.status(401).send();
+    });
+
     return router;
 
 };

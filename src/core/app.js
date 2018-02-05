@@ -16,18 +16,17 @@ class Application {
         this.config = config.get("server");
         this.express = express;
         this.server = this.express();
-        this.port = this.config.port;
+        this.port = process.env.PORT || this.config.port;
         this.host = this.config.host;
         this.middlewaresIniter = new MiddlewaresIniter(this.server);
-        // добавление нв все роуты фильторв для корректировки запросов
+        // добавление на все роуты фильторв для корректировки запросов
         this.middlewaresIniter.correctRequest();
-
     }
 
     start() {
         //инициализация ассоциаций в моделях
         models.associateModels();
-        this.server.listen(this.port, this.host, (err) => {
+        this.server.listen(this.port, (err) => {
             if (err) {
                 return Logger.error(err.message);
             }

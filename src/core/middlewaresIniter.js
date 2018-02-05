@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const passport = require('passport');
 const cors = require('./middlewares/cors');
-const config = require('../utils/config');
 
 module.exports = class MiddlewaresIniter {
 

@@ -10,7 +10,9 @@ module.exports = (sequelize, DataTypes) => {
         surname: DataTypes.STRING,
         photo_path: DataTypes.STRING,
         city: DataTypes.STRING,
-        birthday: DataTypes.DATE
+        birthday: DataTypes.DATE,
+        status: DataTypes.INTEGER,
+        role: DataTypes.STRING
     }, {
         timestamps: false
     });
@@ -34,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
 
-    users.beforeCreate((user, options) => {
+    users.beforeCreate((user) => {
         user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10));
     });
 
