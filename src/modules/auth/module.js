@@ -6,8 +6,9 @@ const mailSender = require('./utils/mail-sender');
 const ModuleClass = require('../../core/module');
 
 const controllersPath = path.resolve(__dirname, "controllers");
+const middlewaresPath = path.resolve(__dirname, "middlewares");
 
-var module = new ModuleClass("auth", controllersPath);
+var module = new ModuleClass("auth", controllersPath, middlewaresPath);
 passport.init();
 mailSender.init();
 module.init();

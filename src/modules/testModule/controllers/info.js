@@ -18,7 +18,7 @@ module.exports.func = (router) => {
 
     router.get('/asd', (req, res) => {
         res.send({
-            test: req.session.admin
+            test: req.user
         })
     });
 
