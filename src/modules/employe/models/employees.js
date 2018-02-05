@@ -16,20 +16,20 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'gradation'
         });
         employees.belongsToMany(models.languages, {
-            through: 'user_languages',
-            foreignKey: 'user_id'
+            through: 'employee_languages',
+            foreignKey: 'employee_id'
         });
         employees.hasMany(models.achievements, {
-            foreignKey: 'user_id'
+            foreignKey: 'employee_id'
         });
         employees.hasMany(models.cv, {
-            foreignKey: 'user_id'
+            foreignKey: 'employee_id'
         });
         employees.hasMany(models.not_valid_jobs, {
-            foreignKey: 'user_id'
+            foreignKey: 'employee_id'
         });
         employees.belongsTo(models.users, {
-            foreignKey: 'user_id'
+            foreignKey: 'employee_id'
         });
     };
 
