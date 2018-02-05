@@ -1,9 +1,4 @@
 const models = require('../../../core/models');
-const Users = models.users;
-const Employees = models.employees;
-const Companies = models.companies;
-const Cv = models.cvs;
-const Profiles = models.profiles;
 const Op = require('sequelize').Op;
 const Users = models.users;
 const mailSender = require('../utils/mail-sender');
@@ -13,47 +8,6 @@ const logger = require('../../../utils/logger');
 let instance;
 
 class LoginService {
-
-    saveEmployeesProfiles(employee, profiles) {
-        logger.log(employee);
-        Object.keys(profiles).forEach((value, index, array) => {
-            Profiles.findOne({
-                where: {
-                    name: {
-                        [Op.eq]: value,
-                    },
-                },
-            }).then((profile) => {
-                logger.log(`profile --- ${profile.name}`);
-                Cv.build({
-                    profile_id: profile.id,
-                    employee_id: employee.id,
-                }).save().then((cv) => {
-                    logger.log(cv);
-                })
-            })
-                .catch((err) => {
-                    logger.error(err.message);
-                })
-        });
-        return employee;
-    }
-
-    findOrCreateEmployee(user) {
-        return Employees.findOrCreate({
-            where:{
-                user_id: user.id
-            },
-            defaults: {
-                user_id: user.id
-            }
-        }).then((employee) => {
-                return employee[0];
-            })
-            .catch((err) => {
-                logger.log(err.message);
-            })
-    }
 
     isEmailFree(email) {
         return Users.findOne({

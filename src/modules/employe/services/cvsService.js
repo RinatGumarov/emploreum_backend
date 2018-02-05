@@ -4,7 +4,7 @@ const profilesService = require('../../specialisation/services/profilesService')
 
 let instance;
 
-class CvService {
+class CvsService {
 
     /**
      * создание резюме для определенного профиля
@@ -24,8 +24,8 @@ class CvService {
 
 }
 
-if (typeof instance !== CvService) {
-    instance = new CvService();
+if (typeof instance !== CvsService) {
+    instance = new CvsService();
 }
 
 module.exports = instance;

@@ -1,6 +1,6 @@
 const models = require('../../../core/models');
 const Employees = models.employees;
-const cvService = require('./cvService');
+const cvService = require('./cvsService');
 
 let instance;
 

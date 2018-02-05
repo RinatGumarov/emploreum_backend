@@ -34,7 +34,7 @@ module.exports.func = (router) => {
                         } else {
                             res.send({
                                 registrationStep: user.status,
-                                role: user.role
+                                role: user.role,
                             })
                         }
                     });
@@ -52,7 +52,7 @@ module.exports.func = (router) => {
     router.post('/signup/3', (req, res) => {
         employeesService.saveEmploye(req.user, req.body);
         res.send({
-            registrationStep: req.user.status + 1
+            registrationStep: req.user.status + 1,
         });
     });
 
