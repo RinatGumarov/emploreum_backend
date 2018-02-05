@@ -9,9 +9,8 @@ module.exports.func = (router) => {
         passport.authenticate('local'),
         function (req, res) {
             res.json({
-                name: 'wefwef',
-                role: 'employee',
-                step: 1,
+                role: req.user.role,
+                registrationStep: req.user.status,
             });
         });
 
@@ -36,21 +35,15 @@ module.exports.func = (router) => {
     router.post('/signup/2', (req, res) => {
         logger.log(req.session.email);
         if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
-            users
-                .build({
-                    email: req.session.email,
-                    password: req.session.password,
-                    role: req.session.role,
-                    status: 2,
-                })
-                .save()
+            loginService.saveUser(req.session.email, req.session.password, req.session.role, 1)
                 .then((user) => {
                     req.login(user, (err) => {
                         if (err) {
                             res.status(401).send({error: 'Unauthorized'});
                         } else {
                             res.send({
-                                user: user
+                                registrationStep: user.status,
+                                role: user.role,
                             })
                         }
                     });
@@ -65,10 +58,13 @@ module.exports.func = (router) => {
     });
 
     router.post('/signup/3', (req, res) => {
-        Object.keys(req.body).forEach(function(item, i, arr){
-            logger.log(item);
+        // Object.keys(req.body).forEach(function(item, i, arr){
+        //     logger.log(item);
+        // });
+        loginService.saveEmployeesProfiles(req.user, req.body);
+        res.send({
+            registrationStep: req.user.status + 1,
         });
-       res.end();
     });
 
     return router;

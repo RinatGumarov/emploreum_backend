@@ -28,8 +28,8 @@ module.exports = (sequelize, DataTypes) => {
         employees.hasMany(models.not_valid_jobs, {
             foreignKey: 'user_id'
         });
-        employees.hasOne(models.users, {
-            foreignKey: 'id'
+        employees.belongsTo(models.users, {
+            foreignKey: 'user_id'
         });
     };
 

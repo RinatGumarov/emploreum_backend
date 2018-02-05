@@ -47,14 +47,16 @@
     "debug": "node $NODE_DEBUG_OPTION src/index.js",
     "migrate:up": "cross-env NODE_ENV=production sequelize db:migrate",
     "migrate:down": "cross-env NODE_ENV=production sequelize db:migrate:undo",
-    "migrate:down:all": "cross-env NODE_ENV=production sequelize db:migrate:undo:all"
+    "migrate:down:all": "cross-env NODE_ENV=production sequelize db:migrate:undo:all",
+    "db:reset": "npm run migrate:down:all && npm run migrate:up"
   },
   "scriptsComments": {
     "start": "стартует сервер",
     "debug": "старт сервера в режиме отладки",
     "migrate:up": "накатывание миграций",
     "migrate:down": "откат последних миграций",
-    "migrate:down:all": "откат всех последних миграций"
+    "migrate:down:all": "откат всех последних миграций",
+    "db:reset": "чистка базы"
   },
   "author": "",
   "license": "MIT"
