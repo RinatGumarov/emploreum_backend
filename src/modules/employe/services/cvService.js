@@ -1,19 +1,13 @@
 const models = require('../../../core/models');
 const Cv = models.cv;
-const Profiles = models.profiles;
+const profilesService = require('../../specialisation/services/profilesService');
 
 let instance;
 
 class CvService {
 
     saveCv(profileName, employeeId) {
-        return Profiles.findOne({
-            where: {
-                name: {
-                    [Op.eq]: profileName
-                }
-            }
-        }).then((profile) => {
+        return profilesService.findOneByName(profileName).then((profile) => {
             Cv.build({
                 profile_id: profile.id,
                 employee_id: employeeId

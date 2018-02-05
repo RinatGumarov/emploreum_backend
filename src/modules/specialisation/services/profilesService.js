@@ -8,6 +8,16 @@ class ProfileService {
         return Profiles.findAll();
     }
 
+    findOneByName(name) {
+        return Profiles.findOne({
+            where: {
+                name: {
+                    [Op.eq]: profileName
+                }
+            }
+        });
+    }
+
 }
 
 if (typeof instance !== ProfileService) {
