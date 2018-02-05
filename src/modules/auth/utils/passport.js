@@ -19,7 +19,6 @@ class Passport {
                 passwordField: 'password',
             },
             (email, password, done) => {
-                console.log('0987');
                 Users.findOne({
                     where: { email: email },
                 }).then((user, err) => {
