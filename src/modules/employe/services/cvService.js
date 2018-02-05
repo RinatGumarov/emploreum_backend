@@ -6,6 +6,12 @@ let instance;
 
 class CvService {
 
+    /**
+     * создание резюме для определенного профиля
+     * @param profileName
+     * @param employeeId
+     * @returns {Promise.<TResult>}
+     */
     saveCv(profileName, employeeId) {
         return profilesService.findOneByName(profileName).then((profile) => {
             Cv.build({

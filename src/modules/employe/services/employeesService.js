@@ -6,6 +6,11 @@ let instance;
 
 class EmployeesService {
 
+    /**
+     * сохранение работника и его профилей
+     * @param user
+     * @param profiles
+     */
     saveEmploye(user, profiles) {
         Employees.build({
             user_id: user.id
