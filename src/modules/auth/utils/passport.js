@@ -23,15 +23,15 @@ class Passport {
                     where: { email: email },
                 }).then((user, err) => {
                     if (err) {
-                        done(err);
+                        return done(err);
                     }
                     if (!user) {
-                        done(null, false, { message: 'Incorrect username.' });
+                        return done(null, false, { message: 'Incorrect username.' });
                     }
                     if (!user.validPassword(password, user.password)) {
-                        done(null, false, { message: 'Incorrect password.' });
+                        return done(null, false, { message: 'Incorrect password.' });
                     }
-                    done(null, user);
+                    return done(null, user);
                 });
             }
         ));

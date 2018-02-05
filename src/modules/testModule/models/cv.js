@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     
-    let cv = sequelize.define('cv', {}, {
+    let cv = sequelize.define('cvs', {}, {
         timestamps: false
     });
 

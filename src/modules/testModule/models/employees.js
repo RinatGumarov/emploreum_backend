@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         employees.hasMany(models.achievements, {
             foreignKey: 'user_id'
         });
-        employees.hasMany(models.cv, {
+        employees.hasMany(models.cvs, {
             foreignKey: 'user_id'
         });
         employees.hasMany(models.not_valid_jobs, {

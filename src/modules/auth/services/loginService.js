@@ -2,7 +2,7 @@ const models = require('../../../core/models');
 const Users = models.users;
 const Employees = models.employees;
 const Companies = models.companies;
-const Cv = models.cv;
+const Cv = models.cvs;
 const Profiles = models.profiles;
 const Op = require('sequelize').Op;
 const mailSender = require('../utils/mail-sender');
@@ -13,28 +13,45 @@ let instance;
 
 class LoginService {
 
-    saveEmployeesProfiles(user, profiles) {
-        Employees.build({
-            user_id: user.id,
-        })
-            .save().then((savedEmployee) => {
-                logger.log(savedEmployee);
-                Object.keys(profiles).forEach((value, index, array) => {
-                    Profiles.findOne({
-                        where: {
-                            name: {
-                                [Op.eq]: value,
-                            },
-                        },
-                    }).then((profile) => {
-                        Cv.build({
-                            profile_id: profile.id,
-                            employee_id: savedEmployee.id
-                        })
-                    })
-                });
+    saveEmployeesProfiles(employee, profiles) {
+        logger.log(employee);
+        Object.keys(profiles).forEach((value, index, array) => {
+            Profiles.findOne({
+                where: {
+                    name: {
+                        [Op.eq]: value,
+                    },
+                },
+            }).then((profile) => {
+                logger.log(`profile --- ${profile.name}`);
+                Cv.build({
+                    profile_id: profile.id,
+                    employee_id: employee.id,
+                }).save().then((cv) => {
+                    logger.log(cv);
+                })
+            })
+                .catch((err) => {
+                    logger.error(err.message);
+                })
+        });
+        return employee;
+    }
+
+    findOrCreateEmployee(user) {
+        return Employees.findOrCreate({
+            where:{
+                user_id: user.id
+            },
+            defaults: {
+                user_id: user.id
             }
-        );
+        }).then((employee) => {
+                return employee[0];
+            })
+            .catch((err) => {
+                logger.log(err.message);
+            })
     }
 
     isEmailFree(email) {

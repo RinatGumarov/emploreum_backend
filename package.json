@@ -49,7 +49,8 @@
     "migrate:down": "cross-env NODE_ENV=production sequelize db:migrate:undo",
     "migrate:down:all": "cross-env NODE_ENV=production sequelize db:migrate:undo:all",
     "seeds": "cross-env NODE_ENV=production sequelize db:seed:all",
-    "db:reset": "npm run migrate:down:all && npm run migrate:up"
+    "db:reset": "npm run migrate:down:all && npm run migrate:up",
+    "rseed": "npm run db:reset && npm run seeds"
   },
   "scriptsComments": {
     "start": "стартует сервер",
@@ -58,7 +59,8 @@
     "migrate:down": "откат последних миграций",
     "migrate:down:all": "откат всех последних миграций",
     "seeds": "накатить всех сидов",
-    "db:reset": "чистка базы"
+    "db:reset": "чистка базы",
+    "rseed": "очистить базу и нагнать сиды"
   },
   "author": "",
   "license": "MIT"

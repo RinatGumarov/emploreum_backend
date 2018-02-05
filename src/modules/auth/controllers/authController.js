@@ -58,10 +58,9 @@ module.exports.func = (router) => {
     });
 
     router.post('/signup/3', (req, res) => {
-        // Object.keys(req.body).forEach(function(item, i, arr){
-        //     logger.log(item);
-        // });
-        loginService.saveEmployeesProfiles(req.user, req.body);
+        loginService.findOrCreateEmployee(req.user).then((employee) => {
+            loginService.saveEmployeesProfiles(employee, req.body);
+        });
         res.send({
             registrationStep: req.user.status + 1,
         });

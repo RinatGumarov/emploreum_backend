@@ -21,7 +21,7 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.BIGINT,
                 references: {
-                    model: "cv",
+                    model: "cvs",
                     key: "id"
                 }
             }

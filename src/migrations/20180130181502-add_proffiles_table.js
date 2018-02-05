@@ -18,6 +18,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-      return queryInterface.dropTable('profiles', {});
+      return queryInterface.dropTable('profiles', {cascade: true});
   }
 };
