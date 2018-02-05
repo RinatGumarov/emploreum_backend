@@ -49,7 +49,7 @@
     "migrate:down": "cross-env NODE_ENV=production sequelize db:migrate:undo",
     "migrate:down:all": "cross-env NODE_ENV=production sequelize db:migrate:undo:all",
     "seeds": "cross-env NODE_ENV=production sequelize db:seed:all",
-    "db:reset": "npm run migrate:down:all && npm run migrate:up"
+    "db:reset": "npm run migrate:down:all && npm run migrate:up && npm run seeds"
   },
   "scriptsComments": {
     "start": "стартует сервер",
