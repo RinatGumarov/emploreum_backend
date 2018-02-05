@@ -1,12 +1,9 @@
 const models = require('../../../core/models');
-<<<<<<< HEAD
 const Users = models.users;
 const Employees = models.employees;
 const Companies = models.companies;
 const Cv = models.cvs;
 const Profiles = models.profiles;
-=======
->>>>>>> dev
 const Op = require('sequelize').Op;
 const Users = models.users;
 const mailSender = require('../utils/mail-sender');
