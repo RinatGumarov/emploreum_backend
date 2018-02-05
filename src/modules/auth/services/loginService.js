@@ -8,6 +8,8 @@ let instance;
 
 class LoginService {
 
+    // saveEmployeesProfiles(employee, (profiles))
+
     isEmailFree(email) {
         return Users.findOne({
             where: {

@@ -3,12 +3,12 @@
 module.exports = {
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('user_languages', {
-            user_id: {
+            employee_id: {
                 allowNull: false,
                 primaryKey: true,
                 type: Sequelize.BIGINT,
                 references: {
-                    model: "users",
+                    model: "employees",
                     key: "id"
                 }
             },

@@ -17,11 +17,11 @@ module.exports = {
                     key: "id"
                 }
             },
-            user_id: {
+            employee_id: {
                 allowNull: false,
                 type: Sequelize.BIGINT,
                 references: {
-                    model: "users",
+                    model: "employees",
                     key: "id"
                 }
             }

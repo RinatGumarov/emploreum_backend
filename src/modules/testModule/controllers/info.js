@@ -18,8 +18,12 @@ module.exports.func = (router) => {
 
     router.get('/asd', (req, res) => {
         res.send({
-            test: req.session.admin
+            test: req.user
         })
+    });
+
+    router.get('/1', (req, res) => {
+        res.status(401).send();
     });
 
     return router;
