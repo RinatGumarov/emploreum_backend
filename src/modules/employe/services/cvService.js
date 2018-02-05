@@ -8,6 +8,7 @@ class CvService {
 
     /**
      * создание резюме для определенного профиля
+     * определенного работника
      * @param profileName
      * @param employeeId
      * @returns {Promise.<TResult>}
