@@ -51,8 +51,9 @@ module.exports.func = (router) => {
     //toDo req.user.status + 1
     router.post('/signup/3', (req, res) => {
         employeesService.saveEmploye(req.user, req.body);
+        loginService.incrementStep(req.user);
         res.send({
-            registrationStep: req.user.status + 1,
+            registrationStep: req.user.status,
         });
     });
 

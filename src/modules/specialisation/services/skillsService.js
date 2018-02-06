@@ -34,6 +34,17 @@ class SkillService {
         return Skills.findAll(options);
     }
 
+    findByProfileName(name) {
+
+        let options = {
+            include: [{
+                model: Profiles,
+                where: {name: {[Op.eq]: name}}
+            }]
+        };
+
+        return Skills.findAll(options);
+    }
 }
 
 if (typeof instance !== SkillService)
