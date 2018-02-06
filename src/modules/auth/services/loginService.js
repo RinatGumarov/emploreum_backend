@@ -72,6 +72,8 @@ class LoginService {
         user.increment('status', {by: 1});
     }
 
+
+
 }
 
 if (typeof instance !== LoginService)

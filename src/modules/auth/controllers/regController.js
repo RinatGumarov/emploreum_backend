@@ -60,6 +60,16 @@ module.exports.func = (router) => {
             })
     });
 
+    router.post('/signup/4', (req, res) => {
+        employeesService.addNameAndAbout(req.user.id, req.body.name, req.body.about);
+        if (req.user.status === 2)
+            loginService.incrementStep(req.user);
+        loginService.getUserById(req.user.id)
+            .then((user) => {
+                return res.send({});
+            })
+    });
+
     return router;
 
 };
