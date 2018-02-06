@@ -1,6 +1,7 @@
 const models = require('../../../core/models');
 const Employees = models.employees;
 const cvService = require('./cvsService');
+const logger = require('../../../utils/logger');
 
 let instance;
 
@@ -12,14 +13,18 @@ class EmployeesService {
      * @param user
      * @param profiles
      */
-    saveEmploye(user, profiles) {
-        Employees.build({
-            user_id: user.id
-        })
-            .save().then((savedEmployee) => {
+    addCvToEmployee(user, profiles) {
+        Employees.findOrCreate({
+            where:{
+                user_id: user.id
+            },
+            defaults: {
+                user_id: user.id
+            }
+        }).then((savedEmployee) => {
                 logger.log(savedEmployee);
                 Object.keys(profiles).forEach((value, index, array) => {
-                    cvService.saveCv(value, savedEmployee.id)
+                    cvService.saveCv(value, array[index], savedEmployee.id)
                 });
             }
         );

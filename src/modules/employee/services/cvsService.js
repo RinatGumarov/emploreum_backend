@@ -1,5 +1,5 @@
 const models = require('../../../core/models');
-const Cv = models.cv;
+const Cv = models.cvs;
 const profilesService = require('../../specialisation/services/profilesService');
 
 let instance;
@@ -15,10 +15,10 @@ class CvsService {
      */
     saveCv(profileName, employeeId) {
         return profilesService.findOneByName(profileName).then((profile) => {
-            Cv.build({
+            return Cv.build({
                 profile_id: profile.id,
                 employee_id: employeeId
-            })
+            }).save();
         })
     }
 
