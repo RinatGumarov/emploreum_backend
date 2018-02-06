@@ -23,7 +23,7 @@ class ProfileService {
     }
 
     /**
-     * поиск по имени
+     * поиск по названию
      * @param name
      * @returns {Promise.<Model>}
      */
@@ -31,7 +31,7 @@ class ProfileService {
         return Profiles.findOne({
             where: {
                 name: {
-                    [Op.eq]: profileName
+                    [Op.eq]: name
                 }
             }
         });

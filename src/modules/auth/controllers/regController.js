@@ -48,13 +48,16 @@ module.exports.func = (router) => {
         }
     });
 
-    //toDo req.user.status + 1
     router.post('/signup/3', (req, res) => {
-        employeesService.saveEmploye(req.user, req.body);
-        loginService.incrementStep(req.user);
-        res.send({
-            registrationStep: req.user.status,
-        });
+        employeesService.addCvToEmployee(req.user, req.body);
+        if (req.user.status === 1)
+            loginService.incrementStep(req.user);
+        loginService.getUserById(req.user.id)
+            .then((user) => {
+                return res.send({
+                    registrationStep: req.user.status,
+                })
+            })
     });
 
     return router;

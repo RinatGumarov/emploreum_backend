@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'employee_id'
         });
         employees.belongsTo(models.users, {
-            foreignKey: 'employee_id'
+            foreignKey: 'user_id'
         });
     };
 
