@@ -22,9 +22,12 @@ class EmployeesService {
                 user_id: user.id
             }
         }).then((savedEmployee) => {
-                logger.log(savedEmployee);
+                logger.log(savedEmployee[0]);
                 Object.keys(profiles).forEach((value, index, array) => {
-                    cvService.saveCv(value, array[index], savedEmployee.id)
+                    cvService.saveCv(value, profiles[value],savedEmployee[0].id)
+                        .then((cv) => {
+                            logger.log(cv);
+                        })
                 });
             }
         );

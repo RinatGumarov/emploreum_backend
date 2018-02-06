@@ -23,13 +23,18 @@ class Models {
 
     constructor() {
         let databaseConfig = config.get("database").production;
+        let url = process.env.DATABASE_URL || databaseConfig.url;
         this.dbModel = {};
-        this.sequelize = new Sequelize(
-            databaseConfig.database,
-            databaseConfig.username,
-            databaseConfig.password,
-            databaseConfig
-        );
+        if (url) {
+            this.sequelize = new Sequelize(url);
+        } else {
+            this.sequelize = new Sequelize(
+                databaseConfig.database,
+                databaseConfig.username,
+                databaseConfig.password,
+                databaseConfig
+            );
+        }
     }
 }
 

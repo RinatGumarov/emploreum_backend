@@ -55,7 +55,7 @@ module.exports.func = (router) => {
         loginService.getUserById(req.user.id)
             .then((user) => {
                 return res.send({
-                    registrationStep: req.user.status,
+                    registrationStep: user.status,
                 })
             })
     });
