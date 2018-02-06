@@ -22,4 +22,4 @@ module.exports = class MiddlewaresIniter {
         this.server.use(passport.initialize());
         this.server.use(passport.session());
     }
-}
+};
