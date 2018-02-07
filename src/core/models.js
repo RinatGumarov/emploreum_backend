@@ -22,7 +22,10 @@ class Models {
     }
 
     constructor() {
-        let databaseConfig = config.get("database").production || {};
+        let dbConfig = config.get('database');
+        let databaseConfig = {};
+        if (dbConfig)
+            databaseConfig = dbConfig.production;
         let url = process.env.DATABASE_URL || databaseConfig.url;
         this.dbModel = {};
         if (url) {
