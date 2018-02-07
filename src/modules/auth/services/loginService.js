@@ -53,7 +53,8 @@ class LoginService {
     generateCode() {
         let max = 1000000;
         let min = 100000;
-        return Math.floor(Math.random() * (max - min + 1)) + min
+        return 111111;
+        // return Math.floor(Math.random() * (max - min + 1)) + min
     }
 
 
