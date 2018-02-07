@@ -2,6 +2,7 @@ const models = require('../../../core/models');
 const Employees = models.employees;
 const cvService = require('./cvsService');
 const logger = require('../../../utils/logger');
+const Op = require('sequelize').Op;
 
 let instance;
 
@@ -16,7 +17,9 @@ class EmployeesService {
     addCvToEmployee(user, profiles) {
         Employees.findOrCreate({
             where:{
-                user_id: user.id
+                user_id: {
+                    [Op.eq]: user.id
+                }
             },
             defaults: {
                 user_id: user.id
@@ -31,6 +34,20 @@ class EmployeesService {
                 });
             }
         );
+    }
+
+    addNameAndAbout(userId, name, about) {
+        return Employees.findOne({
+            where:{
+                user_id: {
+                    [Op.eq]: userId
+                }
+            }
+        }).then((employee) => {
+            employee.name = name;
+            employee.about = about;
+            employee.save();
+        });
     }
 
 

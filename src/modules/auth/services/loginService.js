@@ -69,8 +69,10 @@ class LoginService {
     }
 
     incrementStep(user) {
-        user.increment('status', {by: 1});
+        return user.increment('status', {by: 1});
     }
+
+
 
 }
 

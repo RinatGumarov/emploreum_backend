@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         photo_path: DataTypes.STRING,
         city: DataTypes.STRING,
         birthday: DataTypes.DATE,
+        about: DataTypes.TEXT,
     }, {
         timestamps: false
     });
