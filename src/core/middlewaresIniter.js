@@ -6,15 +6,19 @@ const cors = require('./middlewares/cors');
 
 module.exports = class MiddlewaresIniter {
 
-    constructor(server) {
+    constructor(server, express) {
         this.server = server;
+        this.express = express;
     }
 
     correctRequest() {
-
+        this.server.use(this.express.static('public'));
         this.server.use(cors);
-        this.server.use(bodyParser.json());
-        this.server.use(bodyParser.urlencoded({extended: false}));
+        this.server.use(bodyParser.json({limit: '10mb'}));
+        this.server.use(bodyParser.urlencoded({
+            extended: true,
+            limit: '10mb'
+        }));
         this.server.use(cookieParser());
         this.server.use(session({
             secret: 'keyboard cat'

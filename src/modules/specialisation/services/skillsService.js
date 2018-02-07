@@ -22,7 +22,7 @@ class SkillService {
                 where: {id: {[Op.eq]: id}}
             }]
         };
-        
+
         if (typeof likeStr === "string") {
             options.where = {
                 name: {
