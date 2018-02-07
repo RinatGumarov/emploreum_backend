@@ -43,8 +43,9 @@ class LoginService {
         return Users.findOne(
             {
                 where:
-                    {id: {
-                        [Op.eq]: id
+                    {
+                        id: {
+                            [Op.eq]: id
                         }
                     }
             });
@@ -72,6 +73,27 @@ class LoginService {
         return user.increment('status', {by: 1});
     }
 
+    deleteUser(user) {
+        return Users.destroy({
+            where: {
+                id: {
+                    [Op.eq]: user.id,
+                },
+            },
+        }).then((deletedRows) => {
+            if (deletedRows === 1) {
+                logger.log(`user ${user.email} deleted successfully`);
+                return true;
+            }
+            else {
+                logger.error('something went wrong');
+                return false;
+            }
+        }).catch((err) => {
+            logger.error(err);
+            return false;
+        });
+    }
 
 
 }

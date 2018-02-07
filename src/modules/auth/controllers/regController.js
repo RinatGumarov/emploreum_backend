@@ -102,6 +102,16 @@ module.exports.func = (router) => {
         }
     });
 
+    router.delete('/unreg', (req, res) => {
+        loginService.deleteUser(req.user).then((flag) => {
+            if (flag){
+                return res.status(200).send({success: true});
+            } else {
+                return res.status(500).send({error: 'server error'});
+            }
+        });
+    });
+
     return router;
 
 };
