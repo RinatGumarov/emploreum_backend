@@ -2,6 +2,7 @@ const models = require('../../../core/models');
 const Employees = models.employees;
 const cvService = require('./cvsService');
 const logger = require('../../../utils/logger');
+const Op = require('sequelize').Op;
 
 let instance;
 
@@ -45,6 +46,7 @@ class EmployeesService {
         }).then((employee) => {
             employee.name = name;
             employee.about = about;
+            employee.save();
         });
     }
 

@@ -1,5 +1,6 @@
 const loginService = require('../services/loginService');
 const employeesService = require('../../employee/services/employeesService');
+const companiesService = require('../../company/services/company-service');
 const passport = require('passport');
 const logger = require('../../../utils/logger');
 
@@ -49,25 +50,56 @@ module.exports.func = (router) => {
     });
 
     router.post('/signup/3', (req, res) => {
-        employeesService.addCvToEmployee(req.user, req.body);
-        if (req.user.status === 1)
-            loginService.incrementStep(req.user);
-        loginService.getUserById(req.user.id)
-            .then((user) => {
+        switch (req.user.role) {
+            case 'EMPLOYEE':
+                employeesService.addCvToEmployee(req.user, req.body);
+                break;
+            case 'COMPANY':
+                companiesService.addSpecToCompany(req.user, req.body.specs);
+                break;
+        }
+        if (req.user.status === 1) {
+            return loginService.incrementStep(req.user).then((user) => {
+                req.user = user;
+            }).then(() => {
                 return res.send({
-                    registrationStep: user.status,
-                })
-            })
+                    registrationStep: req.user.status,
+                });
+            });
+        } else {
+            return res.send({
+                registrationStep: req.user.status,
+            });
+        }
     });
 
     router.post('/signup/4', (req, res) => {
-        employeesService.addNameAndAbout(req.user.id, req.body.name, req.body.about);
-        if (req.user.status === 2)
-            loginService.incrementStep(req.user);
-        loginService.getUserById(req.user.id)
-            .then((user) => {
-                return res.send({});
-            })
+        switch (req.user.role) {
+            case 'EMPLOYEE':
+                employeesService.addNameAndAbout(req.user.id, req.body.name, req.body.about)
+                    .then(() => {
+                        if (req.user.status === 2) {
+                            loginService.incrementStep(req.user).then(() => {
+                                return res.send({});
+                            });
+                        } else {
+                            return res.send({});
+                        }
+                    });
+                break;
+            case 'COMPANY':
+                companiesService.addNameAndAbout(req.user.id, req.body.name, req.body.about)
+                    .then(() => {
+                        if (req.user.status === 2) {
+                            loginService.incrementStep(req.user).then(() => {
+                                return res.send({});
+                            });
+                        } else {
+                            return res.send({});
+                        }
+                    });
+                break;
+        }
     });
 
     return router;
