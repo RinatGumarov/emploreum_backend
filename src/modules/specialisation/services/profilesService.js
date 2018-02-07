@@ -1,4 +1,6 @@
-const Profiles = require('../../../core/models').profiles;
+const models = require('../../../core/models');
+const Profiles = models.profiles;
+const Op = require('sequelize').Op;
 
 console.log(Profiles);
 
@@ -8,12 +10,20 @@ class ProfileService {
      * поиск всех профилей
      * @returns {Promise.<Array.<Model>>}
      */
-    all() {
-        return Profiles.findAll();
+    all(likeStr) {
+        let options = {};
+        if (typeof likeStr === "string") {
+            options.where = {
+                name: {
+                    [Op.like]: `%${likeStr}%`
+                }
+            }
+        }
+        return Profiles.findAll(options);
     }
 
     /**
-     * поиск по имени
+     * поиск по названию
      * @param name
      * @returns {Promise.<Model>}
      */
@@ -21,7 +31,7 @@ class ProfileService {
         return Profiles.findOne({
             where: {
                 name: {
-                    [Op.eq]: profileName
+                    [Op.eq]: name
                 }
             }
         });

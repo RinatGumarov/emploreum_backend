@@ -9,6 +9,11 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     companies.associate = function (models) {
+        companies.belongsToMany(models.profiles, {
+            through: 'company_profiles',
+            foreignKey: 'company_id'
+        });
+
         companies.hasOne(models.users, {
             foreignKey: 'id'
         });

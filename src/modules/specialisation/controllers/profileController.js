@@ -5,12 +5,14 @@ module.exports.func = (router) => {
 
     /**
      * получить все специализации
+     * @var like - вхождения в имя
      */
     router.get('/profiles', (req, res) => {
 
-        profileService.all().then(function (profiles) {
+        // если req.query.like не передан то будет считать что в функию ничего не передается
+        profileService.all(req.query.like).then(function (profiles) {
             res.send({
-                profiles: profiles
+                profiles: profiles.map((elem) => elem.name)
             })
         });
 

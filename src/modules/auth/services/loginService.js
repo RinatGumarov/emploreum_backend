@@ -39,6 +39,17 @@ class LoginService {
         return code;
     }
 
+    getUserById(id) {
+        return Users.findOne(
+            {
+                where:
+                    {id: {
+                        [Op.eq]: id
+                        }
+                    }
+            });
+    }
+
     generateCode() {
         let max = 1000000;
         let min = 100000;
@@ -56,6 +67,12 @@ class LoginService {
             })
             .save();
     }
+
+    incrementStep(user) {
+        return user.increment('status', {by: 1});
+    }
+
+
 
 }
 
