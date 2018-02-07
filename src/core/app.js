@@ -5,6 +5,7 @@ const logger = require('../utils/logger');
 const config = require('../utils/config');
 const MiddlewaresIniter = require('./middlewaresIniter');
 const models = require("./models");
+const fileSystem = require("./fileSystem");
 const ip = require('ip');
 let appInstance;
 
@@ -18,7 +19,7 @@ class Application {
         this.server = this.express();
         this.port = process.env.PORT || this.config.port;
         this.host = process.env.HOST || this.config.host;
-        this.middlewaresIniter = new MiddlewaresIniter(this.server);
+        this.middlewaresIniter = new MiddlewaresIniter(this.server, this.express);
         // добавление на все роуты фильторв для корректировки запросов
         this.middlewaresIniter.correctRequest();
     }
@@ -26,6 +27,7 @@ class Application {
     start() {
         //инициализация ассоциаций в моделях
         models.associateModels();
+        fileSystem.init();
         this.server.listen(this.port, (err) => {
             if (err) {
                 return Logger.error(err.message);
