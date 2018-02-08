@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         photo_path: DataTypes.STRING,
         city: DataTypes.STRING,
         birthday: DataTypes.DATE,
+        about: DataTypes.TEXT,
     }, {
         timestamps: false
     });
@@ -29,7 +30,8 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'employee_id'
         });
         employees.belongsTo(models.users, {
-            foreignKey: 'employee_id'
+            foreignKey: 'user_id',
+            targetKey: 'id',
         });
     };
 

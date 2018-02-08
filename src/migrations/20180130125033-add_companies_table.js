@@ -33,16 +33,11 @@ module.exports = {
                     model: "users",
                     key: "id"
                 },
+                cascade: true,
+                onDelete: "CASCADE",
                 comment: 'там емейл и пароль'
             }
         });
-        /*
-          Add altering commands here.
-          Return a promise to correctly handle asynchronicity.
-
-          Example:
-          return queryInterface.createTable('users', { id: Sequelize.INTEGER });
-        */
     },
 
     down: (queryInterface) => {

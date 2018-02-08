@@ -1,7 +1,11 @@
-module.exports = function (req, res, next) {
+module.exports = authMiddleware = function (req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
-    res.status(401).send({error: 'unauthorized'});
+    return res.status(401).send({error: 'unauthorized'});
 };
 
+module.exports.func = (router) => {
+    router.get('/logout', authMiddleware);
+    return router;
+};

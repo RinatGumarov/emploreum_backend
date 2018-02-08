@@ -4,7 +4,7 @@ module.exports.func = (router) => {
         if (!req.isAuthenticated()) {
             return next();
         }
-        res.status(403).send({error: 'forbidden'});
+        return res.status(403).send({error: 'forbidden'});
     });
 
     return router;

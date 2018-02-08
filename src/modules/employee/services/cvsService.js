@@ -1,5 +1,5 @@
 const models = require('../../../core/models');
-const Cv = models.cv;
+const Cv = models.cvs;
 const profilesService = require('../../specialisation/services/profilesService');
 
 let instance;
@@ -10,15 +10,16 @@ class CvsService {
      * создание резюме для определенного профиля
      * определенного работника
      * @param profileName
+     * @param skills
      * @param employeeId
-     * @returns {Promise.<TResult>}
+     * @returns {Promise.<Cv>}
      */
-    saveCv(profileName, employeeId) {
+    saveCv(profileName, skills, employeeId) {
         return profilesService.findOneByName(profileName).then((profile) => {
-            Cv.build({
+            return Cv.build({
                 profile_id: profile.id,
                 employee_id: employeeId
-            })
+            }).save();
         })
     }
 

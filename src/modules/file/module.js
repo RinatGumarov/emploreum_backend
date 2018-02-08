@@ -2,9 +2,7 @@
 const path = require('path');
 
 const ModuleClass = require('../../core/module');
-
 const middlewaresPath = path.resolve(__dirname, "middlewares");
-const modelsPath = path.resolve(__dirname, "models");
 
-var module = new ModuleClass("employe", null, null, modelsPath);
+var module = new ModuleClass("file", null, middlewaresPath);
 module.init();

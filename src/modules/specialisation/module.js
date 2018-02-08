@@ -4,7 +4,7 @@ const path = require('path');
 const ModuleClass = require('../../core/module');
 
 const controllersPath = path.resolve(__dirname, "controllers");
-const modelsPath = path.resolve(__dirname, "models");
+const middlewaresPath = path.resolve(__dirname, 'middlewares');
 
-var module = new ModuleClass("specialisation", controllersPath, null, modelsPath);
+var module = new ModuleClass("specialisation", controllersPath, middlewaresPath);
 module.init();
