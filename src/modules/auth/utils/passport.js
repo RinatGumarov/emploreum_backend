@@ -1,17 +1,18 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const Users = require('../../../core/models').users;
+const userService = require('../services/usersService');
 
 let instance;
 
 class Passport {
-    init(){
+    init() {
 
         passport.serializeUser((user, done) => {
             done(null, user.id);
         });
 
-        passport.deserializeUser((id, done) => Users.findById(id)
+        passport.deserializeUser((id, done) => userService.getUserById(id)
             .then((user) => done(null, user)));
 
         passport.use(new LocalStrategy({
@@ -19,17 +20,15 @@ class Passport {
                 passwordField: 'password',
             },
             (email, password, done) => {
-                Users.findOne({
-                    where: { email: email },
-                }).then((user, err) => {
+                userService.getUserByEmail(email).then((user, err) => {
                     if (err) {
                         return done(err);
                     }
                     if (!user) {
-                        return done(null, false, { message: 'Incorrect username.' });
+                        return done(null, false, {message: 'Incorrect username.'});
                     }
                     if (!user.validPassword(password, user.password)) {
-                        return done(null, false, { message: 'Incorrect password.' });
+                        return done(null, false, {message: 'Incorrect password.'});
                     }
                     return done(null, user);
                 });

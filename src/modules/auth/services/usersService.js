@@ -1,14 +1,19 @@
 const models = require('../../../core/models');
 const Op = require('sequelize').Op;
 const Users = models.users;
+const Roles = models.roles;
 const mailSender = require('../utils/mail-sender');
 const config = require('../../../utils/config');
 const logger = require('../../../utils/logger');
 
 let instance;
 
-class LoginService {
+class UsersService {
 
+    /**
+     * @param email
+     * @returns {Promise<boolean>}
+     */
     isEmailFree(email) {
         return Users.findOne({
             where: {
@@ -19,6 +24,10 @@ class LoginService {
         }).then((user) => user === null);
     }
 
+    /**
+     * @param email
+     * @returns {number}
+     */
     sendCodeToUser(email) {
         const code = this.generateCode();
 
@@ -39,18 +48,58 @@ class LoginService {
         return code;
     }
 
+    /**
+     * @param id
+     * @returns {Promise<Model>}
+     */
     getUserById(id) {
-        return Users.findOne(
-            {
-                where:
-                    {
-                        id: {
-                            [Op.eq]: id
-                        }
-                    }
-            });
+        let me = this;
+        return Users.findOne({
+            include: [{
+                model: Roles
+            }],
+            where: {
+                id: {
+                    [Op.eq]: id
+                }
+            }
+        }).then(function (user) {
+            return me.changeUserRole(user);
+        });
     }
 
+    /**
+     * @param email
+     * @returns {Promise<Model>}
+     */
+    getUserByEmail(email) {
+        let me = this;
+        return Users.findOne({
+            include: [{
+                model: Roles,
+            }],
+            where: {
+                email: {
+                    [Op.eq]: email
+                }
+            }
+        }).then(function (user) {
+            return me.changeUserRole(user);
+        });
+    }
+
+    /**
+     * @param user
+     * @returns {*}
+     */
+    changeUserRole(user) {
+        user.role = user.role.role;
+        return user;
+    }
+
+    /**
+     * @returns {number}
+     */
     generateCode() {
         let max = 1000000;
         let min = 100000;
@@ -59,21 +108,42 @@ class LoginService {
     }
 
 
+    /**
+     * @param email
+     * @param password
+     * @param role
+     * @param step
+     * @returns {Promise<Model>}
+     */
     saveUser(email, password, role, step) {
-        return Users
-            .build({
+        return Roles.findOne({
+            where: {
+                name: {
+                    [Op.eq]: role
+                }
+            }
+        }).then(function (role) {
+            Users.build({
                 email: email,
                 password: password,
-                role: role,
+                role_id: role.id,
                 status: step,
-            })
-            .save();
+            }).save();
+        });
     }
 
+    /**
+     * @param user
+     * @returns {Promise<this>|*|void}
+     */
     incrementStep(user) {
         return user.increment('status', {by: 1});
     }
 
+    /**
+     * @param user
+     * @returns {Promise<T>}
+     */
     deleteUser(user) {
         return Users.destroy({
             where: {
@@ -101,7 +171,7 @@ class LoginService {
 
 }
 
-if (typeof instance !== LoginService)
-    instance = new LoginService();
+if (typeof instance !== UsersService)
+    instance = new UsersService();
 
 module.exports = instance;

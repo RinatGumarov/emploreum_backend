@@ -5,7 +5,6 @@ module.exports = (sequelize, DataTypes) => {
         email: DataTypes.STRING,
         password: DataTypes.STRING,
         status: DataTypes.INTEGER,
-        role: DataTypes.STRING
     }, {
         timestamps: false
     });
@@ -19,17 +18,14 @@ module.exports = (sequelize, DataTypes) => {
     };
 
     users.associate = function (models) {
-        users.hasMany(models.employees, {
+        users.hasOne(models.employees, {
             foreignKey: 'user_id',
             onDelete: 'CASCADE',
             cascade: true
-        } );
-
-        users.hasMany(models.companies, {
-            foreignKey: 'user_id',
-            onDelete: 'CASCADE',
-            cascade: true
-        } );
+        });
+        users.belongsTo(models.roles, {
+            foreignKey: 'role_id',
+        });
     };
 
     return users;

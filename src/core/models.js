@@ -3,6 +3,9 @@
 const Sequelize = require('sequelize');
 const config = require('../utils/config');
 const logger = require('../utils/logger');
+const fs = require('fs');
+const path = require('path');
+
 let modelsInstance;
 
 class Models {
@@ -16,9 +19,21 @@ class Models {
     }
 
     addModel(pathToModel) {
+
         logger.log(`Инициализирую ${pathToModel} модель`);
         const model = this.sequelize.import(pathToModel);
         this[model.name] = model;
+    }
+
+
+    initModels(pathToModels) {
+        let me = this;
+        fs.readdirSync(pathToModels).filter(function (filename) {
+            let filePath = path.resolve(pathToModels, filename);
+            return path.parse(filePath).ext === '.js';
+        }).forEach((filename) => {
+            me.addModel(path.join(pathToModels, filename));
+        });
     }
 
     constructor() {
@@ -39,6 +54,7 @@ class Models {
                 databaseConfig
             );
         }
+
     }
 }
 
