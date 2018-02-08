@@ -16,9 +16,16 @@ class CompaniesService {
      * @param specs
      */
     addSpecToCompany(user, specs) {
-        Companies.build({
-            user_id: user.id
-        }).save().then((company) => {
+        Companies.findOrCreate({
+            where:{
+                user_id: {
+                    [Op.eq]: user.id
+                }
+            },
+            defaults: {
+                user_id: user.id
+            }
+        }).then((company) => {
                 logger.log(company[0]);
                 specs.forEach((value, index, array) => {
                     profilesService.findOneByName(value)
@@ -34,9 +41,7 @@ class CompaniesService {
                         });
                 });
             }
-        ).catch((err) => {
-            logger.error(err);
-        })
+        );
     }
 
     addNameAndAbout(userId, name, about) {

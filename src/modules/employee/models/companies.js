@@ -14,8 +14,9 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'company_id'
         });
 
-        companies.hasOne(models.users, {
-            foreignKey: 'id'
+        companies.belongsTo(models.users, {
+            foreignKey: 'user_id',
+            targetKey: 'id',
         });
     };
 

@@ -24,6 +24,12 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'CASCADE',
             cascade: true
         } );
+
+        users.hasMany(models.companies, {
+            foreignKey: 'user_id',
+            onDelete: 'CASCADE',
+            cascade: true
+        } );
     };
 
     return users;
