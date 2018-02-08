@@ -3,7 +3,7 @@ const passport = require('passport');
 module.exports.func = (router) => {
 
     router.post('/login', passport.authenticate('local'), function (req, res) {
-        res.json({
+        res.send({
             role: req.user.role,
             registrationStep: req.user.status
         });
@@ -11,9 +11,7 @@ module.exports.func = (router) => {
 
     router.get('/logout', function (req, res) {
         req.logout();
-        res.json({
-            logout: "success"
-        });
+        res.send(true);
     });
 
 

@@ -1,7 +1,6 @@
 const usersService = require('../services/usersService');
 const employeesService = require('../../employee/services/employeesService');
 const companiesService = require('../../company/services/company-service');
-const passport = require('passport');
 const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
@@ -18,7 +17,7 @@ module.exports.func = (router) => {
                 req.session.password = req.body.password;
                 req.session.role = req.body.role;
                 req.session.verifyCode = usersService.sendCodeToUser(req.body.email);
-                res.status(200).send();
+                res.status(200).send(true);
                 logger.log(req.session.verifyCode);
             }
         });
@@ -35,17 +34,16 @@ module.exports.func = (router) => {
                         } else {
                             res.send({
                                 registrationStep: user.status,
-                                role: req.session.role,
+                                role: user.role
                             })
                         }
                     });
                 })
                 .catch((error) => {
-                    logger.log(error);
                     return res.status(500).send(error);
                 });
         } else {
-            res.status(400).send({error: 'code mismatch'})
+            res.status(400).send('code mismatch')
         }
     });
 
@@ -105,9 +103,9 @@ module.exports.func = (router) => {
     router.delete('/unreg', (req, res) => {
         usersService.deleteUser(req.user).then((flag) => {
             if (flag) {
-                return res.status(200).send({success: true});
+                return res.status(200).send(true);
             } else {
-                return res.status(500).send({error: 'server error'});
+                return res.status(500).send('server error');
             }
         });
     });
