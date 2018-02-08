@@ -51,8 +51,10 @@ module.exports = {
                 unique: true,
                 references: {
                     model: "users",
-                    key: "id"
+                    key: "id",
                 },
+                cascade: true,
+                onDelete: "CASCADE",
                 comment: 'там емейл и пароль'
             }
         });

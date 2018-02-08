@@ -23,7 +23,9 @@ module.exports = {
                 references: {
                     model: "employees",
                     key: "id"
-                }
+                },
+                cascade: true,
+                onDelete: "CASCADE",
             }
         });
     },

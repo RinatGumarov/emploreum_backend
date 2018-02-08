@@ -30,7 +30,8 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'employee_id'
         });
         employees.belongsTo(models.users, {
-            foreignKey: 'user_id'
+            foreignKey: 'user_id',
+            targetKey: 'id',
         });
     };
 
