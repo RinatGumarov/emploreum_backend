@@ -17,7 +17,34 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.TEXT,
             },
-            
+            pricePerWeek: {
+                type: Sequelize.DOUBLE,
+            },
+            duration: {
+                type: Sequelize.INTEGER,
+            },
+            company_id: {
+                type: Sequelize.BIGINT,
+                allowNull: false,
+                unique: true,
+                references: {
+                    model: "users",
+                    key: "id",
+                },
+                cascade: true,
+                onDelete: "CASCADE",
+            },
+            employee_id: {
+                type: Sequelize.BIGINT,
+                allowNull: false,
+                unique: true,
+                references: {
+                    model: "users",
+                    key: "id",
+                },
+                cascade: true,
+                onDelete: "CASCADE",
+            }
         });
     },
 
