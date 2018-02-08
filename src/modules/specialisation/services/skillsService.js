@@ -8,7 +8,8 @@ let instance;
 class SkillService {
 
 
-    /** поиск скила по профилю
+    /**
+     * поиск скила по профилю
      * если likestr передан то будет искатьс вхождени в имя
      * @param id
      * @param likeStr

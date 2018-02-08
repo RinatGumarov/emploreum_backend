@@ -53,7 +53,6 @@ class UsersService {
      * @returns {Promise<Model>}
      */
     getUserById(id) {
-        let me = this;
         return Users.findOne({
             include: [{
                 model: Roles
@@ -64,7 +63,7 @@ class UsersService {
                 }
             }
         }).then(function (user) {
-            return me.changeUserRole(user);
+            return instance.changeUserRole(user);
         });
     }
 
@@ -73,7 +72,6 @@ class UsersService {
      * @returns {Promise<Model>}
      */
     getUserByEmail(email) {
-        let me = this;
         return Users.findOne({
             include: [{
                 model: Roles,
@@ -84,16 +82,19 @@ class UsersService {
                 }
             }
         }).then(function (user) {
-            return me.changeUserRole(user);
+            return instance.changeUserRole(user);
         });
     }
 
     /**
+     * Трансформирует роль в нормальный вид
      * @param user
      * @returns {*}
      */
     changeUserRole(user) {
-        user.role = user.role.role;
+        if (user) {
+            user.role = user.role.role;
+        }
         return user;
     }
 
@@ -118,17 +119,23 @@ class UsersService {
     saveUser(email, password, role, step) {
         return Roles.findOne({
             where: {
-                name: {
+                role: {
                     [Op.eq]: role
                 }
             }
         }).then(function (role) {
-            Users.build({
-                email: email,
-                password: password,
-                role_id: role.id,
-                status: step,
-            }).save();
+            if (role) {
+                return Users.build({
+                    email: email,
+                    password: password,
+                    role_id: role.id,
+                    status: step,
+                }).save().then(function (user) {
+                    user.role = role;
+                    return instance.changeUserRole(user);
+                });
+            }
+            return null;
         });
     }
 
