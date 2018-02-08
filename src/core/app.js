@@ -13,7 +13,6 @@ class Application {
 
 
     constructor() {
-
         this.config = config.get("server");
         this.express = express;
         this.server = this.express();
@@ -22,6 +21,7 @@ class Application {
         this.middlewaresIniter = new MiddlewaresIniter(this.server, this.express);
         // добавление на все роуты фильторв для корректировки запросов
         this.middlewaresIniter.correctRequest();
+        models.initModels(`${__dirname}/../models/`);
     }
 
     start() {

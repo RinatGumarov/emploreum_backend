@@ -30,33 +30,18 @@ module.exports = class Module {
         });
     }
 
-    initModels(pathToModels) {
-
-        fs.readdirSync(pathToModels).filter(function (filename) {
-            let filePath = path.resolve(pathToModels, filename);
-            return path.parse(filePath).ext === '.js';
-        }).forEach((filename) => {
-            models.addModel(path.join(pathToModels, filename));
-        });
-
-    }
-
-    constructor(moduleName, pathToControllers, pathToMiddlewares, pathToModels) {
+    constructor(moduleName, pathToControllers, pathToMiddlewares) {
         if (!moduleName) {
             throw new Error('не передано название модуля');
         }
         this.moduleName = moduleName;
         this.pathToControllers = pathToControllers;
         this.pathToMiddlewares = pathToMiddlewares;
-        this.pathToModels = pathToModels;
-        this.db = {};
     }
 
     init() {
         this.router = app.getRouter();
-        if (this.pathToModels) {
-            this.initModels(this.pathToModels);
-        }
+
         if (this.pathToMiddlewares) {
             this.initFiles(this.pathToMiddlewares);
         }
