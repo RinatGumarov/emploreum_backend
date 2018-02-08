@@ -18,5 +18,13 @@ module.exports = (sequelize, DataTypes) => {
         return bcrypt.compareSync(password, validPass);
     };
 
+    users.associate = function (models) {
+        users.hasMany(models.employees, {
+            foreignKey: 'user_id',
+            onDelete: 'CASCADE',
+            cascade: true
+        } );
+    };
+
     return users;
 };

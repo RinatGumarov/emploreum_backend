@@ -81,6 +81,8 @@ class LoginService {
                     [Op.eq]: user.id,
                 },
             },
+            force: false,
+            cascade: true
         }).then((deletedRows) => {
             if (deletedRows === 1) {
                 logger.log(`user ${user.email} deleted successfully`);
