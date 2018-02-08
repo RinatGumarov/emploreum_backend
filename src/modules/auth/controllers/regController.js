@@ -1,4 +1,4 @@
-const loginService = require('../services/loginService');
+const usersService = require('../services/usersService');
 const employeesService = require('../../employee/services/employeesService');
 const companiesService = require('../../company/services/company-service');
 const passport = require('passport');
@@ -7,7 +7,7 @@ const logger = require('../../../utils/logger');
 module.exports.func = (router) => {
 
     router.post('/signup/1', (req, res) => {
-        loginService.isEmailFree(req.body.email).then((isFree) => {
+        usersService.isEmailFree(req.body.email).then((isFree) => {
             if (!isFree) {
                 return res.status(400).send('email is already in use');
             } else {
@@ -17,7 +17,7 @@ module.exports.func = (router) => {
                 req.session.email = req.body.email;
                 req.session.password = req.body.password;
                 req.session.role = req.body.role;
-                req.session.verifyCode = loginService.sendCodeToUser(req.body.email);
+                req.session.verifyCode = usersService.sendCodeToUser(req.body.email);
                 res.status(200).send();
                 logger.log(req.session.verifyCode);
             }
@@ -27,7 +27,7 @@ module.exports.func = (router) => {
     router.post('/signup/2', (req, res) => {
         logger.log(req.session.email);
         if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
-            loginService.saveUser(req.session.email, req.session.password, req.session.role, 1)
+            usersService.saveUser(req.session.email, req.session.password, req.session.role, 1)
                 .then((user) => {
                     req.login(user, (err) => {
                         if (err) {
@@ -35,7 +35,7 @@ module.exports.func = (router) => {
                         } else {
                             res.send({
                                 registrationStep: user.status,
-                                role: user.role,
+                                role: req.session.role,
                             })
                         }
                     });
@@ -59,7 +59,7 @@ module.exports.func = (router) => {
                 break;
         }
         if (req.user.status === 1) {
-            return loginService.incrementStep(req.user).then((user) => {
+            return usersService.incrementStep(req.user).then((user) => {
                 req.user = user;
             }).then(() => {
                 return res.send({
@@ -79,7 +79,7 @@ module.exports.func = (router) => {
                 employeesService.addNameAndAbout(req.user.id, req.body.name, req.body.about)
                     .then(() => {
                         if (req.user.status === 2) {
-                            loginService.incrementStep(req.user).then(() => {
+                            usersService.incrementStep(req.user).then(() => {
                                 return res.send({});
                             });
                         } else {
@@ -91,7 +91,7 @@ module.exports.func = (router) => {
                 companiesService.addNameAndAbout(req.user.id, req.body.name, req.body.about)
                     .then(() => {
                         if (req.user.status === 2) {
-                            loginService.incrementStep(req.user).then(() => {
+                            usersService.incrementStep(req.user).then(() => {
                                 return res.send({});
                             });
                         } else {
@@ -103,7 +103,7 @@ module.exports.func = (router) => {
     });
 
     router.delete('/unreg', (req, res) => {
-        loginService.deleteUser(req.user).then((flag) => {
+        usersService.deleteUser(req.user).then((flag) => {
             if (flag) {
                 return res.status(200).send({success: true});
             } else {
