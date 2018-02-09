@@ -23,6 +23,11 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'CASCADE',
             cascade: true
         });
+        users.hasOne(models.companies, {
+            foreignKey: 'user_id',
+            onDelete: 'CASCADE',
+            cascade: true
+        });
         users.belongsTo(models.roles, {
             foreignKey: 'role_id',
         });
