@@ -3,18 +3,25 @@ const employeesService = require('../../employee/services/employeesService');
 const companiesService = require('../../company/services/companyService');
 const logger = require('../../../utils/logger');
 
+const FIRST_STATE = 1;
+const TWO_STATE = 2;
+
 module.exports.func = (router) => {
+
 
     /**
      * уввеличивать статус пользователя пока все не заполнит
      * является функцией вызова promise
      * @param req
      * @param res
+     * @param stateNumber -
+     * при каком стейте у пользовател должен делаться инкремент
+     * для блокирования инкремента при возврате пользователем на шаг назад
      * @returns {Function}
      */
-    getIncremenstPromis = function (req, res) {
+    getIncremenstPromise = function (req, res, stateNumber) {
         return function () {
-            if (req.user.status < 3) {
+            if (req.user.status === stateNumber) {
                 return usersService.incrementStep(req.user).then((user) => {
                     req.user = user;
                 }).then(() => {
@@ -63,19 +70,24 @@ module.exports.func = (router) => {
         logger.log(req.session.email);
         try {
             if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
-                usersService.saveUser(req.session.email, req.session.password, req.session.role, 1)
-                    .then((user) => {
-                        req.login(user, (err) => {
-                            if (err) {
-                                res.status(401).send({error: 'Unauthorized'});
-                            } else {
-                                res.send({
-                                    registrationStep: user.status,
-                                    role: user.role
-                                })
-                            }
-                        });
+
+                usersService.saveUser(
+                    req.session.email,
+                    req.session.password,
+                    req.session.role,
+                    FIRST_STATE
+                ).then((user) => {
+                    req.login(user, (err) => {
+                        if (err) {
+                            res.status(401).send({error: 'Unauthorized'});
+                        } else {
+                            res.send({
+                                registrationStep: user.status,
+                                role: user.role
+                            })
+                        }
                     });
+                });
             } else {
                 res.status(400).send('code mismatch')
             }
@@ -92,15 +104,17 @@ module.exports.func = (router) => {
      */
     router.post('/signup/3', (req, res) => {
         try {
-            let result;
+
+            let promise = getIncremenstPromise(req, res, FIRST_STATE);
+
             switch (req.user.role) {
                 case 'EMPLOYEE':
                     resultPrimuse = employeesService.addCvToEmployee(req.user, req.body)
-                        .then(getIncremenstPromis(req, res));
+                        .then(promise);
                     break;
                 case 'COMPANY':
                     resultPrimuse = companiesService.addSpecToCompany(req.user, req.body.specs)
-                        .then(getIncremenstPromis(req, res));
+                        .then(promise);
                     break;
             }
         } catch (err) {
@@ -116,14 +130,17 @@ module.exports.func = (router) => {
     router.post('/signup/4', (req, res) => {
 
         try {
+
+            let promise = getIncremenstPromise(req, res, TWO_STATE);
+
             switch (req.user.role) {
                 case 'EMPLOYEE':
                     employeesService.addNameAndAbout(req.user.id, req.body.name, req.body.about)
-                        .then(getIncremenstPromis(req, res));
+                        .then(promise);
                     break;
                 case 'COMPANY':
                     companiesService.addNameAndAbout(req.user.id, req.body.name, req.body.about)
-                        .then(getIncremenstPromis(req, res));
+                        .then(promise);
                     break;
             }
         } catch (err) {
