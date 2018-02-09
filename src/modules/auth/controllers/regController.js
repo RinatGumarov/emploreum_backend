@@ -1,6 +1,6 @@
 const usersService = require('../services/usersService');
 const employeesService = require('../../employee/services/employeesService');
-const companiesService = require('../../company/services/company-service');
+const companiesService = require('../../company/services/companyService');
 const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
