@@ -28,7 +28,7 @@ module.exports = {
                 allowNull: false,
                 unique: true,
                 references: {
-                    model: "users",
+                    model: "companies",
                     key: "id",
                 },
                 cascade: true,
@@ -39,7 +39,7 @@ module.exports = {
                 allowNull: false,
                 unique: true,
                 references: {
-                    model: "users",
+                    model: "employees",
                     key: "id",
                 },
                 cascade: true,
