@@ -1,4 +1,4 @@
-const companyService = require('../services/company-service');
+const companyService = require('../services/companyService');
 const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
@@ -14,7 +14,7 @@ module.exports.func = (router) => {
                     res.status(200).send({company: company});
                 }
                 else {
-                    
+
                     res.status(400).send({error: `There is no company for user ${req.user.email}`});
                 }
             })
