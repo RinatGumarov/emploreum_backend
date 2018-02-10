@@ -15,8 +15,8 @@ class CompaniesService {
      * @param user
      * @param specs
      */
-    addSpecToCompany(user, specs) {
-        Companies.findOrCreate({
+    async addSpecToCompany(user, specs) {
+        let company = (await Companies.findOrCreate({
             where: {
                 user_id: {
                     [Op.eq]: user.id
@@ -25,23 +25,17 @@ class CompaniesService {
             defaults: {
                 user_id: user.id
             }
-        }).then((company) => {
-                logger.log(company[0]);
-                specs.forEach((value, index, array) => {
-                    profilesService.findOneByName(value)
-                        .then((profile) => {
-                            CompanyProfiles.build({
-                                company_id: company[0].id,
-                                profile_id: profile.id
-                            }).save().then((companyProfile) => {
-                                    logger.log(companyProfile);
-                                    return companyProfile;
-                                }
-                            )
-                        });
-                });
-            }
-        );
+        }))[0];
+        logger.log(company);
+        specs.forEach(async (value) => {
+            let profile = await profilesService.findOneByName(value);
+            let companyProfile = await CompanyProfiles.build({
+                company_id: company.id,
+                profile_id: profile.id
+            }).save();
+            logger.log(companyProfile);
+        });
+        return company;
     }
 
     addNameAndAbout(userId, name, about) {

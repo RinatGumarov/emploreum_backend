@@ -52,12 +52,14 @@ class SkillService {
         return Skills.findAll(options);
     }
 
-    findByName(name) {
-        let options = {
-            where: {name: {[Op.eq]: name}}
-        };
-
-        return Skills.findOne(options);
+    async findByName(name) {
+        return await Skills.findOne({
+            where: {
+                name: {
+                    [Op.eq]: name
+                }
+            }
+        });
     }
 }
 
