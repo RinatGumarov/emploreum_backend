@@ -1,9 +1,7 @@
 const models = require('../../../core/models');
 const Cvs = models.cvs;
 const Profiles = models.profiles;
-const Employees = models.employees;
 const Op = require('sequelize').Op;
-const profilesService = require('../../specialisation/services/profilesService');
 
 let instance;
 
@@ -17,7 +15,6 @@ class CvsService {
      * @returns {Promise<Model>}
      */
     async save(profileId, employeeId) {
-
         let cvs = await Cvs.findOrCreate({
             where: {
                 profile_id: {[Op.eq]: profileId},

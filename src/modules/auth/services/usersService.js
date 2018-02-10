@@ -3,6 +3,7 @@ const Op = require('sequelize').Op;
 const Users = models.users;
 const Roles = models.roles;
 const rolesService = require('./rolesService');
+const employeesService = require('../../employee/services/employeesService');
 const mailSender = require('../utils/mail-sender');
 const config = require('../../../utils/config');
 const logger = require('../../../utils/logger');
@@ -133,6 +134,7 @@ class UsersService {
             status: step,
             role_id: role.id
         });
+        employeesService.save(user);
         return user;
     }
 
