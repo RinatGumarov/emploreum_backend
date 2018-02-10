@@ -60,33 +60,33 @@ module.exports.func = (router) => {
      * если пароль верный то регистрируем и аунтифицируем
      * пользователя
      */
-    router.post('/signup/2', (req, res) => {
-        logger.log(req.session.email);
+    router.post('/signup/2', async (req, res) => {
         try {
             if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
-
-                usersService.saveUser(
+                let user = await usersService.saveUser(
                     req.session.email,
                     req.session.password,
                     req.session.role,
                     FIRST_STATE
-                ).then((user) => {
-                    req.login(user, (err) => {
-                        if (err) {
-                            res.status(401).send({error: 'Unauthorized'});
-                        } else {
-                            res.send({
-                                registrationStep: user.status,
-                                role: req.session.role
-                            })
-                        }
-                    });
+                );
+                req.login(user, (err) => {
+                    if (err) {
+                        return res.status(401).send({
+                            error: 'Unauthorized'
+                        });
+                    } else {
+                        return res.send({
+                            registrationStep: user.status,
+                            role: req.session.role
+                        });
+                    }
                 });
             } else {
-                res.status(400).send('code mismatch')
+                return res.status(400).send('code mismatch')
             }
         } catch (err) {
-            res.status(500).json({
+            logger.error(err.stack);
+            return res.status(500).json({
                 error: err.message
             })
         }
