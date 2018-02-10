@@ -16,35 +16,18 @@ class EmployeesService {
      * @param userId
      * @param profiles
      */
-    save(userId, profiles) {
+    async save(userId) {
 
-        return Employees.findOrCreate({
+        let savedEmployees = await Employees.findOrCreate({
             where: {
                 user_id: {[Op.eq]: userId}
             },
             defaults: {
                 user_id: userId
             }
-        }).then((savedEmployee) => {
-                let employee = savedEmployee[0];
-                // резюмэ по разным профилям
-                Object.keys(profiles).forEach((profileName) =>
-                    profileService.findOneByName(profileName).then((profile) =>
-                        //сохроняем резюме
-                        cvService.save(profile.id, employee.id)
-                            .then((cv) => {
-                                let skills = profiles[profileName];
-                                //сохрроняем скилы
-                                for (let i = 0; i < skills.length; i++) {
-                                    skillsService.findByName(skills[i]).then((skill) =>
-                                        cvService.addSkill(cv, skill)
-                                    )
-                                }
-                            })
-                    )
-                );
-            }
-        );
+        });
+
+        return savedEmployees[0]
     }
 
     /**
@@ -53,11 +36,12 @@ class EmployeesService {
      * @returns {Promise<*>}
      */
     async update(userId, params) {
-        return await Employees.update(params, {
-            where: {
-                user_id: {[Op.eq]: userId}
-            }
-        })
+        return await
+            Employees.update(params, {
+                where: {
+                    user_id: {[Op.eq]: userId}
+                }
+            })
     }
 
 

@@ -7,59 +7,21 @@ let instance;
 
 class SkillService {
 
-
     /**
      * поиск скила по профилю
      * если likestr передан то будет искатьс вхождени в имя
-     * @param id
-     * @param likeStr
-     * @returns {Promise.<Array.<Model>>}
      */
-    findByProfileId(id, likeStr) {
-
-        let options = {
+    async findByProfileId(id) {
+        let skills = await Skills.find({
+            attributes: ['id', 'name', 'parent_id', "photo_path"],
             include: [{
+                attributes: [],
                 model: Profiles,
-                where: {id: {[Op.eq]: id}}
+                where: {id: {[Op.eq]: id}},
             }]
-        };
-
-        if (typeof likeStr === "string") {
-            options.where = {
-                name: {
-                    [Op.like]: `%${likeStr}%`
-                }
-            }
-        }
-
-        return Skills.findAll(options);
-    }
-
-    /**
-     * поиск по профилю
-     * @param name
-     * @returns {Promise<Array<Model>>}
-     */
-    findByProfileName(name) {
-
-        let options = {
-            include: [{
-                model: Profiles,
-                where: {name: {[Op.eq]: name}}
-            }]
-        };
-
-        return Skills.findAll(options);
-    }
-
-    async findByName(name) {
-        return await Skills.findOne({
-            where: {
-                name: {
-                    [Op.eq]: name
-                }
-            }
         });
+
+        return skills;
     }
 }
 

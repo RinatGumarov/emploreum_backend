@@ -12,15 +12,15 @@ class Passport {
             done(null, user.id);
         });
 
-        passport.deserializeUser((id, done) => userService.getUserById(id)
+        passport.deserializeUser(async (id, done) => await userService.getUserById(id)
             .then((user) => done(null, user)));
 
         passport.use(new LocalStrategy({
                 usernameField: 'email',
                 passwordField: 'password',
             },
-            (email, password, done) => {
-                userService.getUserByEmail(email).then((user, err) => {
+            async (email, password, done) => {
+                await userService.getUserByEmail(email).then((user, err) => {
                     if (err) {
                         return done(err);
                     }
