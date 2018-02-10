@@ -2,6 +2,7 @@ const models = require('../../../core/models');
 const Op = require('sequelize').Op;
 const Users = models.users;
 const Roles = models.roles;
+const rolesService = require('./rolesService');
 const mailSender = require('../utils/mail-sender');
 const config = require('../../../utils/config');
 const logger = require('../../../utils/logger');
@@ -74,7 +75,7 @@ class UsersService {
     getUserByEmail(email) {
         return Users.findOne({
             include: [{
-                model: Roles,
+                model: Roles
             }],
             where: {
                 email: {
@@ -122,32 +123,22 @@ class UsersService {
     /**
      * @param email
      * @param password
-     * @param role
+     * @param roleName
      * @param step
      * @returns {Promise<Model>}
      */
-    saveUser(email, password, role, step) {
-        return Roles.findOne({
-            where: {
-                role: {
-                    [Op.eq]: role
-                }
-            }
-        }).then(function (role) {
-            if (role) {
-                return Users.build({
-                    email: email,
-                    password: password,
-                    role_id: role.id,
-                    status: step,
-                }).save().then(function (user) {
-                    user.role = role;
-                    return instance.changeUserRole(user);
-                });
-            }
-            return null;
+    saveUser(email, password, roleName, step) {
+        return rolesService.findByName(roleName).then((role) => {
+            let user = {
+                email: email,
+                password: password,
+                status: step,
+                role_id: role.id
+            };
+            return Users.create(user);
         });
     }
+
 
     /**
      * @param user

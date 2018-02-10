@@ -11,7 +11,8 @@ module.exports = (sequelize, DataTypes) => {
     not_valid_jobs.associate = function (models) {
         not_valid_jobs.belongsToMany(models.skills, {
             through: 'not_valid_job_skills',
-            foreignKey: 'not_valid_job_id'
+            foreignKey: 'not_valid_job_id',
+            timestamps: false
         });
     };
 

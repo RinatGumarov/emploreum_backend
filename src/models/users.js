@@ -13,23 +13,28 @@ module.exports = (sequelize, DataTypes) => {
         user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10));
     });
 
+    users.beforeUpdate((params, options) => {
+        if (params.status) {
+            delete params.status;
+        }
+        if (params.role_id) {
+            delete params.role_id;
+        }
+    });
+
     users.prototype.validPassword = (password, validPass) => {
         return bcrypt.compareSync(password, validPass);
     };
 
     users.associate = function (models) {
         users.hasOne(models.employees, {
-            foreignKey: 'user_id',
-            onDelete: 'CASCADE',
-            cascade: true
+            foreignKey: 'user_id'
         });
         users.hasOne(models.companies, {
-            foreignKey: 'user_id',
-            onDelete: 'CASCADE',
-            cascade: true
+            foreignKey: 'user_id'
         });
         users.belongsTo(models.roles, {
-            foreignKey: 'role_id',
+            foreignKey: 'role_id'
         });
     };
 
