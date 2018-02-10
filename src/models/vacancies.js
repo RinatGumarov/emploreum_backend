@@ -9,14 +9,19 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     vacancies.associate = function (models) {
-        vacancies.belongsTo(models.employees, {
-            foreignKey: 'employee_id',
-            targetKey: 'id',
-        });
-
         vacancies.belongsTo(models.companies, {
             foreignKey: 'company_id',
             targetKey: 'id'
+        });
+
+        vacancies.belongsToMany(models.employees, {
+            through: 'vacancy_employees',
+            foreignKey: 'employee_id',
+        });
+
+        vacancies.belongsToMany(models.profile_skills, {
+            through: 'vacancy_profile_skills',
+            foreignKey: 'profile_skill_id'
         });
     };
 

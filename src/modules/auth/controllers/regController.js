@@ -4,7 +4,7 @@ const companiesService = require('../../company/services/companyService');
 const logger = require('../../../utils/logger');
 
 const FIRST_STATE = 1;
-const TWO_STATE = 2;
+const SECOND_STATE = 2;
 
 module.exports.func = (router) => {
 
@@ -40,9 +40,8 @@ module.exports.func = (router) => {
     /**
      * шаг регистрации с высыланием проверочного кода на почту
      */
-    router.post('/signup/1', (req, res) => {
-        usersService.isEmailFree(req.body.email).then((isFree) => {
-            if (!isFree) {
+    router.post('/signup/1', async (req, res) => {
+            if (!(await usersService.isEmailFree(req.body.email))) {
                 return res.status(400).send('email is already in use');
             } else {
 
@@ -58,7 +57,6 @@ module.exports.func = (router) => {
 
                 logger.log(req.session.verifyCode);
             }
-        });
     });
 
     /**
@@ -118,9 +116,10 @@ module.exports.func = (router) => {
                     break;
             }
         } catch (err) {
+            logger.error(err);
             res.status(500).json({
                 error: err.message
-            })
+            });
         }
     });
 
@@ -131,7 +130,7 @@ module.exports.func = (router) => {
 
         try {
 
-            let promise = getIncremenstPromise(req, res, TWO_STATE);
+            let promise = getIncremenstPromise(req, res, SECOND_STATE);
 
             switch (req.user.role) {
                 case 'EMPLOYEE':
