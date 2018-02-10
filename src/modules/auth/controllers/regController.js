@@ -83,7 +83,7 @@ module.exports.func = (router) => {
                         } else {
                             res.send({
                                 registrationStep: user.status,
-                                role: user.role
+                                role: req.session.role
                             })
                         }
                     });
@@ -109,7 +109,7 @@ module.exports.func = (router) => {
 
             switch (req.user.role) {
                 case 'EMPLOYEE':
-                    resultPrimuse = employeesService.addCvToEmployee(req.user, req.body)
+                    resultPrimuse = employeesService.save(req.user.id, req.body)
                         .then(promise);
                     break;
                 case 'COMPANY':
