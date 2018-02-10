@@ -1,5 +1,8 @@
 const models = require('../../../core/models');
-const Cv = models.cvs;
+const Cvs = models.cvs;
+const Profiles = models.profiles;
+const Employees = models.employees;
+const Op = require('sequelize').Op;
 const profilesService = require('../../specialisation/services/profilesService');
 
 let instance;
@@ -9,18 +12,34 @@ class CvsService {
     /**
      * создание резюме для определенного профиля
      * определенного работника
-     * @param profileName
-     * @param skills
+     * @param profileId
      * @param employeeId
-     * @returns {Promise.<Cv>}
+     * @returns {Promise<Model>}
      */
-    saveCv(profileName, skills, employeeId) {
-        return profilesService.findOneByName(profileName).then((profile) => {
-            return Cv.build({
-                profile_id: profile.id,
+    save(profileId, employeeId) {
+
+        return Cvs.findOrCreate({
+            where: {
+                profile_id: {[Op.eq]: profileId},
+                employee_id: {[Op.eq]: employeeId}
+            },
+            defaults: {
+                profile_id: profileId,
                 employee_id: employeeId
-            }).save();
-        })
+            }
+        }).then(function (cvs) {
+            return cvs[0];
+        });
+    }
+
+    /**
+     * метод  скилов для резюме
+     * @param cv
+     * @param skill
+     * @returns {*}
+     */
+    addSkill(cv, skill) {
+        return cv.addSkills([skill]);
     }
 
 }

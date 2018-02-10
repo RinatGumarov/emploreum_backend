@@ -19,17 +19,13 @@ module.exports = (sequelize, DataTypes) => {
 
     users.associate = function (models) {
         users.hasOne(models.employees, {
-            foreignKey: 'user_id',
-            onDelete: 'CASCADE',
-            cascade: true
+            foreignKey: 'user_id'
         });
         users.hasOne(models.companies, {
-            foreignKey: 'user_id',
-            onDelete: 'CASCADE',
-            cascade: true
+            foreignKey: 'user_id'
         });
         users.belongsTo(models.roles, {
-            foreignKey: 'role_id',
+            foreignKey: 'role_id'
         });
     };
 
