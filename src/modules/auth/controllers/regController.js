@@ -19,21 +19,17 @@ module.exports.func = (router) => {
      * для блокирования инкремента при возврате пользователем на шаг назад
      * @returns {Function}
      */
-    getIncremenstPromise = function (req, res, stateNumber) {
-        return function () {
-            if (req.user.status === stateNumber) {
-                return usersService.incrementStep(req.user).then((user) => {
-                    req.user = user;
-                }).then(() => {
-                    return res.json({
-                        registrationStep: req.user.status,
-                    });
-                });
-            } else {
-                return res.json({
-                    registrationStep: req.user.status,
-                });
-            }
+    incrementStatusAndReturnResponse = async function (req, res, stateNumber) {
+        let user = req.user;
+        if (user.status === stateNumber) {
+            user = await usersService.incrementStep(req.user);
+            return res.json({
+                registrationStep: user.status,
+            });
+        } else {
+            return res.json({
+                registrationStep: user.status,
+            });
         }
     };
 
@@ -41,22 +37,22 @@ module.exports.func = (router) => {
      * шаг регистрации с высыланием проверочного кода на почту
      */
     router.post('/signup/1', async (req, res) => {
-            if (!(await usersService.isEmailFree(req.body.email))) {
-                return res.status(400).send('email is already in use');
-            } else {
+        if (!(await usersService.isEmailFree(req.body.email))) {
+            return res.status(400).send('email is already in use');
+        } else {
 
-                if (String(req.body.password) !== String(req.body.passwordConfirmation)) {
-                    return res.status(400).send("passwords not equal");
-                }
-
-                req.session.email = req.body.email;
-                req.session.password = req.body.password;
-                req.session.role = req.body.role;
-                req.session.verifyCode = usersService.sendCodeToUser(req.body.email);
-                res.json({data: "success"});
-
-                logger.log(req.session.verifyCode);
+            if (String(req.body.password) !== String(req.body.passwordConfirmation)) {
+                return res.status(400).send("passwords not equal");
             }
+
+            req.session.email = req.body.email;
+            req.session.password = req.body.password;
+            req.session.role = req.body.role;
+            req.session.verifyCode = usersService.sendCodeToUser(req.body.email);
+            res.json({data: "success"});
+
+            logger.log(req.session.verifyCode);
+        }
     });
 
     /**
@@ -100,19 +96,16 @@ module.exports.func = (router) => {
      * Шаг заполнения скилов и профилей компании
      * или работника
      */
-    router.post('/signup/3', (req, res) => {
+    router.post('/signup/3', async (req, res) => {
         try {
-
-            let promise = getIncremenstPromise(req, res, FIRST_STATE);
-
             switch (req.user.role) {
                 case 'EMPLOYEE':
-                    resultPrimuse = employeesService.save(req.user.id, req.body)
-                        .then(promise);
+                    await employeesService.save(req.user.id, req.body);
+                    await incrementStatusAndReturnResponse(req, res, FIRST_STATE);
                     break;
                 case 'COMPANY':
-                    resultPrimuse = companiesService.addSpecToCompany(req.user, req.body.specs)
-                        .then(promise);
+                    await companiesService.addSpecToCompany(req.user, req.body.specs);
+                    await incrementStatusAndReturnResponse(req, res, FIRST_STATE);
                     break;
             }
         } catch (err) {
@@ -126,20 +119,16 @@ module.exports.func = (router) => {
     /**
      * шаг заполнения лично информации
      */
-    router.post('/signup/4', (req, res) => {
-
+    router.post('/signup/4', async (req, res) => {
         try {
-
-            let promise = getIncremenstPromise(req, res, SECOND_STATE);
-
             switch (req.user.role) {
                 case 'EMPLOYEE':
-                    employeesService.update(req.user.id, req.body);
-                    promise();
+                    await employeesService.update(req.user.id, req.body);
+                    await incrementStatusAndReturnResponse(req, res, SECOND_STATE);
                     break;
                 case 'COMPANY':
-                    companiesService.addNameAndAbout(req.user.id, req.body.name, req.body.about)
-                        .then(promise);
+                    await companiesService.addNameAndAbout(req.user.id, req.body.name, req.body.about);
+                    await incrementStatusAndReturnResponse(req, res, SECOND_STATE);
                     break;
             }
         } catch (err) {
@@ -152,14 +141,13 @@ module.exports.func = (router) => {
     /**
      * метод удаления пользователя из системы
      */
-    router.delete('/unreg', (req, res) => {
-        usersService.deleteUser(req.user).then((deleted) => {
-            if (deleted) {
-                return res.json({data: "success"});
-            } else {
-                return res.status(500).send('server error');
-            }
-        });
+    router.delete('/unreg', async (req, res) => {
+        let deleted = await usersService.deleteUser(req.user);
+        if (deleted) {
+            return res.json({data: "success"});
+        } else {
+            return res.status(500).send('server error');
+        }
     });
 
     return router;

@@ -6,7 +6,7 @@ module.exports.func = (router) => {
 
     router.post('/vacancy', async (req, res) => {
         try {
-            let vacancy = await vacancyService.createVacancy(req.user, req.body)
+            let vacancy = await vacancyService.createVacancy(req.user, req.body);
             return res.status(200).send({vacancy: vacancy});
         }
         catch(err) {
