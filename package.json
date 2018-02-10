@@ -25,7 +25,9 @@
     "pg-hstore": "^2.3.2",
     "randomstring": "^1.1.5",
     "sequelize": "^4.32.2",
-    "sequelize-cli": "^3.2.0"
+    "sequelize-cli": "^3.2.0",
+    "truffle-contract": "^3.0.3",
+    "web3": "^1.0.0-beta.29"
   },
   "dependenciesComments": {
     "bcrypt-nodejs": "либа для хеширования пароля",
@@ -45,7 +47,9 @@
     "sequelize-cli": "консольная утилита для генерации миграций модейлей и.т.д.",
     "cross-env": "для установки env переменных при запуске скриптов",
     "pg": "обертка для postgres, предоставляет javascript api",
-    "pg-hstore": "для json представляения данных postgres"
+    "pg-hstore": "для json представляения данных postgres",
+    "web3": "для отправки транзакций в blockchain",
+    "truffle-contract": "работы с контрактами в eth"
   },
   "devDependencies": {},
   "scripts": {
