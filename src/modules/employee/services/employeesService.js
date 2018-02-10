@@ -17,7 +17,7 @@ class EmployeesService {
      * @param profiles
      */
     addCvToEmployee(user, profiles) {
-        Employees.findOrCreate({
+        return Employees.findOrCreate({
             where: {
                 user_id: {
                     [Op.eq]: user.id
@@ -45,7 +45,7 @@ class EmployeesService {
      */
     addNameAndAbout(userId, name, about) {
         return Employees.findOne({
-            where:{
+            where: {
                 user_id: {
                     [Op.eq]: userId
                 }

@@ -17,7 +17,7 @@ class CompaniesService {
      */
     addSpecToCompany(user, specs) {
         Companies.findOrCreate({
-            where:{
+            where: {
                 user_id: {
                     [Op.eq]: user.id
                 }
@@ -54,6 +54,42 @@ class CompaniesService {
         }).then((company) => {
             company.name = name;
             company.about = about;
+            return company.save();
+        });
+    }
+
+    findByUserId(userId) {
+        return Companies.findOne({
+            where: {
+                user_id: {
+                    [Op.eq]: userId,
+                },
+            },
+        })
+    }
+
+    changeAbout(userId, about) {
+        return Companies.findOne({
+            where: {
+                user_id: {
+                    [Op.eq]: userId
+                }
+            }
+        }).then((company) => {
+            company.about = about;
+            return company.save();
+        });
+    }
+
+    changeName(userId, name) {
+        return Companies.findOne({
+            where: {
+                user_id: {
+                    [Op.eq]: userId
+                }
+            }
+        }).then((company) => {
+            company.name = name;
             return company.save();
         });
     }

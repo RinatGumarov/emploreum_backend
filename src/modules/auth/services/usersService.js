@@ -110,6 +110,16 @@ class UsersService {
 
 
     /**
+     * увеличивает статус пользователя
+     * при регистрации
+     * @param user
+     * @returns {Promise<this>|*|void}
+     */
+    incrementStep(user) {
+        return user.increment('status', {by: 1});
+    }
+
+    /**
      * @param email
      * @param password
      * @param role
@@ -137,14 +147,6 @@ class UsersService {
             }
             return null;
         });
-    }
-
-    /**
-     * @param user
-     * @returns {Promise<this>|*|void}
-     */
-    incrementStep(user) {
-        return user.increment('status', {by: 1});
     }
 
     /**
