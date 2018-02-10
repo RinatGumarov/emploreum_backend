@@ -4,39 +4,16 @@ const Op = require('sequelize').Op;
 
 console.log(Profiles);
 
+
 class ProfileService {
 
     /**
-     * поиск всех профилей
-     * @returns {Promise.<Array.<Model>>}
+     * @param likeStr
+     * @returns {Promise<Array<Model>>}
      */
-    all(likeStr) {
-        let options = {};
-        if (typeof likeStr === "string") {
-            options.where = {
-                name: {
-                    [Op.like]: `%${likeStr}%`
-                }
-            }
-        }
-        return Profiles.findAll(options);
+    all() {
+        return Profiles.findAll();
     }
-
-    /**
-     * поиск по названию
-     * @param name
-     * @returns {Promise.<Model>}
-     */
-    findOneByName(name) {
-        return Profiles.findOne({
-            where: {
-                name: {
-                    [Op.eq]: name
-                }
-            }
-        });
-    }
-
 }
 
 if (typeof instance !== ProfileService) {

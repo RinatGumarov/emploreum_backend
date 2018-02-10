@@ -28,20 +28,16 @@ class EmployeesService {
         }).then((savedEmployee) => {
                 let employee = savedEmployee[0];
                 // резюмэ по разным профилям
-                Object.keys(profiles).forEach((profileName) =>
-                    profileService.findOneByName(profileName).then((profile) =>
-                        //сохроняем резюме
-                        cvService.save(profile.id, employee.id)
-                            .then((cv) => {
-                                let skills = profiles[profileName];
-                                //сохрроняем скилы
-                                for (let i = 0; i < skills.length; i++) {
-                                    skillsService.findByName(skills[i]).then((skill) =>
-                                        cvService.addSkill(cv, skill)
-                                    )
-                                }
-                            })
-                    )
+
+                Object.keys(profiles).forEach((profile) =>
+                    cvService.save(profile.id, employee.id)
+                        .then((cv) => {
+                            let skills = profiles[profileName];
+                            //сохрроняем скилы
+                            for (let i = 0; i < skills.length; i++) {
+                                    cvService.addSkill(cv, skill.id)
+                            }
+                        })
                 );
             }
         );
