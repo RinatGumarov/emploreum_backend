@@ -42,18 +42,6 @@ class CvsService {
         return cv.addSkills([skill]);
     }
 
-    /**
-     * поиск резюме по работнику
-     * @param employeeId
-     * @returns {Promise<Array<Model>>}
-     */
-    async getAllByEmployeeId(employeeId) {
-        return await Cvs.findAll({
-            where: {
-                employee_id: {[Op.eq]: employeeId}
-            }
-        })
-    }
 }
 
 if (typeof instance !== CvsService) {

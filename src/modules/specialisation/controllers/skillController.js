@@ -2,12 +2,9 @@ const skillService = require('../services/skillsService');
 
 module.exports.func = (router) => {
 
-    router.get('/skills/:profileId', (req, res) => {
-        skillService.findByProfileId(req.params.profileId).then(
-            (skills) => {
-                res.json({skills: skills})
-            }
-        );
+    router.get('/skills/:profileId', async (req, res) => {
+        let skills = await skillService.findByProfileId(req.params.profileId);
+        res.json({skills: skills});
     });
 
     return router;
