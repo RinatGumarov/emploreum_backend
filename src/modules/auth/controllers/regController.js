@@ -135,8 +135,8 @@ module.exports.func = (router) => {
 
             switch (req.user.role) {
                 case 'EMPLOYEE':
-                    employeesService.addNameAndAbout(req.user.id, req.body.name, req.body.about)
-                        .then(promise);
+                    employeesService.update(req.user.id, req.body);
+                    promise();
                     break;
                 case 'COMPANY':
                     companiesService.addNameAndAbout(req.user.id, req.body.name, req.body.about)

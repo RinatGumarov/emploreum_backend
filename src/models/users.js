@@ -13,6 +13,15 @@ module.exports = (sequelize, DataTypes) => {
         user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10));
     });
 
+    users.beforeUpdate((params, options) => {
+        if (params.status) {
+            delete params.status;
+        }
+        if (params.role_id) {
+            delete params.role_id;
+        }
+    });
+
     users.prototype.validPassword = (password, validPass) => {
         return bcrypt.compareSync(password, validPass);
     };

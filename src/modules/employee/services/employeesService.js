@@ -49,22 +49,15 @@ class EmployeesService {
 
     /**
      * @param userId
-     * @param name
-     * @param about
-     * @returns {Promise<Model>}
+     * @param params
+     * @returns {Promise<*>}
      */
-    addNameAndAbout(userId, name, about) {
-        return Employees.findOne({
+    async update(userId, params) {
+        return await Employees.update(params, {
             where: {
-                user_id: {
-                    [Op.eq]: userId
-                }
+                user_id: {[Op.eq]: userId}
             }
-        }).then((employee) => {
-            employee.name = name;
-            employee.about = about;
-            employee.save();
-        });
+        })
     }
 
 
