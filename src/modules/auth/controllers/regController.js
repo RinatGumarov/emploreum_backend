@@ -1,4 +1,5 @@
 const usersService = require('../services/usersService');
+const cvService = require('../../employee/services/cvsService');
 const employeesService = require('../../employee/services/employeesService');
 const companiesService = require('../../company/services/companyService');
 const logger = require('../../../utils/logger');
@@ -98,16 +99,29 @@ module.exports.func = (router) => {
      */
     router.post('/signup/3', async (req, res) => {
         try {
+            // profiles - объекты класса профиль, содержащие скиллы.
+            let profiles = req.body.profiles;
             switch (req.user.role) {
                 case 'EMPLOYEE':
-                    await employeesService.save(req.user.id, req.body);
-                    await incrementStatusAndReturnResponse(req, res, FIRST_STATE);
+                    let employee = await employeesService.save(req.user.id);
+                    for (let i = 0; i < profiles.length; i++) {
+                        let profile = profiles[i];
+                        let cv = await cvService.save(profile.id, employee.id);
+                        let skills = profile.skills;
+                        // сохраняем скилы
+                        for (let j = 0; j < skills.length; j++) {
+                            cvService.addSkill(cv, skills[j].id)
+                        }
+                    }
                     break;
                 case 'COMPANY':
-                    await companiesService.addSpecToCompany(req.user, req.body.specs);
-                    await incrementStatusAndReturnResponse(req, res, FIRST_STATE);
+                    let company = await companiesService.save(req.user.id);
+                    for (let i = 0; i < profiles.length; ++i) {
+                        await companiesService.addSpecToCompany(company.id, profiles[i].id);
+                    }
                     break;
             }
+            await incrementStatusAndReturnResponse(req, res, FIRST_STATE);
         } catch (err) {
             logger.error(err);
             res.status(500).json({
@@ -124,13 +138,12 @@ module.exports.func = (router) => {
             switch (req.user.role) {
                 case 'EMPLOYEE':
                     await employeesService.update(req.user.id, req.body);
-                    await incrementStatusAndReturnResponse(req, res, SECOND_STATE);
                     break;
                 case 'COMPANY':
-                    await companiesService.addNameAndAbout(req.user.id, req.body.name, req.body.about);
-                    await incrementStatusAndReturnResponse(req, res, SECOND_STATE);
+                    await companiesService.update(req.user.id, req.body);
                     break;
             }
+            await incrementStatusAndReturnResponse(req, res, SECOND_STATE);
         } catch (err) {
             res.status(500).json({
                 error: err.message
@@ -142,8 +155,7 @@ module.exports.func = (router) => {
      * метод удаления пользователя из системы
      */
     router.delete('/unreg', async (req, res) => {
-        let deleted = await usersService.deleteUser(req.user);
-        if (deleted) {
+        if (await usersService.deleteUser(req.user)) {
             return res.json({data: "success"});
         } else {
             return res.status(500).send('server error');

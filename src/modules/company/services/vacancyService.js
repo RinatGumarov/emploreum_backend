@@ -7,6 +7,7 @@ const logger = require('../../../utils/logger');
 const Op = require('sequelize').Op;
 const profilesService = require('../../specialisation/services/profilesService');
 const skillsService = require('../../specialisation/services/skillsService');
+// const
 
 let instance;
 

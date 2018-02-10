@@ -134,7 +134,6 @@ class UsersService {
             status: step,
             role_id: role.id
         });
-        employeesService.save(user);
         return user;
     }
 
@@ -143,27 +142,13 @@ class UsersService {
      * @param user
      * @returns {Promise<T>}
      */
-    deleteUser(user) {
-        return Users.destroy({
+    async deleteUser(userId) {
+        return await Users.destroy({
             where: {
                 id: {
-                    [Op.eq]: user.id,
+                    [Op.eq]: userId,
                 },
-            },
-            force: false,
-            cascade: true
-        }).then((deletedRows) => {
-            if (deletedRows === 1) {
-                logger.log(`user ${user.email} deleted successfully`);
-                return true;
             }
-            else {
-                logger.error('something went wrong');
-                return false;
-            }
-        }).catch((err) => {
-            logger.error(err);
-            return false;
         });
     }
 
