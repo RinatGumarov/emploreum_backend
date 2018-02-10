@@ -1,5 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
-    let profile_skills = sequelize.define('profile_skills', {}, {
+    let profile_skills = sequelize.define('profile_skills', {
+        id: {
+            type: DataTypes.BIGINT,
+            primaryKey: true,
+        },
+    }, {
         timestamps: false
     });
 

@@ -46,6 +46,16 @@ class SkillService {
 
         return Skills.findAll(options);
     }
+
+    async findByName(name) {
+        return await Skills.findOne({
+            where: {
+                name: {
+                    [Op.eq]: name
+                }
+            }
+        });
+    }
 }
 
 if (typeof instance !== SkillService)

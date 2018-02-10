@@ -26,7 +26,6 @@ module.exports = {
             company_id: {
                 type: Sequelize.BIGINT,
                 allowNull: false,
-                unique: true,
                 references: {
                     model: "companies",
                     key: "id",

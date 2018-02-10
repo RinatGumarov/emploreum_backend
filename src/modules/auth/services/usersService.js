@@ -14,14 +14,15 @@ class UsersService {
      * @param email
      * @returns {Promise<boolean>}
      */
-    isEmailFree(email) {
-        return Users.findOne({
+    async isEmailFree(email) {
+        let user = await Users.findOne({
             where: {
                 email: {
                     [Op.eq]: email,
                 },
             },
-        }).then((user) => user === null);
+        });
+        return user === null;
     }
 
     /**

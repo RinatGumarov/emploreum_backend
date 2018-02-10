@@ -4,10 +4,14 @@ const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
 
-    router.post('new_vacancy', (req, res) => {
-        vacancyService.createVacancy(req.user, [], []).then((vacancy) => {
+    router.post('/vacancy', async (req, res) => {
+        try {
+            let vacancy = await vacancyService.createVacancy(req.user, req.body)
             return res.status(200).send({vacancy: vacancy});
-        });
+        }
+        catch(err) {
+            return res.status(500).send({error: err.message});
+        }
     });
 
     return router;
