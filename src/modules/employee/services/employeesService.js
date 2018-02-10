@@ -1,9 +1,5 @@
 const models = require('../../../core/models');
 const Employees = models.employees;
-const Users = models.users;
-const cvService = require('./cvsService');
-const profileService = require('../../specialisation/services/profilesService');
-const skillsService = require('../../specialisation/services/skillsService');
 const Op = require('sequelize').Op;
 
 let instance;
