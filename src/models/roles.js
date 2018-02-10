@@ -4,5 +4,12 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: false
     });
+
+    roles.associate = function (models) {
+        roles.hasMany(models.users, {
+            foreignKey: 'role_id'
+        });
+    };
+
     return roles;
 };

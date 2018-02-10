@@ -1,6 +1,6 @@
 const models = require('../../../core/models');
-const Skills = models.skills;
 const Profiles = models.profiles;
+const Skills = models.skills;
 const Op = require('sequelize').Op;
 
 let instance;
@@ -35,6 +35,11 @@ class SkillService {
         return Skills.findAll(options);
     }
 
+    /**
+     * поиск по профилю
+     * @param name
+     * @returns {Promise<Array<Model>>}
+     */
     findByProfileName(name) {
 
         let options = {
