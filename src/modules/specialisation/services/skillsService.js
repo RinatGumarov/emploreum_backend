@@ -12,7 +12,7 @@ class SkillService {
      * если likestr передан то будет искатьс вхождени в имя
      */
     async findByProfileId(id) {
-        let skills = await Skills.find({
+        let skills = await Skills.findAll({
             attributes: ['id', 'name', 'parent_id', "photo_path"],
             include: [{
                 attributes: [],
