@@ -12,14 +12,12 @@ class SkillService {
      * если likestr передан то будет искатьс вхождени в имя
      */
     findByProfileId(id) {
-        return Skills.findAll({
-            attributes: {exclude: ['profiles']},
+        return Skills.find({
+            attributes: ['id', 'name', 'parent_id', "photo_path"],
             include: [{
+                attributes: [],
                 model: Profiles,
                 where: {id: {[Op.eq]: id}},
-                through: {
-                    attributes: []
-                }
             }]
         });
     }
