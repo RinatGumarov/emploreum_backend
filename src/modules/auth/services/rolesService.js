@@ -6,13 +6,9 @@ let instance;
 
 class RolesService {
 
-    findByName(name) {
-
-        let options = {
-            where: {role: {[Op.eq]: name}}
-        };
-
-        return Roles.findOne(options);
+    async findByName(name) {
+        let role = await Roles.findOne({where: {role: {[Op.eq]: name}}});
+        return role;
     }
 
 }

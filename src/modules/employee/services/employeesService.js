@@ -1,9 +1,5 @@
 const models = require('../../../core/models');
 const Employees = models.employees;
-const Users = models.users;
-const cvService = require('./cvsService');
-const profileService = require('../../specialisation/services/profilesService');
-const skillsService = require('../../specialisation/services/skillsService');
 const Op = require('sequelize').Op;
 
 let instance;
@@ -16,31 +12,18 @@ class EmployeesService {
      * @param userId
      * @param profiles
      */
-    save(userId, profiles) {
+    async save(userId) {
 
-        return Employees.findOrCreate({
+        let savedEmployees = await Employees.findOrCreate({
             where: {
                 user_id: {[Op.eq]: userId}
             },
             defaults: {
                 user_id: userId
             }
-        }).then((savedEmployee) => {
-                let employee = savedEmployee[0];
-                // резюмэ по разным профилям
+        });
 
-                Object.keys(profiles).forEach((profile) =>
-                    cvService.save(profile.id, employee.id)
-                        .then((cv) => {
-                            let skills = profiles[profileName];
-                            //сохрроняем скилы
-                            for (let i = 0; i < skills.length; i++) {
-                                    cvService.addSkill(cv, skill.id)
-                            }
-                        })
-                );
-            }
-        );
+        return savedEmployees[0]
     }
 
     /**
@@ -49,11 +32,12 @@ class EmployeesService {
      * @returns {Promise<*>}
      */
     async update(userId, params) {
-        return await Employees.update(params, {
-            where: {
-                user_id: {[Op.eq]: userId}
-            }
-        })
+        return await
+            Employees.update(params, {
+                where: {
+                    user_id: {[Op.eq]: userId}
+                }
+            })
     }
 
 

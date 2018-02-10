@@ -3,6 +3,7 @@ const Op = require('sequelize').Op;
 const Users = models.users;
 const Roles = models.roles;
 const rolesService = require('./rolesService');
+const employeesService = require('../../employee/services/employeesService');
 const mailSender = require('../utils/mail-sender');
 const config = require('../../../utils/config');
 const logger = require('../../../utils/logger');
@@ -54,8 +55,8 @@ class UsersService {
      * @param id
      * @returns {Promise<Model>}
      */
-    getUserById(id) {
-        return Users.findOne({
+    async getUserById(id) {
+        let user = await Users.findOne({
             include: [{
                 model: Roles
             }],
@@ -64,17 +65,17 @@ class UsersService {
                     [Op.eq]: id
                 }
             }
-        }).then(function (user) {
-            return instance.changeUserRole(user);
         });
+
+        return this.changeUserRole(user);
     }
 
     /**
      * @param email
      * @returns {Promise<Model>}
      */
-    getUserByEmail(email) {
-        return Users.findOne({
+    async getUserByEmail(email) {
+        let user = await Users.findOne({
             include: [{
                 model: Roles
             }],
@@ -83,9 +84,8 @@ class UsersService {
                     [Op.eq]: email
                 }
             }
-        }).then(function (user) {
-            return instance.changeUserRole(user);
         });
+        return this.changeUserRole(user);
     }
 
     /**
@@ -112,13 +112,11 @@ class UsersService {
 
 
     /**
-     * увеличивает статус пользователя
-     * при регистрации
      * @param user
-     * @returns {Promise<this>|*|void}
+     * @returns {Promise<*>}
      */
-    incrementStep(user) {
-        return user.increment('status', {by: 1});
+    async incrementStep(user) {
+        return await user.increment('status', {by: 1});
     }
 
     /**
@@ -128,16 +126,16 @@ class UsersService {
      * @param step
      * @returns {Promise<Model>}
      */
-    saveUser(email, password, roleName, step) {
-        return rolesService.findByName(roleName).then((role) => {
-            let user = {
-                email: email,
-                password: password,
-                status: step,
-                role_id: role.id
-            };
-            return Users.create(user);
+    async saveUser(email, password, roleName, step) {
+        let role = await rolesService.findByName(roleName);
+        let user = await Users.create({
+            email: email,
+            password: password,
+            status: step,
+            role_id: role.id
         });
+        employeesService.save(user);
+        return user;
     }
 
 

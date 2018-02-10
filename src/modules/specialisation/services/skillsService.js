@@ -11,17 +11,17 @@ class SkillService {
      * поиск скила по профилю
      * если likestr передан то будет искатьс вхождени в имя
      */
-    findByProfileId(id) {
-        return Skills.findAll({
-            attributes: {exclude: ['profiles']},
+    async findByProfileId(id) {
+        let skills = await Skills.find({
+            attributes: ['id', 'name', 'parent_id', "photo_path"],
             include: [{
+                attributes: [],
                 model: Profiles,
                 where: {id: {[Op.eq]: id}},
-                through: {
-                    attributes: []
-                }
             }]
         });
+
+        return skills;
     }
 }
 

@@ -8,11 +8,11 @@ console.log(Profiles);
 class ProfileService {
 
     /**
-     * @param likeStr
      * @returns {Promise<Array<Model>>}
      */
-    all() {
-        return Profiles.findAll();
+    async all() {
+        let profiles = await Profiles.findAll();
+        return profiles;
     }
 }
 
