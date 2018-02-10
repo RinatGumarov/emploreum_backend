@@ -16,9 +16,9 @@ class CvsService {
      * @param employeeId
      * @returns {Promise<Model>}
      */
-    save(profileId, employeeId) {
+    async save(profileId, employeeId) {
 
-        return Cvs.findOrCreate({
+        let cvs = await Cvs.findOrCreate({
             where: {
                 profile_id: {[Op.eq]: profileId},
                 employee_id: {[Op.eq]: employeeId}
@@ -27,9 +27,9 @@ class CvsService {
                 profile_id: profileId,
                 employee_id: employeeId
             }
-        }).then(function (cvs) {
-            return cvs[0];
         });
+
+        return cvs[0];
     }
 
     /**
@@ -38,8 +38,8 @@ class CvsService {
      * @param skill
      * @returns {*}
      */
-    addSkill(cv, skill) {
-        return cv.addSkills([skill]);
+    async addSkill(cv, skill) {
+        return await cv.addSkills([skill]);
     }
 
 }
