@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    
+
     let skills = sequelize.define('skills', {
         name: DataTypes.STRING,
         photo_path: DataTypes.STRING
@@ -13,7 +13,13 @@ module.exports = (sequelize, DataTypes) => {
         });
         skills.belongsToMany(models.profiles, {
             through: 'profile_skills',
-            foreignKey: 'skill_id'
+            foreignKey: 'skill_id',
+            timestamps: false
+        });
+        skills.belongsToMany(models.cvs, {
+            through: 'cv_skills',
+            foreignKey: 'skill_id',
+            timestamps: false
         });
     };
 
