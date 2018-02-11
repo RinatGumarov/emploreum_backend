@@ -10,11 +10,9 @@ module.exports = {
                 type: Sequelize.BIGINT
             },
             name: {
-                allowNull: false,
                 type: Sequelize.STRING
             },
             info: {
-                allowNull: false,
                 type: Sequelize.TEXT,
             },
             pricePerWeek: {
