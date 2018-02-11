@@ -31,45 +31,9 @@ class VacanciesService {
     }
 
     async addProfileSkillToVacancy(options) {
-        // let profiles = options.profiles;
-        // let info = options.info;
-        // let name = options.name;
-        // let pricePerWeek = options.pricePerWeek;
-        // let duration = options.duration;
-        // let company = await companyService.findByUserId(userId);
-        // let vacancy = await Vacancies.create({
-        //     company_id: company.id,
-        //     name: name,
-        //     info: info,
-        //     duration: duration,
-        //     pricePerWeek: pricePerWeek,
-        // });
-        // await Object.keys(profiles).forEach(async (profile) => {
-        //     await profiles[profile].forEach(async (skill) => {
-        //         let profileId = (await profilesService.findOneByName(profile)).id;
-        //         let skillId = (await skillsService.findByName(skill)).id;
-        //         let ps = await ProfileSkills.findOne({
-        //             where: {
-        //                 profile_id: {
-        //                     [Op.eq]: profileId,
-        //                 },
-        //                 skill_id: {
-        //                     [Op.eq]: skillId,
-        //                 }
-        //             }
-        //         });
         return await VacancyProfileSkills.create(
             options
-        //     {
-        //     vacancy_id: vacancy.id,
-        //     profile_skill_id: ps.id
-        // }
-        );
-        //         logger.log(vps);
-        //     });
-        // });
-        // logger.log(`created vacancy ${vacancy.name}`);
-        // return vacancy;
+        )
     }
 
 }
