@@ -155,7 +155,7 @@ module.exports.func = (router) => {
      * метод удаления пользователя из системы
      */
     router.delete('/unreg', async (req, res) => {
-        if (await usersService.deleteUser(req.user)) {
+        if (await usersService.deleteUser(req.user.id)) {
             return res.json({data: "success"});
         } else {
             return res.status(500).send('server error');
