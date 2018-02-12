@@ -15,7 +15,20 @@ module.exports = {
             {
                 name: 'javascript',
                 photo_path: "random"
-            }
+            },
+            {
+                name: 'ios',
+                photo_path: "random"
+            },
+            {
+                name: 'android',
+                photo_path: "random"
+            },
+            {
+                name: 'hadoop',
+                photo_path: "random"
+            },
+
         ], {});
     },
 

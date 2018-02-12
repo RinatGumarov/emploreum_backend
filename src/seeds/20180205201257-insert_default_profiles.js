@@ -12,7 +12,10 @@ module.exports = {
             },
             {
                 name: 'desktop'
-            }
+            },
+            {
+                name: 'bigdata'
+            },
         ], {});
 
     },

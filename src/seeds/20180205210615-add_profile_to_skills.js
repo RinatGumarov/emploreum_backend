@@ -28,6 +28,18 @@ module.exports = {
             },
             {
                 profile_id: await queryInterface.rawSelect('profiles', {where: {name: 'mobile'}}, ['id']),
+                skill_id: await queryInterface.rawSelect('skills', {where: {name: 'android'}}, ['id'])
+            },
+            {
+                profile_id: await queryInterface.rawSelect('profiles', {where: {name: 'mobile'}}, ['id']),
+                skill_id: await queryInterface.rawSelect('skills', {where: {name: 'ios'}}, ['id'])
+            },
+            {
+                profile_id: await queryInterface.rawSelect('profiles', {where: {name: 'bigdata'}}, ['id']),
+                skill_id: await queryInterface.rawSelect('skills', {where: {name: 'hadoop'}}, ['id'])
+            },
+            {
+                profile_id: await queryInterface.rawSelect('profiles', {where: {name: 'bigdata'}}, ['id']),
                 skill_id: await queryInterface.rawSelect('skills', {where: {name: 'java'}}, ['id'])
             }
         ], {});
