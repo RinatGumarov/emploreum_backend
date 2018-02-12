@@ -41,7 +41,18 @@ class EmployeesService {
             })
     }
 
-
+    /**
+     * @param userId
+     * @returns {Promise<Model>}
+     */
+    async getByUserId(userId) {
+        let employee = await Employees.findOne({
+            where: {
+                user_id: {[Op.eq]: userId}
+            }
+        });
+        return employee;
+    }
 }
 
 if (typeof instance !== EmployeesService) {

@@ -10,12 +10,11 @@ let instance;
 class CompaniesService {
 
     /**
-     * сохранение работника и создание для него
-     * резюме с определенными специализациями
+     * создание профиля для компании
      * @param companyId
      * @param profileId
      */
-    async addSpecToCompany(companyId, profileId) {
+    async addProfileToCompany(companyId, profileId) {
         return await CompanyProfiles.create({
             company_id: companyId,
             profile_id: profileId

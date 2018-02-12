@@ -4,7 +4,7 @@ const Op = models.sequelize.Op;
 const Users = models.users;
 const Roles = models.roles;
 
-const rolesService = require('./rolesService');
+const rolesService = require('./roleService');
 const mailSender = require('../utils/mailSender');
 const config = require('../../../utils/config');
 const logger = require('../../../utils/logger');

@@ -2,16 +2,17 @@ SELECT vacancies.*
 FROM (
        SELECT
          v_skill_array.v_id,
-         count(
-             SELECT *
-             FROM unnest(string_to_array(:skillsString, ',') :: INT [])
-             EXCEPT
-             SELECT *
-             FROM unnest(v_skill_array.s_array)
-         ) AS equal_skills_count,
-         count(SELECT *
-               FROM unnest(v_skill_array.s_array)
-         ) AS all_skill_count
+         count((
+                 SELECT *
+                 FROM unnest(string_to_array(:skillsString, ',') :: INT [])
+                 EXCEPT
+                 SELECT *
+                 FROM unnest(v_skill_array.s_array)
+               )) AS equal_skills_count,
+         count((
+                 SELECT *
+                 FROM unnest(v_skill_array.s_array)
+               )) AS all_skill_count
        FROM (
               SELECT
                 vacancies.id         AS v_id,

@@ -1,6 +1,6 @@
-const usersService = require('../services/usersService');
-const cvService = require('../../employee/services/cvsService');
-const employeesService = require('../../employee/services/employeesService');
+const usersService = require('../services/userService');
+const cvService = require('../../employee/services/cvService');
+const employeesService = require('../../employee/services/employeeService');
 const companiesService = require('../../company/services/companyService');
 const logger = require('../../../utils/logger');
 
@@ -113,7 +113,7 @@ module.exports.func = (router) => {
                 case 'COMPANY':
                     let company = await companiesService.save(req.user.id);
                     for (let i = 0; i < profiles.length; ++i) {
-                        await companiesService.addSpecToCompany(company.id, profiles[i].id);
+                        await companiesService.addProfileToCompany(company.id, profiles[i].id);
                     }
                     break;
             }
