@@ -45,6 +45,7 @@ class VacanciesService {
                         model: models.profiles
                     },
                     {
+                        attributes: ['id', 'name'],
                         model: models.skills
                     }
                 ],
