@@ -5,7 +5,7 @@ const path = require('path');
 
 let queryScannerInstance;
 
-class QueryScanner{
+class QueryScanner {
 
 
     constructor() {
@@ -17,17 +17,13 @@ class QueryScanner{
             let filePath = path.resolve(queriesPath, queryFileName);
             return path.parse(filePath).ext === '.sql';
         }).forEach((queryFileName) => {
-            let queryName = path.parse(queryFileName).name;
+            let queryName = path.parse(queryFileName).name.replace(/-/g, "_");
             let filePath = path.resolve(queriesPath, queryFileName);
-            if (!this.queries[moduleName]) {
-                this.queries[moduleName] = {};
+            if (!this[moduleName]) {
+                this[moduleName] = {};
             }
-            this.queries[moduleName][queryName] = fs.readFileSync(filePath).toString().split(String.fromCharCode(10)).join(" ");
+            this[moduleName][queryName] = fs.readFileSync(filePath).toString().split(String.fromCharCode(10)).join(" ");
         });
-    }
-
-    get(moduleName, queryName) {
-        return this.queries[moduleName][queryName]
     }
 
 }

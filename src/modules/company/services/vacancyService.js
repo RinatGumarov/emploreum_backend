@@ -57,7 +57,7 @@ class VacanciesService {
     }
 
     async getRecommended(userId) {
-        let queryStr = queryScanner.get('company', 'recommended-vacancies');
+        let queryStr = queryScanner.company.recommended_vacancies;
         return models.sequelize.query(queryStr,
             {
                 replacements: {skillsString: '1,2,3'},
