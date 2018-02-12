@@ -1,63 +1,77 @@
-const Web3 = require("web3");
-const web3InitError = require("./Web3Error");
 const contractService = require('truffle-contract');
-var web3;
-module.exports.web3 = web3;
+const web3 = require("./web3");
+const utilConfig = require("../../../utils/config");
+const config = utilConfig.get("web3");
+const logger = require('../../../utils/logger');
+const Web3InitError = require('./Web3Error');
+const accountUtil = require('./account');
 
-module.exports.initWeb3 = function () {
-    web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
-    return web3;
-};
+let instance;
+let gasPrice = web3.utils.toWei('1', 'gwei');
 
-// return Promise with contract instance
-
-module.exports.readContract = function (contractInfo) {
-    return initContract(contractInfo).then(contract => {
-        return contract.deplyed()
-    })
-};
-
-// return Promise with contract instance
-
-module.exports.readContractFromAddress = function (contractInfo, address) {
-    return initContract(contractInfo).then(contract => {
-        return contract.at(address)
-    })
-};
-
-// return Promise with contract instance
-
-module.exports.createContract = function (contractInfo, gas) {
-    let args = Array.prototype.slice.call(arguments, 2)
-    // if (args.length === 0)
-    //   args = null
-    args.push({gas});
-    return initContract(contractInfo).then(contract => {
-        return contract.new.apply(null, args)
-    })
-};
-
-function initContract(contractInfo) {
-    if (!web3) {
-        throw new Web3InitError()
-    }
+var initContract = function (contractInfo) {
+    if (!web3)
+        throw new Web3InitError();
 
     let contract = contractService(contractInfo);
     contract.setProvider(web3.currentProvider);
 
-    return new Promise((resolve, reject) => {
-        web3.eth.getAccounts((error, accounts) => {
-            if (error) {
-                throw new Web3InitError(error.message)
-            }
-            if (accounts.length === 0) {
-                throw new Web3InitError('there is no any init accounts in web3')
-            }
-
-            contract.defaults({from: accounts[0]})
-            resolve(contract)
-        })
-    })
-
-
+    return accountUtil.unlockMainAccount(contract);
 }
+
+class ContractUtil {
+    /**
+     * Read contract from blockchain with address from abi
+     *
+     * @param contractInfo
+     * @returns {Promise.<TResult>} with contract instance
+     */
+    readContract(contractInfo) {
+        return initContract(contractInfo).then(contract => {
+            return contract.deplyed();
+        })
+    };
+
+
+    /**
+     * Read contract from blockchain that located at address
+     *
+     * @param contractInfo
+     * @param address
+     * @returns {Promise.<TResult>} with contract instance
+     */
+    readContractFromAddress(contractInfo, address) {
+        return initContract(contractInfo).then(contract => {
+            return contract.at(address);
+        })
+    };
+
+    /**
+     * Create contract in blockchain
+     *
+     * @param contractInfo
+     * @param gas
+     * @param [arg1, arg2, ...] contract constructor args
+     * @returns {Promise.<TResult>} with contract instance
+     */
+    createContract(contractInfo, gas) {
+        let args = Array.prototype.slice.call(arguments, 2);
+        args.push({gas, gasPrice});
+
+        return initContract(contractInfo).then(contract => {
+            return contract.new.apply(null, args).then(contract => {
+                logger.log("Created new contract");
+                logger.log(contract);
+
+                return contract;
+            })
+        })
+    };
+}
+
+if (typeof instance !== ContractUtil)
+    instance = new ContractUtil();
+
+module.exports = instance;
+
+

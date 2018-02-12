@@ -13,6 +13,7 @@
     "chalk": "^1.1.3",
     "cookie-parser": "^1.4.3",
     "cross-env": "5.0.0",
+    "ethereumjs-tx": "^1.3.3",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "ip": "1.1.5",
@@ -49,7 +50,8 @@
     "pg": "обертка для postgres, предоставляет javascript api",
     "pg-hstore": "для json представляения данных postgres",
     "web3": "для отправки транзакций в blockchain",
-    "truffle-contract": "работы с контрактами в eth"
+    "truffle-contract": "работы с контрактами в eth",
+    "ethereumjs-tx": "for sending transactions"
   },
   "devDependencies": {},
   "scripts": {

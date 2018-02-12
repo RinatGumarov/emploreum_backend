@@ -1,4 +1,6 @@
 {
-  "create_contract_path": "./abi/Main.json",
-  "create_contract_gas_count": 1400000
+  "main_contract_path": "0x24959b8bECaCA482225aE24EF0d7b415e1c1c84a",
+  "create_contract_gas_count": 1400000,
+  "account_password": "password",
+  "unlock_time": 1000
 }
