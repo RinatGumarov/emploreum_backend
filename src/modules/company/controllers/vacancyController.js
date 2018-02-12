@@ -65,6 +65,11 @@ module.exports.func = (router) => {
     });
 
 
+    router.get('/vacancy/recommended', async (req, res) => {
+        let recommendedVacancies = await vacancyService.getRecommended();
+        res.json(recommendedVacancies);
+    });
+
     return router;
 
 };

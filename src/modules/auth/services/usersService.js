@@ -1,5 +1,5 @@
 const models = require('../../../core/models');
-const Op = require('sequelize').Op;
+const Op = models.sequelize.Op;
 const Users = models.users;
 const Roles = models.roles;
 const rolesService = require('./rolesService');

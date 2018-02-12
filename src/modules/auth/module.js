@@ -9,6 +9,7 @@ const controllersPath = path.resolve(__dirname, "controllers");
 const middlewaresPath = path.resolve(__dirname, "middlewares");
 
 var module = new ModuleClass("auth", controllersPath, middlewaresPath);
+
 passport.init();
 mailSender.init();
 module.init();

@@ -3,11 +3,9 @@ const Vacancies = models.vacancies;
 const Companies = models.companies;
 const ProfileSkills = models.profile_skills;
 const VacancyProfileSkills = models.vacancy_profile_skills;
+const queryScanner = require('../../../core/queryScanner');
 const logger = require('../../../utils/logger');
-const Op = require('sequelize').Op;
-const profilesService = require('../../specialisation/services/profilesService');
-const skillsService = require('../../specialisation/services/skillsService');
-const companyService = require('../services/companyService');
+const Op = models.sequelize.Op;
 
 let instance;
 
@@ -56,6 +54,16 @@ class VacanciesService {
                 }
             }
         });
+    }
+
+    async getRecommended(userId) {
+        let queryStr = queryScanner.get('company', 'recommended-vacancies');
+        return models.sequelize.query(queryStr,
+            {
+                replacements: {skillsString: '1,2,3'},
+                type: models.sequelize.QueryTypes.SELECT,
+                model: Vacancies
+            })
     }
 }
 
