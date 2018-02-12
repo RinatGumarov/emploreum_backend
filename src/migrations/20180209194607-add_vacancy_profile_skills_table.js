@@ -13,7 +13,7 @@ module.exports = {
               cascade: true,
               onDelete: "CASCADE",
           },
-          profile_skill_id: {
+          profileSkillId: {
               type: Sequelize.BIGINT,
               allowNull: false,
               references: {
