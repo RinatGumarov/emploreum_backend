@@ -1,25 +1,17 @@
 const skillService = require('../../specialisation/services/skillService');
-const vacancyService = require('../../company/services/vacancyService');
 const employeeService = require('../services/employeeService');
 
 module.exports.func = (router) => {
 
-    router.get('/vacancy/recommended', async (req, res) => {
-        let employee = await employeeService.getByUserId(req.user.id);
-        let employeeSkills = await skillService.getEmployeeSkills(employee.id);
-        let recommendedVacancies = await vacancyService.getRecommended(employeeSkills);
-        res.json(recommendedVacancies);
-    });
-
-    router.post('/vacancy/add', async (req, res) => {
+    router.post('/vacancy/:vacancyId/add', async (req, res) => {
         try {
             let employee = await employeeService.getByUserId(req.user.id);
-            await employeeService.attachVacancy(employee, req.body.vacancyId);
+            await employeeService.attachVacancy(employee, req.params.vacancyId);
             res.send({data: 'success'});
         }
-        catch (err){
+        catch (err) {
             logger.error(err.message);
-            res.status(500).send( { error: 'Could not attach vacancy' } );
+            res.status(500).send({error: 'Could not attach vacancy'});
         }
     });
 

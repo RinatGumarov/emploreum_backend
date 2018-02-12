@@ -110,11 +110,15 @@ class VacanciesService {
     }
 
     /**
-     * skills - массив обьектов моделей
+     * метод получения рекомендуемых вакансий по профилю работника
+     * смотри скилы по резюме работника и скилы вакансий
+     * если скилы по резюме работника покрывают 70 треуемых скилов
+     * то данная ваканчия рекомендована
      * @param skills
-     * @returns {Promise}
+     * @param profileId
+     * @returns {Promise<*>}
      */
-    async getRecommended(skills) {
+    async getRecommended(skills, profileId) {
 
         let skillsIds = skills.map((skill) => {
             return skill.id
@@ -123,7 +127,10 @@ class VacanciesService {
         let queryStr = queryScanner.company.recommended_vacancies;
         let vacancies = await models.sequelize.query(queryStr,
             {
-                replacements: {skillsString: skillsIds.join(",")},
+                replacements: {
+                    skillsString: skillsIds.join(","),
+                    profileId: profileId
+                },
                 type: models.sequelize.QueryTypes.SELECT,
                 model: Vacancies
             });
