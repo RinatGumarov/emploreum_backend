@@ -1,7 +1,7 @@
 "use strict";
 const path = require('path');
 const passport = require('./utils/passport');
-const mailSender = require('./utils/mail-sender');
+const mailSender = require('./utils/mailSender');
 
 const ModuleClass = require('../../core/module');
 
