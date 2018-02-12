@@ -4,39 +4,39 @@ module.exports = {
     up: async (queryInterface, Sequelize) => {
         return queryInterface.bulkInsert('vacancy_profile_skills', [
             {
-                profileSkillId: 1,
+                profile_skill_id: 1,
                 vacancy_id: 1
             },
             {
-                profileSkillId: 4,
+                profile_skill_id: 4,
                 vacancy_id: 1
             },
             {
-                profileSkillId: 5,
+                profile_skill_id: 5,
                 vacancy_id: 2
             },
             {
-                profileSkillId: 6,
+                profile_skill_id: 6,
                 vacancy_id: 2
             },
             {
-                profileSkillId: 5,
+                profile_skill_id: 5,
                 vacancy_id: 3
             },
             {
-                profileSkillId: 7,
+                profile_skill_id: 7,
                 vacancy_id: 3
             },
             {
-                profileSkillId: 8,
+                profile_skill_id: 8,
                 vacancy_id: 4
             },
             {
-                profileSkillId: 9,
+                profile_skill_id: 9,
                 vacancy_id: 4
             },
             {
-                profileSkillId: 2,
+                profile_skill_id: 2,
                 vacancy_id: 4
             },
         ], {});

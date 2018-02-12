@@ -1,7 +1,6 @@
 const models = require('../../../core/models');
 const Cvs = models.cvs;
 const Profiles = models.profiles;
-
 const Op = models.sequelize.Op;
 
 let instance;
