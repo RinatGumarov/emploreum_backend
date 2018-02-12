@@ -10,18 +10,17 @@ module.exports = (sequelize, DataTypes) => {
 
     vacancies.associate = function (models) {
         vacancies.belongsTo(models.companies, {
-            foreignKey: 'company_id',
-            targetKey: 'id'
+            foreignKey: 'company_id'
         });
 
         vacancies.belongsToMany(models.employees, {
             through: 'vacancy_employees',
-            foreignKey: 'employee_id',
+            foreignKey: 'vacancy_id',
         });
 
         vacancies.belongsToMany(models.profile_skills, {
             through: 'vacancy_profile_skills',
-            foreignKey: 'profile_skill_id'
+            foreignKey: 'vacancy_id',
         });
     };
 

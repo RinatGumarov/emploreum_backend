@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const app = require('./app');
-const models = require('./models');
+const queryScanner = require('./queryScanner');
 
 /**
  * клас модулей
@@ -30,13 +30,14 @@ module.exports = class Module {
         });
     }
 
-    constructor(moduleName, pathToControllers, pathToMiddlewares) {
+    constructor(moduleName, pathToControllers, pathToMiddlewares, queriesPath) {
         if (!moduleName) {
             throw new Error('не передано название модуля');
         }
         this.moduleName = moduleName;
         this.pathToControllers = pathToControllers;
         this.pathToMiddlewares = pathToMiddlewares;
+        this.queriesPath = queriesPath;
     }
 
     init() {
@@ -45,8 +46,13 @@ module.exports = class Module {
         if (this.pathToMiddlewares) {
             this.initFiles(this.pathToMiddlewares);
         }
+
         if (this.pathToControllers) {
             this.initFiles(this.pathToControllers);
+        }
+
+        if (this.queriesPath) {
+            queryScanner.scanQueries(this.moduleName, this.queriesPath);
         }
     }
 };

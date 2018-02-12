@@ -2,8 +2,8 @@ const models = require('../../../core/models');
 const Companies = models.companies;
 const CompanyProfiles = models.company_profiles;
 const logger = require('../../../utils/logger');
-const Op = require('sequelize').Op;
-const profilesService = require('../../specialisation/services/profilesService');
+
+const Op = models.sequelize.Op;
 
 let instance;
 

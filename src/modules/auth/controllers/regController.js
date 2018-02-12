@@ -24,14 +24,10 @@ module.exports.func = (router) => {
         let user = req.user;
         if (user.status === stateNumber) {
             user = await usersService.incrementStep(req.user);
-            return res.json({
-                registrationStep: user.status,
-            });
-        } else {
-            return res.json({
-                registrationStep: user.status,
-            });
         }
+        return res.json({
+            registrationStep: user.status,
+        });
     };
 
     /**
@@ -155,7 +151,7 @@ module.exports.func = (router) => {
      * метод удаления пользователя из системы
      */
     router.delete('/unreg', async (req, res) => {
-        if (await usersService.deleteUser(req.user)) {
+        if (await usersService.deleteUser(req.user.id)) {
             return res.json({data: "success"});
         } else {
             return res.status(500).send('server error');
