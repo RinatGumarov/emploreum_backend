@@ -126,14 +126,9 @@ class VacanciesService {
                 replacements: {skillsString: skillsIds.join(",")},
                 type: models.sequelize.QueryTypes.SELECT,
                 model: Vacancies
-            })
+            });
 
         return vacancies;
-    }
-
-    async attachEmployee(employeeId, vacancyId){
-        let vacancy = await Vacancies.findById(vacancyId);
-        vacancy.addEmployee(employeeId);
     }
 }
 

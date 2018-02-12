@@ -36,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
         employees.belongsToMany(models.vacancies, {
             through: 'vacancy_employees',
             foreignKey: 'employee_id',
+            timestamps: false,
         });
     };
 
