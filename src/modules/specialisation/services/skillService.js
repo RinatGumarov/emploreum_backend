@@ -24,6 +24,29 @@ class SkillService {
 
         return skills;
     }
+
+    /**
+     * поиск скила по работнику
+     */
+    async getEmployeeSkills(employeeId) {
+        let skills = await Skills.findAll({
+            include: [{
+                attributes: [],
+                model: models.cvs,
+                as : "cvs",
+                include: {
+                    attributes: [],
+                    as: "employee",
+                    model: models.employees,
+                    where: {
+                        id: {[Op.eq]: employeeId}
+                    }
+                }
+            }]
+        })
+
+        return skills;
+    }
 }
 
 if (typeof instance !== SkillService)

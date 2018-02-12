@@ -57,6 +57,7 @@ class VacanciesService {
         let vacancies = await Vacancies.findAll(option);
         let resultVacancies = [];
 
+        //toDo изменить когда будет времечко
         // преобразовывем в человечиский вид)
         for (let i = 0; vacancies.length && i < vacancies.length; ++i) {
 
@@ -108,14 +109,26 @@ class VacanciesService {
 
     }
 
-    async getRecommended(userId) {
+    /**
+     * skills - массив обьектов моделей
+     * @param skills
+     * @returns {Promise}
+     */
+    async getRecommended(skills) {
+
+        let skillsIds = skills.map((skill) => {
+            return skill.id
+        });
+
         let queryStr = queryScanner.company.recommended_vacancies;
-        return models.sequelize.query(queryStr,
+        let vacancies = await models.sequelize.query(queryStr,
             {
-                replacements: {skillsString: '1,2,3'},
+                replacements: {skillsString: skillsIds.join(",")},
                 type: models.sequelize.QueryTypes.SELECT,
                 model: Vacancies
             })
+
+        return vacancies;
     }
 
     async attachEmployee(employeeId, vacancyId){

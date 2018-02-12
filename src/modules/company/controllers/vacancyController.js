@@ -35,12 +35,6 @@ module.exports.func = (router) => {
         res.send(vacancies);
     });
 
-
-    router.get('/vacancy/recommended', async (req, res) => {
-        let recommendedVacancies = await vacancyService.getRecommended();
-        res.json(recommendedVacancies);
-    });
-
     return router;
 
 };
