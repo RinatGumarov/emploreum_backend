@@ -33,7 +33,7 @@ class SkillService {
             include: [{
                 attributes: [],
                 model: models.cvs,
-                as : "cvs",
+                as: "cvs",
                 include: {
                     attributes: [],
                     as: "employee",
@@ -43,10 +43,12 @@ class SkillService {
                     }
                 }
             }]
-        })
-
+        });
         return skills;
     }
+
+
+
 }
 
 if (typeof instance !== SkillService)
