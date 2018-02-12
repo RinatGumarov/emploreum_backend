@@ -117,6 +117,11 @@ class VacanciesService {
                 model: Vacancies
             })
     }
+
+    async attachEmployee(employeeId, vacancyId){
+        let vacancy = await Vacancies.findById(vacancyId);
+        vacancy.addEmployee(employeeId);
+    }
 }
 
 if (typeof instance !== VacanciesService) {

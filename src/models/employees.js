@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
         employees.belongsTo(models.users, {
             foreignKey: 'user_id',
         });
+        employees.belongsToMany(models.vacancies, {
+            through: 'vacancy_employees',
+            foreignKey: 'employee_id',
+        });
     };
 
     return employees;
