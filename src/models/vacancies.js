@@ -16,11 +16,13 @@ module.exports = (sequelize, DataTypes) => {
         vacancies.belongsToMany(models.employees, {
             through: 'vacancy_employees',
             foreignKey: 'vacancy_id',
+            timestamps: false,
         });
 
         vacancies.belongsToMany(models.profile_skills, {
             through: 'vacancy_profile_skills',
             foreignKey: 'vacancy_id',
+            timestamps: false,
         });
     };
 

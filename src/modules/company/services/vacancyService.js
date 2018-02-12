@@ -126,7 +126,7 @@ class VacanciesService {
                 replacements: {skillsString: skillsIds.join(",")},
                 type: models.sequelize.QueryTypes.SELECT,
                 model: Vacancies
-            })
+            });
 
         return vacancies;
     }

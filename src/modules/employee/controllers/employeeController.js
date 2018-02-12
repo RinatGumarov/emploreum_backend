@@ -11,5 +11,17 @@ module.exports.func = (router) => {
         res.json(recommendedVacancies);
     });
 
+    router.post('/vacancy/add', async (req, res) => {
+        try {
+            let employee = await employeeService.getByUserId(req.user.id);
+            await employeeService.attachVacancy(employee, req.body.vacancyId);
+            res.send({data: 'success'});
+        }
+        catch (err){
+            logger.error(err.message);
+            res.status(500).send( { error: 'Could not attach vacancy' } );
+        }
+    });
+
     return router;
 };
