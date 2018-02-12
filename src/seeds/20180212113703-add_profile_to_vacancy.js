@@ -2,30 +2,42 @@
 
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        return queryInterface.bulkInsert('profile_skills', [
+        return queryInterface.bulkInsert('vacancy_profile_skills', [
             {
-                profileSkillId: await queryInterface.rawSelect('profile_skills', {
-                    where: {
-                        profile_id: await queryInterface.rawSelect('profiles', {where: {name: 'postgres'}}, ['id'])
-                    }
-                }, ['id']),
+                profileSkillId: 1,
                 vacancy_id: 1
             },
             {
-                profileSkillId: await queryInterface.rawSelect('profile_skils', {
-                    where: {
-                        profile_id: await queryInterface.rawSelect('profiles', {where: {name: 'java'}}, ['id'])
-                    }
-                }, ['id']),
+                profileSkillId: 4,
                 vacancy_id: 1
             },
             {
-                profileSkillId: await queryInterface.rawSelect('profile_skils', {
-                    where: {
-                        profile_id: await queryInterface.rawSelect('profiles', {where: {name: 'postgres'}}, ['id'])
-                    }
-                }, ['id']),
+                profileSkillId: 5,
+                vacancy_id: 2
+            },
+            {
+                profileSkillId: 6,
+                vacancy_id: 2
+            },
+            {
+                profileSkillId: 5,
                 vacancy_id: 3
+            },
+            {
+                profileSkillId: 7,
+                vacancy_id: 3
+            },
+            {
+                profileSkillId: 8,
+                vacancy_id: 4
+            },
+            {
+                profileSkillId: 9,
+                vacancy_id: 4
+            },
+            {
+                profileSkillId: 2,
+                vacancy_id: 4
             },
         ], {});
     },
