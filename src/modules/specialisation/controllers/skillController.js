@@ -1,4 +1,4 @@
-const skillService = require('../services/skillsService');
+const skillService = require('../services/skillService');
 
 module.exports.func = (router) => {
 

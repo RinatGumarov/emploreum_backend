@@ -1,6 +1,6 @@
-const usersService = require('../services/usersService');
-const cvService = require('../../employee/services/cvsService');
-const employeesService = require('../../employee/services/employeesService');
+const usersService = require('../services/userService');
+const cvService = require('../../employee/services/cvService');
+const employeesService = require('../../employee/services/employeeService');
 const companiesService = require('../../company/services/companyService');
 const logger = require('../../../utils/logger');
 
@@ -24,14 +24,10 @@ module.exports.func = (router) => {
         let user = req.user;
         if (user.status === stateNumber) {
             user = await usersService.incrementStep(req.user);
-            return res.json({
-                registrationStep: user.status,
-            });
-        } else {
-            return res.json({
-                registrationStep: user.status,
-            });
         }
+        return res.json({
+            registrationStep: user.status,
+        });
     };
 
     /**
@@ -117,7 +113,7 @@ module.exports.func = (router) => {
                 case 'COMPANY':
                     let company = await companiesService.save(req.user.id);
                     for (let i = 0; i < profiles.length; ++i) {
-                        await companiesService.addSpecToCompany(company.id, profiles[i].id);
+                        await companiesService.addProfileToCompany(company.id, profiles[i].id);
                     }
                     break;
             }
@@ -155,7 +151,7 @@ module.exports.func = (router) => {
      * метод удаления пользователя из системы
      */
     router.delete('/unreg', async (req, res) => {
-        if (await usersService.deleteUser(req.user)) {
+        if (await usersService.deleteUser(req.user.id)) {
             return res.json({data: "success"});
         } else {
             return res.status(500).send('server error');

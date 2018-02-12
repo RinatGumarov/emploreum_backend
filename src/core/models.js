@@ -42,7 +42,6 @@ class Models {
         if (dbConfig)
             databaseConfig = dbConfig.production;
         let url = process.env.DATABASE_URL || databaseConfig.url;
-        logger.log(`db url - ${url}`);
         this.dbModel = {};
         if (url) {
             this.sequelize = new Sequelize(url);

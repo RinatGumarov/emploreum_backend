@@ -1,7 +1,7 @@
 const models = require('../../../core/models');
 const Cvs = models.cvs;
 const Profiles = models.profiles;
-const Op = require('sequelize').Op;
+const Op = models.sequelize.Op;
 
 let instance;
 
@@ -37,6 +37,19 @@ class CvsService {
      */
     async addSkill(cv, skill) {
         return await cv.addSkills([skill]);
+    }
+
+    /**
+     * @param id
+     * @returns {Promise<Model>}
+     */
+    async getById(id) {
+        let cvs = await Cvs.findOne({
+            where: {
+                id: {[Op.eq]: id}
+            }
+        });
+        return cvs;
     }
 
 }

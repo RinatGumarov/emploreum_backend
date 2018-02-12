@@ -1,6 +1,7 @@
 const models = require('../../../core/models');
 const Profiles = models.profiles;
-const Op = require('sequelize').Op;
+
+const Op = models.sequelize.Op;
 
 class ProfileService {
 
