@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
         profile_skills.belongsTo(models.profiles, {
             foreignKey: 'profile_id'
         });
+        profile_skills.belongsToMany(models.vacancies, {
+            foreignKey: 'vacancy_id',
+            through: 'vacancy_profile_skills'
+        });
     };
 
 

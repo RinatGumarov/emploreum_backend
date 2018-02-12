@@ -36,6 +36,27 @@ class VacanciesService {
         )
     }
 
+    async findAllByCompanyId(companyId) {
+        return await Vacancies.findAll({
+            include: [{
+                model: ProfileSkills,
+                include: [
+                    {
+                        model: models.profiles
+                    },
+                    {
+                        attributes: ['id', 'name'],
+                        model: models.skills
+                    }
+                ],
+            }],
+            where: {
+                company_id: {
+                    [Op.eq]: companyId,
+                }
+            }
+        });
+    }
 }
 
 if (typeof instance !== VacanciesService) {
