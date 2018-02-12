@@ -4,7 +4,7 @@ const vacancyService = require('../../company/services/vacancyService');
 
 module.exports.func = (router) => {
 
-    router.post('/vacancy/:vacancyId/add', async (req, res) => {
+    router.get('/vacancy/:vacancyId/add', async (req, res) => {
         try {
             let employee = await employeeService.getByUserId(req.user.id);
             await employeeService.attachVacancy(employee, req.params.vacancyId);
