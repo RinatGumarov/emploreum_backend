@@ -39,6 +39,19 @@ class CvsService {
         return await cv.addSkills([skill]);
     }
 
+    /**
+     * @param id
+     * @returns {Promise<Model>}
+     */
+    async getById(id) {
+        let cvs = await Cvs.findOne({
+            where: {
+                id: {[Op.eq]: id}
+            }
+        });
+        return cvs;
+    }
+
 }
 
 if (typeof instance !== CvsService) {

@@ -33,7 +33,7 @@ class SkillService {
             include: [{
                 attributes: [],
                 model: models.cvs,
-                as : "cvs",
+                as: "cvs",
                 include: {
                     attributes: [],
                     as: "employee",
@@ -43,7 +43,27 @@ class SkillService {
                     }
                 }
             }]
-        })
+        });
+        return skills;
+    }
+
+    /**
+     * поиск скилов по резюме раотника
+     * @returns {Promise<*>}
+     * @param cvId
+     */
+    async getСvSkills(cvId) {
+        let skills = await Skills.findAll({
+            include: [{
+                attributes: [],
+                model: models.cvs,
+                as: "cvs",
+                attributes: [],
+                where: {
+                    id: {[Op.eq]: cvId}
+                }
+            }]
+        });
 
         return skills;
     }
