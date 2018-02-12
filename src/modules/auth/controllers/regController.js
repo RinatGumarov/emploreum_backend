@@ -24,14 +24,10 @@ module.exports.func = (router) => {
         let user = req.user;
         if (user.status === stateNumber) {
             user = await usersService.incrementStep(req.user);
-            return res.json({
-                registrationStep: user.status,
-            });
-        } else {
-            return res.json({
-                registrationStep: user.status,
-            });
         }
+        return res.json({
+            registrationStep: user.status,
+        });
     };
 
     /**
