@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
         });
         employees.belongsToMany(models.languages, {
             through: 'employee_languages',
+            timestamps: false,
             foreignKey: 'employee_id'
         });
         employees.hasMany(models.achievements, {
@@ -31,7 +32,11 @@ module.exports = (sequelize, DataTypes) => {
         });
         employees.belongsTo(models.users, {
             foreignKey: 'user_id',
-            targetKey: 'id',
+        });
+        employees.belongsToMany(models.vacancies, {
+            through: 'vacancy_employees',
+            foreignKey: 'employee_id',
+            timestamps: false,
         });
     };
 

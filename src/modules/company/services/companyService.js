@@ -2,64 +2,48 @@ const models = require('../../../core/models');
 const Companies = models.companies;
 const CompanyProfiles = models.company_profiles;
 const logger = require('../../../utils/logger');
-const Op = require('sequelize').Op;
-const profilesService = require('../../specialisation/services/profilesService');
+
+const Op = models.sequelize.Op;
 
 let instance;
 
 class CompaniesService {
 
     /**
-     * сохранение работника и создание для него
-     * резюме с определенными специализациями
-     * @param user
-     * @param specs
+     * создание профиля для компании
+     * @param companyId
+     * @param profileId
      */
-    addSpecToCompany(user, specs) {
-        Companies.findOrCreate({
-            where: {
-                user_id: {
-                    [Op.eq]: user.id
-                }
-            },
-            defaults: {
-                user_id: user.id
-            }
-        }).then((company) => {
-                logger.log(company[0]);
-                specs.forEach((value, index, array) => {
-                    profilesService.findOneByName(value)
-                        .then((profile) => {
-                            CompanyProfiles.build({
-                                company_id: company[0].id,
-                                profile_id: profile.id
-                            }).save().then((companyProfile) => {
-                                    logger.log(companyProfile);
-                                    return companyProfile;
-                                }
-                            )
-                        });
-                });
-            }
-        );
+    async addProfileToCompany(companyId, profileId) {
+        return await CompanyProfiles.create({
+            company_id: companyId,
+            profile_id: profileId
+        });
     }
 
-    addNameAndAbout(userId, name, about) {
-        return Companies.findOne({
+    async save(userId) {
+        return (await Companies.findOrCreate({
             where: {
                 user_id: {
                     [Op.eq]: userId
                 }
+            },
+            defaults: {
+                user_id: userId
             }
-        }).then((company) => {
-            company.name = name;
-            company.about = about;
-            return company.save();
+        }))[0];
+    }
+
+    async update(userId, params) {
+        return await Companies.update(params, {
+            where: {
+                user_id: {[Op.eq]: userId}
+            }
         });
     }
 
-    findByUserId(userId) {
-        return Companies.findOne({
+    async findByUserId(userId) {
+        return await Companies.findOne({
             where: {
                 user_id: {
                     [Op.eq]: userId,
@@ -67,34 +51,6 @@ class CompaniesService {
             },
         })
     }
-
-    changeAbout(userId, about) {
-        return Companies.findOne({
-            where: {
-                user_id: {
-                    [Op.eq]: userId
-                }
-            }
-        }).then((company) => {
-            company.about = about;
-            return company.save();
-        });
-    }
-
-    changeName(userId, name) {
-        return Companies.findOne({
-            where: {
-                user_id: {
-                    [Op.eq]: userId
-                }
-            }
-        }).then((company) => {
-            company.name = name;
-            return company.save();
-        });
-    }
-
-
 }
 
 if (typeof instance !== CompaniesService) {

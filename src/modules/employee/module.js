@@ -3,5 +3,8 @@ const path = require('path');
 
 const ModuleClass = require('../../core/module');
 
-var module = new ModuleClass("employee", null, null);
+const controllersPath = path.resolve(__dirname, "controllers");
+const middlewaresPath = path.resolve(__dirname, 'middlewares');
+
+var module = new ModuleClass("employee", controllersPath, middlewaresPath);
 module.init();

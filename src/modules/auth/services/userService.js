@@ -1,8 +1,11 @@
+
 const models = require('../../../core/models');
-const Op = require('sequelize').Op;
+const Op = models.sequelize.Op;
 const Users = models.users;
 const Roles = models.roles;
-const mailSender = require('../utils/mail-sender');
+
+const rolesService = require('./roleService');
+const mailSender = require('../utils/mailSender');
 const config = require('../../../utils/config');
 const logger = require('../../../utils/logger');
 
@@ -14,14 +17,15 @@ class UsersService {
      * @param email
      * @returns {Promise<boolean>}
      */
-    isEmailFree(email) {
-        return Users.findOne({
+    async isEmailFree(email) {
+        let user = await Users.findOne({
             where: {
                 email: {
                     [Op.eq]: email,
                 },
             },
-        }).then((user) => user === null);
+        });
+        return user === null;
     }
 
     /**
@@ -52,8 +56,8 @@ class UsersService {
      * @param id
      * @returns {Promise<Model>}
      */
-    getUserById(id) {
-        return Users.findOne({
+    async getUserById(id) {
+        let user = await Users.findOne({
             include: [{
                 model: Roles
             }],
@@ -62,28 +66,27 @@ class UsersService {
                     [Op.eq]: id
                 }
             }
-        }).then(function (user) {
-            return instance.changeUserRole(user);
         });
+
+        return this.changeUserRole(user);
     }
 
     /**
      * @param email
      * @returns {Promise<Model>}
      */
-    getUserByEmail(email) {
-        return Users.findOne({
+    async getUserByEmail(email) {
+        let user = await Users.findOne({
             include: [{
-                model: Roles,
+                model: Roles
             }],
             where: {
                 email: {
                     [Op.eq]: email
                 }
             }
-        }).then(function (user) {
-            return instance.changeUserRole(user);
         });
+        return this.changeUserRole(user);
     }
 
     /**
@@ -110,70 +113,43 @@ class UsersService {
 
 
     /**
-     * увеличивает статус пользователя
-     * при регистрации
      * @param user
-     * @returns {Promise<this>|*|void}
+     * @returns {Promise<*>}
      */
-    incrementStep(user) {
-        return user.increment('status', {by: 1});
+    async incrementStep(user) {
+        return await user.increment('status', {by: 1});
     }
 
     /**
      * @param email
      * @param password
-     * @param role
+     * @param roleName
      * @param step
      * @returns {Promise<Model>}
      */
-    saveUser(email, password, role, step) {
-        return Roles.findOne({
-            where: {
-                role: {
-                    [Op.eq]: role
-                }
-            }
-        }).then(function (role) {
-            if (role) {
-                return Users.build({
-                    email: email,
-                    password: password,
-                    role_id: role.id,
-                    status: step,
-                }).save().then(function (user) {
-                    user.role = role;
-                    return instance.changeUserRole(user);
-                });
-            }
-            return null;
+    async saveUser(email, password, roleName, step) {
+        let role = await rolesService.findByName(roleName);
+        let user = await Users.create({
+            email: email,
+            password: password,
+            status: step,
+            role_id: role.id
         });
+        return user;
     }
+
 
     /**
      * @param user
      * @returns {Promise<T>}
      */
-    deleteUser(user) {
-        return Users.destroy({
+    async deleteUser(userId) {
+        return await Users.destroy({
             where: {
                 id: {
-                    [Op.eq]: user.id,
+                    [Op.eq]: userId,
                 },
-            },
-            force: false,
-            cascade: true
-        }).then((deletedRows) => {
-            if (deletedRows === 1) {
-                logger.log(`user ${user.email} deleted successfully`);
-                return true;
             }
-            else {
-                logger.error('something went wrong');
-                return false;
-            }
-        }).catch((err) => {
-            logger.error(err);
-            return false;
         });
     }
 

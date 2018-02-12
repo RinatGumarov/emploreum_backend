@@ -10,11 +10,9 @@ module.exports = {
                 type: Sequelize.BIGINT
             },
             name: {
-                allowNull: false,
                 type: Sequelize.STRING
             },
             info: {
-                allowNull: false,
                 type: Sequelize.TEXT,
             },
             pricePerWeek: {
@@ -26,25 +24,13 @@ module.exports = {
             company_id: {
                 type: Sequelize.BIGINT,
                 allowNull: false,
-                unique: true,
                 references: {
-                    model: "users",
+                    model: "companies",
                     key: "id",
                 },
                 cascade: true,
                 onDelete: "CASCADE",
             },
-            employee_id: {
-                type: Sequelize.BIGINT,
-                allowNull: false,
-                unique: true,
-                references: {
-                    model: "users",
-                    key: "id",
-                },
-                cascade: true,
-                onDelete: "CASCADE",
-            }
         });
     },
 

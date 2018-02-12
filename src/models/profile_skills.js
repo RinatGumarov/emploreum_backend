@@ -1,5 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
-    let profile_skills = sequelize.define('profile_skills', {}, {
+    let profile_skills = sequelize.define('profile_skills', {
+        id: {
+            type: DataTypes.BIGINT,
+            primaryKey: true,
+        },
+    }, {
         timestamps: false
     });
 
@@ -9,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
         });
         profile_skills.belongsTo(models.profiles, {
             foreignKey: 'profile_id'
+        });
+        profile_skills.belongsToMany(models.vacancies, {
+            foreignKey: 'profile_skill_id',
+            through: 'vacancy_profile_skills'
         });
     };
 

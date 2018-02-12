@@ -1,7 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const Users = require('../../../core/models').users;
-const userService = require('../services/usersService');
+const userService = require('../services/userService');
 
 let instance;
 
@@ -12,18 +12,19 @@ class Passport {
             done(null, user.id);
         });
 
-        passport.deserializeUser((id, done) => userService.getUserById(id)
-            .then((user) => done(null, user)));
+        passport.deserializeUser(async (id, done) => {
+            let user = await userService.getUserById(id);
+            done(null, user);
+        });
 
         passport.use(new LocalStrategy({
                 usernameField: 'email',
                 passwordField: 'password',
             },
-            (email, password, done) => {
-                userService.getUserByEmail(email).then((user, err) => {
-                    if (err) {
-                        return done(err);
-                    }
+            async (email, password, done) => {
+                try {
+                    let user = await userService.getUserByEmail(email);
+
                     if (!user) {
                         return done(null, false, {message: 'Incorrect username.'});
                     }
@@ -31,9 +32,11 @@ class Passport {
                         return done(null, false, {message: 'Incorrect password.'});
                     }
                     return done(null, user);
-                });
-            }
-        ));
+                } catch (err) {
+                    return done(err);
+                }
+            })
+        );
     }
 }
 
