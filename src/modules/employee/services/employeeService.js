@@ -1,5 +1,6 @@
 const models = require('../../../core/models');
 const Employees = models.employees;
+const logger = require('../../../utils/logger');
 
 const Op = models.sequelize.Op;
 
@@ -41,7 +42,28 @@ class EmployeesService {
             })
     }
 
+    /**
+     * @param userId
+     * @returns {Promise<Model>}
+     */
+    async getByUserId(userId) {
+        let employee = await Employees.findOne({
+            where: {
+                user_id: {[Op.eq]: userId}
+            }
+        });
+        return employee;
+    }
 
+    /**
+     * Прикрепить работника к вакансии по нажатию "Откликнуться".
+     * @param employee
+     * @param vacancyId
+     * @returns {Promise<void>}
+     */
+    async attachVacancy(employee, vacancyId){
+        await employee.addVacancy(vacancyId);
+    }
 }
 
 if (typeof instance !== EmployeesService) {
