@@ -3,6 +3,7 @@ const Vacancies = models.vacancies;
 const Companies = models.companies;
 const ProfileSkills = models.profile_skills;
 const VacancyProfileSkills = models.vacancy_profile_skills;
+
 const queryScanner = require('../../../core/queryScanner');
 const logger = require('../../../utils/logger');
 const Op = models.sequelize.Op;

@@ -1,5 +1,6 @@
 const models = require('../../../core/models');
 const Employees = models.employees;
+
 const Op = models.sequelize.Op;
 
 let instance;
