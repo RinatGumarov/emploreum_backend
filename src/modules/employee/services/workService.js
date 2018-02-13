@@ -8,10 +8,20 @@ let instance;
 
 class WorkService {
 
-    async save(workData, employee){
+    async save(workData, employee) {
         return await Works.build(workData).save();
     }
 
+    async findAllByEmployeeId(employeeId) {
+        let works = await Works.findAll({
+                                       where: {
+                                           employee_id: {
+                                               [Op.eq]: employeeId
+                                           }
+                                       }
+                                   });
+        return works;
+    }
 
 }
 

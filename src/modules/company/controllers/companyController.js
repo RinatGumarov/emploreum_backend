@@ -31,6 +31,10 @@ module.exports.func = (router) => {
         }
     });
 
+    router.get('/address', async (req, res) => {
+       return res.send(req.user.address);
+    });
+
     return router;
 
 };

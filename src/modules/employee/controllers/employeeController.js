@@ -10,7 +10,7 @@ const work = require('../../blockchain/utils/work');
 
 module.exports.func = (router) => {
 
-    router.get('/vacancy/:vacancyId/add', async (req, res) => {
+    router.post('/vacancy/:vacancyId/add', async (req, res) => {
         try {
             let vacancyId = req.params.vacancyId;
             let vacancy = await vacancyService.findById(vacancyId);
@@ -69,11 +69,11 @@ module.exports.func = (router) => {
                     throw new Web3InitError('Could not registrate company in blockchain');
             });
             workService.save(workData, employee);
-            res.send({data: 'success'});
+            return res.send({data: 'success'});
         }
         catch (err) {
             logger.error(err.message);
-            res.status(500).send({error: 'Could not attach vacancy'});
+            return res.status(500).send({error: 'Could not attach vacancy'});
         }
     });
 
@@ -93,6 +93,21 @@ module.exports.func = (router) => {
         let employee = await employeeService.getByUserId(req.user.id);
         let employeeSkills = await skillService.getEmployeeSkills(employee.id);
         res.json(employeeSkills);
+    });
+
+    router.get('/address', async (req, res) => {
+        return res.send(req.user.address);
+    });
+
+    router.get('/contracts/current', async (req, res) => {
+       try {
+           let employee = await employeeService.getByUserId(req.user.id);
+           return res.send(await workService.findAllByEmployeeId(employee.id));
+       }
+       catch (err) {
+           logger.error(err.trace);
+           return res.status(500).send({error: 'Could not get current works for the employee'});
+       }
     });
 
     return router;
