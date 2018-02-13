@@ -137,6 +137,10 @@ class VacanciesService {
 
         return vacancies;
     }
+
+    async findById(id){
+        return await Vacancies.findById(id);
+    }
 }
 
 if (typeof instance !== VacanciesService) {

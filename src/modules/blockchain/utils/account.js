@@ -1,14 +1,13 @@
-const contract = require("./contract");
+const contractUtil = require("./contract");
 const web3 = require("./web3");
 const utilConfig = require("../../../utils/config");
 const config = utilConfig.get("web3");
 const logger = require('../../../utils/logger');
-const Web3InitError = require('./Web3Error');
 
 let instance;
-let defaultAccount = 1;
 
 class RegistrationUtil {
+
     /**
      * Create new company address in blockchain.
      *
@@ -77,45 +76,46 @@ class RegistrationUtil {
      * @returns {Promise.<TResult>}
      */
     registerEmployee(employee) {
-        let path = config.main_contract_path;
-        let address = config.create_contract_address;
+        let address = config.main_contract_path;
         let gas = config.create_contract_gas_count;
-        let contractInfo = require(path);
+        let contractInfo = require('./abi/Main.json');
 
-        return contract.readContractFromAddress(contractInfo, address).then(contract => {
-            contract.newEmployee(employee.firstName, employee.lastName, employee.email, employee.raiting,
-                                 employee.address, employee.positionCodes, employee.skillCodes,
-                                 employee.skillToPosition, {gas}
-            ).then(data => {
-                logger.log(`employee registeration complite!`);
-                logger.log(`'transaction hash: ', ${data.tx}`);
-                return true
-            }).catch(err => {
-                console.log(err)
-                return false
-            })
+        return contractUtil.readContractFromAddress(contractInfo, address).then(contract => {
+            return contract.newEmployee(employee.firstName, employee.lastName, employee.email, employee.raiting,
+                                        employee.address, employee.positionCodes, employee.skillCodes,
+                                        employee.skillToPosition, {gas}
+            )
+        }).then(data => {
+            logger.log(`employee registeration complite!`);
+            logger.log(`'transaction hash: ', ${data.tx}`);
+            return true;
+        }).catch(err => {
+            logger.error(err);
+            return false;
         })
     }
 
     /**
-     * Try to unlock account by defaultAccount position
+     *  Register company in blockchain by main contract.
      *
-     * @param contract
-     * @returns {Promise.<TResult>} with contract or null
+     * @param company
+     * @returns {Promise.<TResult>}
      */
-    unlockMainAccount(contract) {
-        return web3.eth.getAccounts().then(accounts => {
-            if (accounts.length === 0)
-                throw new Web3InitError('there is no any init accounts in web3');
+    registerCompany(company) {
+        let address = config.main_contract_path;
+        let gas = config.create_contract_gas_count;
+        let contractInfo = require('./abi/Main.json');
 
-            contract.defaults({from: accounts[defaultAccount]});
-
-            return web3.eth.personal
-                .unlockAccount(accounts[defaultAccount], config.account_password, web3.utils.toHex(config.unlock_time));
-        }).then(status => {
-            logger.log(`try to unlock account, status: ${status}`);
-            return status ? contract : null;
-        })
+        return contractUtil.readContractFromAddress(contractInfo, address).then(contract => {
+            return contract.newCompany(company.name, company.raiting, company.address, {gas})
+        }).then(data => {
+            logger.log(`company registeration complite!`);
+            logger.log(`'transaction hash: ', ${data.tx}`);
+            return true
+        }).catch(err => {
+            logger.error(err);
+            return false
+        });
     }
 }
 

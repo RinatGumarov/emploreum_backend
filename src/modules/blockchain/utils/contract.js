@@ -4,7 +4,7 @@ const utilConfig = require("../../../utils/config");
 const config = utilConfig.get("web3");
 const logger = require('../../../utils/logger');
 const Web3InitError = require('./Web3Error');
-const accountUtil = require('./account');
+const accountUtil = require('./accountUtil');
 
 let instance;
 let gasPrice = web3.utils.toWei('1', 'gwei');

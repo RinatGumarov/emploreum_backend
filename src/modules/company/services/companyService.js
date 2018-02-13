@@ -51,6 +51,32 @@ class CompaniesService {
             },
         })
     }
+
+    async findByUserIdWithUser(userId) {
+        return await Companies.findOne({
+                                           include: [{
+                                               model: models.users,
+                                           }],
+                                           where: {
+                                               user_id: {
+                                                   [Op.eq]: userId,
+                                               },
+                                           },
+                                       })
+    }
+
+    async hasContracts(companyId){
+        let works = await models.works.find({
+                                                where: {
+                                                    company_id: {
+                                                        [Op.eq]: companyId,
+                                                    },
+                                                },
+                                            });
+        return works !== null;
+    }
+
+
 }
 
 if (typeof instance !== CompaniesService) {

@@ -1,5 +1,5 @@
 const logger = require('../../../utils/logger');
-const contractLibrary = require('../utils/contract');
+const contractLibrary = require('./contract');
 let instance;
 
 class Creator {
@@ -8,15 +8,17 @@ class Creator {
         let gas = 4577293;
         var contractInfo = require('../utils/abi/Main.json');
 
-        contractLibrary.createContract(contractInfo, gas).then(contract => {
+        return contractLibrary.createContract(contractInfo, gas).then(contract => {
             logger.log(`Main contract created: ${contract}`);
+            return contract;
         })
     }
 }
 
+
 if (typeof instance !== Creator)
     instance = new Creator();
 
-module.exports = Creator;
+module.exports = instance;
 
 

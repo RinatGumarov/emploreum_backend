@@ -1,5 +1,6 @@
 const logger = require('../../../utils/logger');
 const blockchainRegisterService = require('../utils/account');
+const creator = require('../utils/creator');
 
 const web3 = require('../utils/web3');
 
@@ -33,28 +34,14 @@ module.exports.func = (router) => {
         // return blockchainRegisterService.sendTransaction(value, to, privateKey, (data) => {res.json(data)});
 
 
-        // let account;
-        // return web3.eth.getAccounts().then(accounts => {
-        //     account = accounts[0];
-        //     return web3.eth.personal.unlockAccount(account, "522452bv", web3.utils.toHex(6000 * 2));
-        // }).then(status => {
-        //     console.log(status);
-        //     return web3.eth.getBalance(account);
-        // }).then(balance => {
-        //     console.log(balance.toString());
-        //     res.json(balance)
-        // })
     });
     router.get('/test', (req, res) => {
-        var begin = (new Date()).getTime();
-        var address = '0x24959b8bECaCA482225aE24EF0d7b415e1c1c84a';
+        // var begin = (new Date()).getTime();
+        // var address = '0x24959b8bECaCA482225aE24EF0d7b415e1c1c84a';
         // contractLibrary.createContract(contractInfo, gas, [], [], begin, 1716924800,
         //                                '0xF2f757BAE0F8681Da6315cED951b3ac566CB5ED7',
         //                                '0xF54934698F6D4Daa0D6F8354A7599629DBAcb9EE', Math.pow(10, 12)).then(
-        let gas = 4577293;
-        var contractInfo = require('../utils/abi/Main.json');
-        contractLibrary.createContract(contractInfo, gas).then(contract => {
-            console.log(432);
+        creator.createMainContract().then(contract => {
             console.log(contract);
         })
         res.json(0);

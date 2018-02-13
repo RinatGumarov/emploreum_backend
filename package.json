@@ -20,6 +20,7 @@
     "mkdirp": "^0.5.1",
     "multer": "^1.3.0",
     "nodemailer": "^4.4.2",
+    "nodemon": "^1.14.12",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pg": "^6.4.2",
@@ -55,7 +56,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node src/index.js",
+    "start": "nodemon src/index.js",
     "debug": "node $NODE_DEBUG_OPTION src/index.js",
     "migrate:up": "cross-env NODE_ENV=production sequelize db:migrate",
     "migrate:down": "cross-env NODE_ENV=production sequelize db:migrate:undo",

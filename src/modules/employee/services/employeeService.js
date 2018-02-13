@@ -64,6 +64,18 @@ class EmployeesService {
     async attachVacancy(employee, vacancyId){
         await employee.addVacancy(vacancyId);
     }
+
+    async wasWorking(employeeId){
+        let works = await models.works.find({
+            where: {
+                employee_id: {
+                    [Op.eq]: employeeId,
+                },
+            },
+        });
+        return works !== null;
+    }
+
 }
 
 if (typeof instance !== EmployeesService) {

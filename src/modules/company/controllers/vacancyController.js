@@ -17,7 +17,7 @@ module.exports.func = (router) => {
                     let profileSkill = await vacancyService.findProfileSkill(profile.id, skill.id);
                     let vacancyProfileSkill = await vacancyService.addProfileSkillToVacancy({
                         vacancy_id: vacancy.id,
-                        profileSkillId: profileSkill.id
+                        profile_skill_id: profileSkill.id
                     });
                     logger.log(vacancyProfileSkill);
                 });
