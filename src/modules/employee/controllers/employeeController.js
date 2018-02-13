@@ -36,12 +36,5 @@ module.exports.func = (router) => {
         res.json(employeeSkills);
     });
 
-    router.get('/profiles', async (req, res) => {
-        let employee = await employeeService.getByUserId(req.user.id);
-        let employeeProfiles = await profilesService.getEmployeeProfiles(employee.id);
-        res.json(employeeProfiles);
-    });
-
-
     return router;
 };
