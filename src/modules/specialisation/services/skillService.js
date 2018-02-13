@@ -18,6 +18,7 @@ class SkillService {
             include: [{
                 attributes: [],
                 model: Profiles,
+                required: true,
                 where: {id: {[Op.eq]: id}},
             }]
         });
@@ -34,9 +35,11 @@ class SkillService {
                 attributes: [],
                 model: models.cvs,
                 as: "cvs",
+                required: true,
                 include: {
                     attributes: [],
                     as: "employee",
+                    required: true,
                     model: models.employees,
                     where: {
                         id: {[Op.eq]: employeeId}
