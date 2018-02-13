@@ -10,7 +10,7 @@ const work = require('../../blockchain/utils/work');
 
 module.exports.func = (router) => {
 
-    router.post('/vacancy/:vacancyId/add', async (req, res) => {
+    router.get('/vacancy/:vacancyId/add', async (req, res) => {
         try {
             let vacancyId = req.params.vacancyId;
             let vacancy = await vacancyService.findById(vacancyId);
@@ -75,6 +75,24 @@ module.exports.func = (router) => {
             logger.error(err.message);
             res.status(500).send({error: 'Could not attach vacancy'});
         }
+    });
+
+    router.get('/vacancy/recommended', async (req, res) => {
+        let employee = await employeeService.getByUserId(req.user.id);
+        let employeeSkills = await skillService.getEmployeeSkills(employee.id);
+        let recommendedVacancies = await vacancyService.getRecommended(employeeSkills,employee.id);
+        res.json(recommendedVacancies);
+    });
+
+    router.get('/info', async (req, res) => {
+        let employee = await employeeService.getByUserId(req.user.id);
+        res.json(employee);
+    });
+
+    router.get('/skills', async (req, res) => {
+        let employee = await employeeService.getByUserId(req.user.id);
+        let employeeSkills = await skillService.getEmployeeSkills(employee.id);
+        res.json(employeeSkills);
     });
 
     return router;

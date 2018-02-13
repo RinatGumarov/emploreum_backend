@@ -110,15 +110,15 @@ class VacanciesService {
     }
 
     /**
+     * //toDo
      * метод получения рекомендуемых вакансий по профилю работника
-     * смотри скилы по резюме работника и скилы вакансий
-     * если скилы по резюме работника покрывают 70 треуемых скилов
-     * то данная ваканчия рекомендована
+     * Добавить обработку в скрипте array_positions
+     * для выявления сходства направления скила работника и направления
+     * скила вакансии
      * @param skills
-     * @param profileId
      * @returns {Promise<*>}
      */
-    async getRecommended(skills, profileId) {
+    async getRecommended(skills,employeeId) {
 
         let skillsIds = skills.map((skill) => {
             return skill.id
@@ -129,7 +129,7 @@ class VacanciesService {
             {
                 replacements: {
                     skillsString: skillsIds.join(","),
-                    profileId: profileId
+                    employeeId: employeeId,
                 },
                 type: models.sequelize.QueryTypes.SELECT,
                 model: Vacancies

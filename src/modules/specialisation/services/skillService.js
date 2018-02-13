@@ -47,26 +47,8 @@ class SkillService {
         return skills;
     }
 
-    /**
-     * поиск скилов по резюме раотника
-     * @returns {Promise<*>}
-     * @param cvId
-     */
-    async getСvSkills(cvId) {
-        let skills = await Skills.findAll({
-            include: [{
-                attributes: [],
-                model: models.cvs,
-                as: "cvs",
-                attributes: [],
-                where: {
-                    id: {[Op.eq]: cvId}
-                }
-            }]
-        });
 
-        return skills;
-    }
+
 }
 
 if (typeof instance !== SkillService)
