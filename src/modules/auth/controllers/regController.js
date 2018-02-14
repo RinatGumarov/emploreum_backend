@@ -35,7 +35,7 @@ module.exports.func = (router) => {
     /**
      * шаг регистрации с высыланием проверочного кода на почту
      */
-    router.post('/signup/1', async (req, res) => {
+    router.post('/signup/email', async (req, res) => {
         if (!(await usersService.isEmailFree(req.body.email))) {
             return res.status(400).send('email is already in use');
         } else {
@@ -59,7 +59,7 @@ module.exports.func = (router) => {
      * если пароль верный то регистрируем и аунтифицируем
      * пользователя
      */
-    router.post('/signup/2', async (req, res) => {
+    router.post('/signup/verification', async (req, res) => {
         try {
             if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
                 let encryptedKey = '';
@@ -108,10 +108,10 @@ module.exports.func = (router) => {
      * Шаг заполнения скилов и профилей компании
      * или работника
      */
-    router.post('/signup/3', async (req, res) => {
+    router.post('/signup/specification', async (req, res) => {
         try {
             // profiles - объекты класса профиль, содержащие скиллы.
-            let profiles = req.body.profiles;
+            let profiles = req.body.specifications;
             switch (req.user.role) {
                 case 'EMPLOYEE':
                     let employee = await employeesService.save(req.user.id);
@@ -144,7 +144,7 @@ module.exports.func = (router) => {
     /**
      * шаг заполнения лично информации
      */
-    router.post('/signup/4', async (req, res) => {
+    router.post('/signup/info', async (req, res) => {
         try {
             switch (req.user.role) {
                 case 'EMPLOYEE':

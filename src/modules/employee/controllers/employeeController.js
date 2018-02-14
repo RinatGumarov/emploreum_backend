@@ -118,6 +118,5 @@ module.exports.func = (router) => {
         res.json(employeeProfiles);
     });
 
-
     return router;
 };
