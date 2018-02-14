@@ -4,8 +4,6 @@ const Web3InitError = require('./Web3Error');
 const utilConfig = require("../../../utils/config");
 const config = utilConfig.get("web3");
 
-let defaultAccount = 1;
-
 let instance;
 
 class Util {
@@ -21,10 +19,10 @@ class Util {
             if (accounts.length === 0)
                 throw new Web3InitError('there is no any init accounts in web3');
 
-            contract.defaults({from: accounts[defaultAccount]});
+            contract.defaults({from: accounts[config.defaultAccount]});
 
-            return web3.eth.personal
-                .unlockAccount(accounts[defaultAccount], config.account_password, web3.utils.toHex(config.unlock_time));
+            return web3.eth.personal.unlockAccount(accounts[config.defaultAccount], config.account_password,
+                                                   web3.utils.toHex(config.unlock_time));
         }).then(status => {
             logger.log(`try to unlock account, status: ${status}`);
             return status ? contract : null;

@@ -4,6 +4,8 @@ const config = utilConfig.get("web3");
 const contractUtil = require("./contract");
 let instance;
 
+//const addressen = await zusatzaufgabe.addressen.call(0);
+
 class Work {
 
     /**
@@ -22,6 +24,7 @@ class Work {
                                         work.empoloyee, work.company, work.weekPayment, {gas});
         }).then(data => {
             logger.log(`contract creation complite!`);
+            logger.log(data);
             logger.log(`'transaction hash: ', ${data.tx}`);
             return true
         }).catch(err => {

@@ -1,4 +1,5 @@
 const skillService = require('../../specialisation/services/skillService');
+const profilesService = require('../../specialisation/services/profileService');
 const employeeService = require('../services/employeeService');
 const companyService = require('../../company/services/companyService');
 const workService = require('../services/workService');
@@ -80,7 +81,7 @@ module.exports.func = (router) => {
     router.get('/vacancy/recommended', async (req, res) => {
         let employee = await employeeService.getByUserId(req.user.id);
         let employeeSkills = await skillService.getEmployeeSkills(employee.id);
-        let recommendedVacancies = await vacancyService.getRecommended(employeeSkills,employee.id);
+        let recommendedVacancies = await vacancyService.getRecommended(employeeSkills, employee.id);
         res.json(recommendedVacancies);
     });
 
@@ -89,6 +90,7 @@ module.exports.func = (router) => {
         res.json(employee);
     });
 
+    // toDo переделать на профили - скилы
     router.get('/skills', async (req, res) => {
         let employee = await employeeService.getByUserId(req.user.id);
         let employeeSkills = await skillService.getEmployeeSkills(employee.id);
@@ -96,7 +98,7 @@ module.exports.func = (router) => {
     });
 
     router.get('/address', async (req, res) => {
-        return res.send(req.user.address);
+        return res.send(req.user.account_address);
     });
 
     router.get('/contracts/current', async (req, res) => {
@@ -109,6 +111,13 @@ module.exports.func = (router) => {
            return res.status(500).send({error: 'Could not get current works for the employee'});
        }
     });
+
+    router.get('/profiles', async (req, res) => {
+        let employee = await employeeService.getByUserId(req.user.id);
+        let employeeProfiles = await profilesService.getEmployeeProfiles(employee.id);
+        res.json(employeeProfiles);
+    });
+
 
     return router;
 };

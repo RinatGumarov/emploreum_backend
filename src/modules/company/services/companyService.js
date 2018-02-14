@@ -52,14 +52,14 @@ class CompaniesService {
         })
     }
 
-    async findByUserIdWithUser(userId) {
+    async findByUserIdWithUser(id) {
         return await Companies.findOne({
                                            include: [{
                                                model: models.users,
                                            }],
                                            where: {
-                                               user_id: {
-                                                   [Op.eq]: userId,
+                                               id: {
+                                                   [Op.eq]: id,
                                                },
                                            },
                                        })
