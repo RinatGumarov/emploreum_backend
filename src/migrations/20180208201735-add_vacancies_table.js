@@ -15,7 +15,7 @@ module.exports = {
             info: {
                 type: Sequelize.TEXT,
             },
-            week_payment: {
+            pricePerWeek: {
                 type: Sequelize.DOUBLE,
             },
             duration: {

@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     let vacancies = sequelize.define('vacancies', {
         name: DataTypes.STRING,
         info: DataTypes.TEXT,
-        week_payment: DataTypes.DOUBLE,
+        pricePerWeek: DataTypes.DOUBLE,
         duration: DataTypes.INTEGER,
     }, {
         timestamps: false
