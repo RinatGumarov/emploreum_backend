@@ -33,7 +33,6 @@ module.exports.func = (router) => {
                     if (!result)
                         throw new Web3InitError('Could not registrate employee in blockchain');
                 });
-
             }
             if (!(await companyService.hasContracts(company.id))) {
                 let blockchainCompany = {
