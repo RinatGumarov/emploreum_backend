@@ -36,5 +36,15 @@ module.exports.func = (router) => {
         res.json(employeeSkills);
     });
 
+    router.get('/contracts/current', async (req, res) => {
+        try {
+            return res.send([]);
+        }
+        catch (err) {
+            logger.error(err.trace);
+            return res.status(500).send({error: 'Could not get current works for the employee'});
+        }
+    });
+
     return router;
 };
