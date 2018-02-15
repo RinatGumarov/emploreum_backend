@@ -8,21 +8,21 @@ let socketSenderInstance;
 class SocketSender {
 
 
+    // toDo
     init(server) {
         let newServer = http.Server(server);
         io.on('connection', function (socket) {
-            logger.log("user connected")
+            socket.on('message', function (data) {
+                logger.log(data);
+                let companyId = data.companyId;
+                let userId = data.userId;
+                socket.emit(companyId, {
+                    userName: userId
+                });
+            });
         });
         io.attach(newServer);
         return newServer;
-    }
-
-    sendSocketMessage(chatId, object) {
-        logger.log(chatId+" посылка сообщения в чат");
-        io.on('connection', function (socket) {
-            logger.log(object);
-            socket.emit(chatId, object);
-        });
     }
 
 }
