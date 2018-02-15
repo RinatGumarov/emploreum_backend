@@ -1,6 +1,8 @@
 const skillService = require('../../specialisation/services/skillService');
 const cvService = require('../services/cvService');
 const employeeService = require('../services/employeeService');
+const companyService = require('../../company/services/companyService');
+const messageService = require('../../message/services/messageService');
 const vacancyService = require('../../company/services/vacancyService');
 const logger = require('../../../utils/logger');
 
@@ -8,8 +10,9 @@ module.exports.func = (router) => {
 
     router.get('/vacancy/:vacancyId/add', async (req, res) => {
         try {
-            let employee = await employeeService.getByUserId(req.user.id);
-            await employeeService.attachVacancy(employee, req.params.vacancyId);
+            await employeeService.attachVacancy(req.user.id, req.params.vacancyId);
+            let company = await companyService.findByVacancyId(req.params.vacancyId);
+            await messageService.sendToCompany(req.user.id, company.id, "Вам постучались на вакансию");
             res.send({data: 'success'});
         }
         catch (err) {
@@ -19,9 +22,8 @@ module.exports.func = (router) => {
     });
 
     router.get('/vacancy/recommended', async (req, res) => {
-        let employee = await employeeService.getByUserId(req.user.id);
-        let employeeSkills = await skillService.getEmployeeSkills(employee.id);
-        let recommendedVacancies = await vacancyService.getRecommended(employeeSkills, employee.id);
+        let employeeSkills = await skillService.getEmployeeSkills(req.user.id);
+        let recommendedVacancies = await vacancyService.getRecommended(employeeSkills, req.user.id);
         res.json(recommendedVacancies);
     });
 
@@ -31,8 +33,7 @@ module.exports.func = (router) => {
     });
 
     router.get('/skills', async (req, res) => {
-        let employee = await employeeService.getByUserId(req.user.id);
-        let employeeSkills = await cvService.getEmployeeSkills(employee.id);
+        let employeeSkills = await cvService.getEmployeeSkillsWithProfiles(req.user.id);
         res.json(employeeSkills);
     });
 

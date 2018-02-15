@@ -5,6 +5,7 @@ const ProfileSkills = models.profile_skills;
 const VacancyProfileSkills = models.vacancy_profile_skills;
 
 const queryScanner = require('../../../core/queryScanner');
+const employeeService = require('../../employee/services/employeeService');
 const Op = models.sequelize.Op;
 
 let instance;
@@ -115,10 +116,11 @@ class VacanciesService {
      * для выявления сходства направления скила работника и направления
      * скила вакансии
      * @param skills
+     * @param userId
      * @returns {Promise<*>}
      */
-    async getRecommended(skills,employeeId) {
-
+    async getRecommended(skills, userId) {
+        let employee = await employeeService.getByUserId(userId);
         let skillsIds = skills.map((skill) => {
             return skill.id
         });
@@ -128,7 +130,7 @@ class VacanciesService {
             {
                 replacements: {
                     skillsString: skillsIds.join(","),
-                    employeeId: employeeId,
+                    employeeId: employee.id,
                 },
                 type: models.sequelize.QueryTypes.SELECT,
                 model: Vacancies

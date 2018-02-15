@@ -1,5 +1,3 @@
-const employeeService = require('../../employee/services/employeeService');
-const companyService = require('../../company/services/companyService');
 const chatService = require('../services/chatService');
 
 module.exports.func = (router) => {
@@ -9,14 +7,25 @@ module.exports.func = (router) => {
         let chats;
 
         if (req.user.role === "EMPLOYEE") {
-            let employee = await employeeService.getByUserId(req.user.id);
-            chats = await chatService.getAllChatsFroEmployee(employee.id);
+            chats = await chatService.getAllChatsFroEmployee(req.user.id);
         } else {
-            let company = await companyService.findByUserId(req.user.id);
-            chats = await chatService.getAllChatsFroCompany(company.id);
+            chats = await chatService.getAllChatsFroCompany(req.user.id);
         }
 
         res.json(chats)
+
+    });
+
+    router.get('/new', async (req, res) => {
+
+        let newMessage;
+
+        if (req.user.role === "EMPLOYEE") {
+            newMessage = await chatService.getAllChatsWithNewMessageForEmployee(req.user.id);
+        } else {
+            newMessage = await chatService.getAllChatsWithNewMessageForCompany(req.user.id);
+        }
+        res.json(newMessage)
 
     });
 

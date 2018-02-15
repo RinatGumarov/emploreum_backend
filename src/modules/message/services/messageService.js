@@ -4,6 +4,9 @@ const Op = models.sequelize.Op;
 
 const mailSender = require('../utils/mailSender');
 const chatService = require('../services/chatService');
+const employeeService = require('../../employee/services/employeeService');
+const companyService = require('../../company/services/companyService');
+const socketService = require('../services/socketService');
 const config = require('../../../utils/config');
 const logger = require('../../../utils/logger');
 
@@ -11,7 +14,7 @@ let instance;
 
 class MessageService {
 
-    async save(companyId, employeeId, text, isEmployeeMessage, isCompanyCessage) {
+    async save(companyId, employeeId, text, isEmployeeMessage, isCompanyCessage, socketChatId) {
 
         let chat = await chatService.getChatBetweenEmployeeAndCompany(employeeId, companyId);
 
@@ -22,15 +25,20 @@ class MessageService {
             is_company_message: isCompanyCessage
         });
 
+        if (socketChatId) {
+            socketService.sendSocketMessage(socketChatId, message);
+        }
+
         return message;
     }
 
     /**
      * Создание соощение
-     * от компании к сотруднику
+     * от лользователя компании к сотруднику
      */
-    async sendToEmployee(companyId, employeeId, text) {
-        let message = await this.save(companyId, employeeId, text, false, true);
+    async sendToEmployee(userId, employeeId, text) {
+        let company = companyService.findByUserId(userId);
+        let message = await this.save(company.id, employeeId, text, false, true, userId);
         return message;
     }
 
@@ -38,8 +46,9 @@ class MessageService {
      * Создание соощение
      * от сотрудника к компании
      */
-    async sendToCompany(companyId, employeeId, text) {
-        let message = await this.save(companyId, employeeId, text, true, false);
+    async sendToCompany(userId, companyId, text) {
+        let employee = await employeeService.getByUserId(userId);
+        let message = await this.save(companyId, employee.id, text, true, false, userId);
         return message;
     }
 
@@ -69,13 +78,15 @@ class MessageService {
         return messages;
     }
 
-    async getAllMessageByChatIdAndCompanyId(chatId, companyId) {
-        let messages = await this.getAllMessageByChatId(chatId, companyId, null);
+    async getAllMessageByChatIdAndCompany(chatId, userId) {
+        let company = companyService.findByUserId(userId);
+        let messages = await this.getAllMessageByChatId(chatId, company.id, null);
         return messages;
     }
 
-    async getAllMessageByChatIdAndEmployeeId(chatId, employeeId) {
-        let messages = await this.getAllMessageByChatId(chatId, null, employeeId);
+    async getAllMessageByChatIdAndEmployee(chatId, userId) {
+        let employee = await employeeService.getByUserId(userId);
+        let messages = await this.getAllMessageByChatId(chatId, null, employee.id);
         return messages;
     }
 
