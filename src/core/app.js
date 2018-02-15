@@ -30,7 +30,7 @@ class Application {
         models.associateModels();
         fileSystem.init();
         this.server = socketSender.init(this.server);
-        this.server.listen(this.host, this.port, (err) => {
+        this.server.listen(this.port, (err) => {
             if (err) {
                 return Logger.error(err.message);
             }
