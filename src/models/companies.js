@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
         about: DataTypes.TEXT,
         logo: DataTypes.STRING,
         city: DataTypes.STRING,
+        response_text: DataTypes.TEXT,
     }, {
         timestamps: false
     });
@@ -13,10 +14,14 @@ module.exports = (sequelize, DataTypes) => {
             through: 'company_profiles',
             foreignKey: 'company_id'
         });
-
         companies.belongsTo(models.users, {
             foreignKey: 'user_id',
-            targetKey: 'id',
+        });
+        companies.hasMany(models.chats, {
+            foreignKey: 'company_id',
+        });
+        companies.hasMany(models.vacancies, {
+            foreignKey: 'company_id',
         });
     };
 

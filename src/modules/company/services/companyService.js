@@ -1,7 +1,6 @@
 const models = require('../../../core/models');
 const Companies = models.companies;
 const CompanyProfiles = models.company_profiles;
-const logger = require('../../../utils/logger');
 
 const Op = models.sequelize.Op;
 
@@ -49,6 +48,19 @@ class CompaniesService {
                     [Op.eq]: userId,
                 },
             },
+        })
+    }
+
+    async findByVacancyId(vacancyId) {
+        return await Companies.findOne({
+            include: [{
+                attributes: [],
+                required: true,
+                model: models.vacancies,
+                where: {
+                    id: {[Op.eq]: vacancyId}
+                }
+            }]
         })
     }
 }
