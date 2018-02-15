@@ -120,24 +120,22 @@ class VacanciesService {
      * @returns {Promise<*>}
      */
     async getRecommended(skills, userId) {
-        // let employee = await employeeService.getByUserId(userId);
-        // let employeeId = employee.id;
-        // let skillsIds = skills.map((skill) => {
-        //     return skill.id
-        // });
-        //
-        // let queryStr = queryScanner.company.recommended_vacancies;
-        // let vacancies = await models.sequelize.query(queryStr,
-        //     {
-        //         replacements: {
-        //             skillsString: skillsIds.join(","),
-        //             employeeId: employeeId,
-        //         },
-        //         type: models.sequelize.QueryTypes.SELECT,
-        //         model: Vacancies
-        //     }); -- yе удолять!
+        let employee = await employeeService.getByUserId(userId);
+        let employeeId = employee.id;
+        let skillsIds = skills.map((skill) => {
+            return skill.id
+        });
 
-        let vacancies = await Vacancies.findAll();
+        let queryStr = queryScanner.company.recommended_vacancies;
+        let vacancies = await models.sequelize.query(queryStr,
+            {
+                replacements: {
+                    skillsString: skillsIds.join(",")
+                },
+                type: models.sequelize.QueryTypes.SELECT,
+                model: Vacancies
+            });
+
         return vacancies;
     }
 }
