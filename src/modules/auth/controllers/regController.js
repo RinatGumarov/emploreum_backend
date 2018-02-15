@@ -27,6 +27,7 @@ module.exports.func = (router) => {
             user = await usersService.incrementStep(req.user);
         }
         return res.json({
+            userId: user.id,
             registrationStep: user.status,
         });
     };
