@@ -3,6 +3,7 @@ const Profiles = models.profiles;
 const Skills = models.skills;
 
 const Op = models.sequelize.Op;
+const employeeService = require('../../employee/services/employeeService');
 
 let instance;
 
@@ -26,7 +27,13 @@ class SkillService {
         return skills;
     }
 
-    async getEmployeeSkills(employeeId) {
+    /**
+     * @param userId
+     * @returns {Promise<*>}
+     */
+    async getEmployeeSkills(userId) {
+        let employee = employeeService.getByUserId(userId);
+        let employeeId = employee.id;
         let skills = await Skills.findAll({
             include: [{
                 attributes: [],

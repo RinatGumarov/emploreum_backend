@@ -6,6 +6,7 @@ const companyService = require('../../company/services/companyService');
 const chatService = require('../../message/services/chatService');
 const messageService = require('../../message/services/messageService');
 
+
 const Op = models.sequelize.Op;
 
 let instance;
@@ -61,15 +62,13 @@ class EmployeesService {
 
     /**
      * Прикрепить работника к вакансии по нажатию "Откликнуться".
-     * @param employee
+     * @param userId
      * @param vacancyId
      * @returns {Promise<void>}
      */
-    async attachVacancy(employee, vacancyId) {
+    async attachVacancy(userId, vacancyId) {
+        let employee = await this.getByUserId(userId);
         await employee.addVacancy(vacancyId);
-        let company = await companyService.findByVacancyId(vacancyId);
-        let chat = await chatService.save(company.id, employee.id);
-        await messageService.sendToCompany(company.id, employee.id, "Вам постучались на вакансию")
     }
 
     async wasWorking(employeeId){

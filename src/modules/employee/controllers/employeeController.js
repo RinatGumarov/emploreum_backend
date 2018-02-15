@@ -3,6 +3,7 @@ const cvService = require('../services/cvService');
 const employeeService = require('../services/employeeService');
 const companyService = require('../../company/services/companyService');
 const workService = require('../services/workService');
+const messageService = require('../../message/services/messageService');
 const vacancyService = require('../../company/services/vacancyService');
 const Account = require('../../blockchain/utils/account');
 const logger = require('../../../utils/logger');
@@ -26,30 +27,8 @@ module.exports.func = (router) => {
             if (!(await companyService.hasContracts(company.id))) {
                 companyService.createBlockchainAccountForCompany(company.name, 10, company.user.account_address)
             }
-            companyService.
-            // let today = Math.round(Date.now() / 1000) + 20000;
-            // let workData = {
-            //     vacancy_id: vacancyId,
-            //     begin_date: today,
-            //     end_date: 1519827609,
-            //     employee_id: employee.id,
-            //     company_id: company.id,
-            //     status: 0,
-            // };
-            // let workBlockchain = {
-            //     skillCodes: [],
-            //     skillToPosition: [],
-            //     startDate: today,
-            //     endDate: workData.end_date,
-            //     empoloyee: req.user.account_address,
-            //     company: company.user.account_address,
-            //     weekPayment: vacancy.pricePerWeek,
-            // };
-            await work.createWork(workBlockchain).then(result => {
-                if (!result)
-                    throw new Web3InitError('Could not registrate company in blockchain');
-            });
-            workService.save(workData, employee);
+            workService.createWork(employee, company, vacancyId);
+            await messageService.sendToCompany(req.user.id, company.id, "Вам постучались на вакансию");
             return res.send({data: 'success'});
         }
         catch (err) {
@@ -59,9 +38,8 @@ module.exports.func = (router) => {
     });
 
     router.get('/vacancy/recommended', async (req, res) => {
-        let employee = await employeeService.getByUserId(req.user.id);
-        let employeeSkills = await skillService.getEmployeeSkills(employee.id);
-        let recommendedVacancies = await vacancyService.getRecommended(employeeSkills, employee.id);
+        let employeeSkills = await skillService.getEmployeeSkills(req.user.id);
+        let recommendedVacancies = await vacancyService.getRecommended(employeeSkills, req.user.id);
         res.json(recommendedVacancies);
     });
 
@@ -71,8 +49,7 @@ module.exports.func = (router) => {
     });
 
     router.get('/skills', async (req, res) => {
-        let employee = await employeeService.getByUserId(req.user.id);
-        let employeeSkills = await cvService.getEmployeeSkills(employee.id);
+        let employeeSkills = await cvService.getEmployeeSkillsWithProfiles(req.user.id);
         res.json(employeeSkills);
     });
 
