@@ -6,7 +6,7 @@ const mailSender = require('../utils/mailSender');
 const chatService = require('../services/chatService');
 const employeeService = require('../../employee/services/employeeService');
 const companyService = require('../../company/services/companyService');
-const socketService = require('../services/socketService');
+const socketSender = require('../../../core/socketSender');
 const config = require('../../../utils/config');
 const logger = require('../../../utils/logger');
 
@@ -26,7 +26,7 @@ class MessageService {
         });
 
         if (socketChatId) {
-            socketService.sendSocketMessage(socketChatId, message);
+            socketSender.sendSocketMessage(socketChatId, message);
         }
 
         return message;
