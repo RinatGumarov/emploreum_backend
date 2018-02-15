@@ -26,19 +26,14 @@ class SkillService {
         return skills;
     }
 
-    /**
-     * поиск скила по работнику
-     */
     async getEmployeeSkills(employeeId) {
         let skills = await Skills.findAll({
             include: [{
                 attributes: [],
                 model: models.cvs,
-                as: "cvs",
                 required: true,
                 include: {
                     attributes: [],
-                    as: "employee",
                     required: true,
                     model: models.employees,
                     where: {
@@ -49,7 +44,6 @@ class SkillService {
         });
         return skills;
     }
-
 
 
 }

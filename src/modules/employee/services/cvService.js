@@ -52,6 +52,26 @@ class CvsService {
         return cvs;
     }
 
+    /**
+     * поиск скилов по направлению работника
+     */
+    async getEmployeeSkills(employeeId) {
+        let skills = await Cvs.findAll({
+            include: [
+                models.skills,
+                models.profiles,
+                {
+                    attributes: [],
+                    required: true,
+                    model: models.employees,
+                    where: {
+                        id: {[Op.eq]: employeeId}
+                    }
+                }]
+        });
+        return skills;
+    }
+
 }
 
 if (typeof instance !== CvsService) {

@@ -7,11 +7,9 @@ module.exports = (sequelize, DataTypes) => {
     cvs.associate = function (models) {
         cvs.belongsTo(models.profiles, {
             foreignKey: 'profile_id',
-            as: "profile"
         });
         cvs.belongsTo(models.employees, {
             foreignKey: 'employee_id',
-            as: "employee"
         });
         cvs.belongsToMany(models.answers, {
             through: 'cv_answers',

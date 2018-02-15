@@ -38,6 +38,9 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'employee_id',
             timestamps: false,
         });
+        employees.hasMany(models.chats, {
+            foreignKey: 'employee_id',
+        });
     };
 
     return employees;
