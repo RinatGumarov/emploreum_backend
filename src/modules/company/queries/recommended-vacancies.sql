@@ -17,11 +17,8 @@ FROM (SELECT
            ) AS vac_skill_array
         JOIN (
                SELECT
-                 employee_skills,
-                 cvs.profile_id
+                 employee_skills
                FROM unnest(string_to_array(:skillsString, ',') :: INT []) AS employee_skills
-                 JOIN cv_skills ON cv_skills.skill_id = employee_skills
-                 JOIN cvs ON cv_skills.cv_id = cvs.id AND cvs.employee_id = :employeeId
              ) AS excepted_skills_array
           ON excepted_skills_array.employee_skills = ANY (vac_skill_array.skills_array :: INT [])
       GROUP BY
