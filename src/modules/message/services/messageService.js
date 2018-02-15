@@ -26,7 +26,8 @@ class MessageService {
             is_company_message: isCompanyCessage
         });
 
-        if (socketChatId) {
+        if (typeof socketChatId != "undefined") {
+            logger.log("send socket message")
             socketSender.sendSocketMessage(socketChatId, message);
         }
 
