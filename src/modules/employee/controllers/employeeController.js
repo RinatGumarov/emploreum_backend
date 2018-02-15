@@ -19,32 +19,11 @@ module.exports.func = (router) => {
             let company = await companyService.findByUserIdWithUser(req.body.companyId);
             await employeeService.attachVacancy(employee, vacancyId);
             if (!(await employeeService.wasWorking(employee.id))) {
-                let blockchainEmployee = {
-                    firstName: employee.name,
-                    lastName: employee.name,
-                    email: req.user.email,
-                    raiting: 10,
-                    address: req.user.account_address,
-                    positionCodes: [],
-                    skillCodes: [],
-                    skillToPosition: [],
-                };
-                await Account.registerEmployee(blockchainEmployee).then(result => {
-                    if (!result)
-                        throw new Web3InitError('Could not registrate employee in blockchain');
-                });
+                employeeService.createBlockchainAccountForEmployee(
+                    employee.name, employee.name, 10, req.user.email, req.user.account_address);
             }
             if (!(await companyService.hasContracts(company.id))) {
-                let blockchainCompany = {
-                    name: company.name,
-                    raiting: 10,
-                    address: company.user.account_address,
-                };
-                await Account.registerCompany(blockchainCompany).then(result => {
-                    if (!result)
-                        throw new Web3InitError('Could not registrate company in blockchain');
-                });
-
+                companyService.createBlockchainAccountForCompany(company.name, 10, company.user.account_address)
             }
             let today = Math.round(Date.now() / 1000) + 20000;
             let workData = {

@@ -1,5 +1,6 @@
 const models = require('../../../core/models');
 const Employees = models.employees;
+const Account = require('../../blockchain/utils/account');
 const logger = require('../../../utils/logger');
 
 const Op = models.sequelize.Op;
@@ -76,20 +77,20 @@ class EmployeesService {
         return works !== null;
     }
 
-    async createBlockchainAccountForEmployee(firstName, lastName, rating, email, accountAddress){
+    async createBlockchainAccountForEmployee(firstName, lastName, rating, email, address){
         let blockchainEmployee = {
             firstName,
             lastName,
             email,
-            raiting,
-            address: req.user.account_address,
+            raiting: rating,
+            address,
             positionCodes: [],
             skillCodes: [],
             skillToPosition: [],
         };
         await Account.registerEmployee(blockchainEmployee).then(result => {
             if (!result)
-                throw new Web3InitError('Could not registrate employee in blockchain');
+                throw new Web3InitError('Could not register employee in blockchain');
         });
     }
 
