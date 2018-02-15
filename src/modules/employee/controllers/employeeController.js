@@ -26,24 +26,25 @@ module.exports.func = (router) => {
             if (!(await companyService.hasContracts(company.id))) {
                 companyService.createBlockchainAccountForCompany(company.name, 10, company.user.account_address)
             }
-            let today = Math.round(Date.now() / 1000) + 20000;
-            let workData = {
-                vacancy_id: vacancyId,
-                begin_date: today,
-                end_date: 1519827609,
-                employee_id: employee.id,
-                company_id: company.id,
-                status: 0,
-            };
-            let workBlockchain = {
-                skillCodes: [],
-                skillToPosition: [],
-                startDate: today,
-                endDate: workData.end_date,
-                empoloyee: req.user.account_address,
-                company: company.user.account_address,
-                weekPayment: vacancy.pricePerWeek,
-            };
+            companyService.
+            // let today = Math.round(Date.now() / 1000) + 20000;
+            // let workData = {
+            //     vacancy_id: vacancyId,
+            //     begin_date: today,
+            //     end_date: 1519827609,
+            //     employee_id: employee.id,
+            //     company_id: company.id,
+            //     status: 0,
+            // };
+            // let workBlockchain = {
+            //     skillCodes: [],
+            //     skillToPosition: [],
+            //     startDate: today,
+            //     endDate: workData.end_date,
+            //     empoloyee: req.user.account_address,
+            //     company: company.user.account_address,
+            //     weekPayment: vacancy.pricePerWeek,
+            // };
             await work.createWork(workBlockchain).then(result => {
                 if (!result)
                     throw new Web3InitError('Could not registrate company in blockchain');
