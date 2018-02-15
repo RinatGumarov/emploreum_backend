@@ -1,5 +1,5 @@
 const skillService = require('../../specialisation/services/skillService');
-const profilesService = require('../../specialisation/services/profileService');
+const cvService = require('../services/cvService');
 const employeeService = require('../services/employeeService');
 const companyService = require('../../company/services/companyService');
 const workService = require('../services/workService');
@@ -8,6 +8,7 @@ const Account = require('../../blockchain/utils/account');
 const logger = require('../../../utils/logger');
 const Web3InitError = require('../../blockchain/utils/Web3Error');
 const work = require('../../blockchain/utils/work');
+const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
 
@@ -68,10 +69,9 @@ module.exports.func = (router) => {
         res.json(employee);
     });
 
-    // toDo переделать на профили - скилы
     router.get('/skills', async (req, res) => {
         let employee = await employeeService.getByUserId(req.user.id);
-        let employeeSkills = await skillService.getEmployeeSkills(employee.id);
+        let employeeSkills = await cvService.getEmployeeSkills(employee.id);
         res.json(employeeSkills);
     });
 

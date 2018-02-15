@@ -89,6 +89,18 @@ class CompaniesService {
         });
     }
 
+    async findByVacancyId(vacancyId) {
+        return await Companies.findOne({
+            include: [{
+                attributes: [],
+                required: true,
+                model: models.vacancies,
+                where: {
+                    id: {[Op.eq]: vacancyId}
+                }
+            }]
+        })
+    }
 }
 
 if (typeof instance !== CompaniesService) {

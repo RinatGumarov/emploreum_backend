@@ -54,7 +54,6 @@
     "truffle-contract": "работы с контрактами в eth",
     "ethereumjs-tx": "for sending transactions"
   },
-  "devDependencies": {},
   "scripts": {
     "start": "nodemon src/index.js",
     "debug": "node $NODE_DEBUG_OPTION src/index.js",
