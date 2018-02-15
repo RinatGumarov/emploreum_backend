@@ -18,7 +18,7 @@ class SocketSender {
     }
 
     sendSocketMessage(chatId, object) {
-        console.log(chatId+" посылка сообщения в чат");
+        logger.log(chatId+" посылка сообщения в чат");
         io.on('connection', function (socket) {
             logger.log(object);
             socket.emit(chatId, object);
