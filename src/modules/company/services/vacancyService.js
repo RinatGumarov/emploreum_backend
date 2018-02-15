@@ -121,6 +121,7 @@ class VacanciesService {
      */
     async getRecommended(skills, userId) {
         let employee = await employeeService.getByUserId(userId);
+        let employeeId = employee.id;
         let skillsIds = skills.map((skill) => {
             return skill.id
         });
@@ -130,7 +131,7 @@ class VacanciesService {
             {
                 replacements: {
                     skillsString: skillsIds.join(","),
-                    employeeId: employee.id,
+                    employeeId: employeeId,
                 },
                 type: models.sequelize.QueryTypes.SELECT,
                 model: Vacancies

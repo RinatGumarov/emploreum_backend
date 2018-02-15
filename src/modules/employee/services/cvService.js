@@ -57,7 +57,7 @@ class CvsService {
      * поиск скилов по направлению работника
      */
     async getEmployeeSkillsWithProfiles(userId) {
-        let employee = employeeService.getByUserId(userId);
+        let employee = await employeeService.getByUserId(userId);
         let employeeId = employee.id;
         let skills = await Cvs.findAll({
             include: [
