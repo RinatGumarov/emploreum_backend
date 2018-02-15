@@ -8,21 +8,19 @@ let socketSenderInstance;
 class SocketSender {
 
 
-    // toDo
     init(server) {
         let newServer = http.Server(server);
         io.on('connection', function (socket) {
-            socket.on('message', function (data) {
-                logger.log(data);
-                let companyId = data.companyId;
-                let userId = data.userId;
-                socket.emit(companyId, {
-                    userName: userId
-                });
-            });
+            logger.log("user connected")
         });
         io.attach(newServer);
         return newServer;
+    }
+
+    sendSocketMessage(chatId, object) {
+        logger.log("поссылка "+chatId+" "+object)
+
+        io.emit(chatId, object);
     }
 
 }

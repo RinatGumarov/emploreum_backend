@@ -4,8 +4,10 @@ const Op = models.sequelize.Op;
 
 const mailSender = require('../utils/mailSender');
 const chatService = require('../services/chatService');
+const userService = require('../../auth/services/userService');
 const employeeService = require('../../employee/services/employeeService');
 const companyService = require('../../company/services/companyService');
+const socketSender = require('../../../core/socketSender');
 const config = require('../../../utils/config');
 const logger = require('../../../utils/logger');
 
@@ -13,7 +15,7 @@ let instance;
 
 class MessageService {
 
-    async save(companyId, employeeId, text, isEmployeeMessage, isCompanyCessage) {
+    async save(companyId, employeeId, text, isEmployeeMessage, isCompanyCessage, socketChatId) {
 
         let chat = await chatService.getChatBetweenEmployeeAndCompany(employeeId, companyId);
 
@@ -24,6 +26,11 @@ class MessageService {
             is_company_message: isCompanyCessage
         });
 
+        if (typeof socketChatId !== "undefined") {
+            logger.log("send socket message");
+            socketSender.sendSocketMessage(socketChatId, message);
+        }
+
         return message;
     }
 
@@ -33,7 +40,8 @@ class MessageService {
      */
     async sendToEmployee(userId, employeeId, text) {
         let company = companyService.findByUserId(userId);
-        let message = await this.save(company.id, employeeId, text, false, true);
+        let user = await userService.getUserByEmployeeId(employeeId);
+        let message = await this.save(company.id, employeeId, text, false, true, user.id);
         return message;
     }
 
@@ -43,7 +51,8 @@ class MessageService {
      */
     async sendToCompany(userId, companyId, text) {
         let employee = await employeeService.getByUserId(userId);
-        let message = await this.save(companyId, employee.id, text, true, false);
+        let user = await userService.getUserByCompanyId(companyId);
+        let message = await this.save(companyId, employee.id, text, true, false, user.id);
         return message;
     }
 
