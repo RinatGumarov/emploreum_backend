@@ -75,6 +75,7 @@ module.exports.func = (router) => {
                         });
                     } else {
                         return res.send({
+                            userId: req.user.id,
                             registrationStep: user.status,
                             role: req.session.role
                         });
