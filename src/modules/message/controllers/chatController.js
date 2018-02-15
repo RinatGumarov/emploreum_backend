@@ -6,21 +6,29 @@ module.exports.func = (router) => {
 
     router.get('/chats/all', async (req, res) => {
 
-        try {
-            let chats;
-            if (req.user.role === "EMPLOYEE") {
-                let employee = await employeeService.getByUserId(req.user.id);
-                chats = await chatService.getAllChatsFroEmployee(employee.id);
-            } else {
-                let company = await companyService.findByUserId(req.user.id);
-                chats = await chatService.getAllChatsFroCompany(company.id);
-            }
-            res.json(chats)
-        } catch (err) {
-            logger.error(err.stack);
-            res.status(500).send({error: 'Could not get all chats'});
+        let chats;
 
+        if (req.user.role === "EMPLOYEE") {
+            chats = await chatService.getAllChatsFroEmployee(req.user.id);
+        } else {
+            chats = await chatService.getAllChatsFroCompany(req.user.id);
         }
+
+        res.json(chats)
+
+    });
+
+    router.get('/new', async (req, res) => {
+
+        let newMessage;
+
+        if (req.user.role === "EMPLOYEE") {
+            newMessage = await chatService.getAllChatsWithNewMessageForEmployee(req.user.id);
+        } else {
+            newMessage = await chatService.getAllChatsWithNewMessageForCompany(req.user.id);
+        }
+        res.json(newMessage)
+
     });
 
     return router;

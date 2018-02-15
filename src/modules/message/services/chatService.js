@@ -3,6 +3,9 @@ const Chats = models.chats;
 const Op = models.sequelize.Op;
 
 const mailSender = require('../utils/mailSender');
+const employeeService = require('../../employee/services/employeeService');
+const companyService = require('../../company/services/companyService');
+
 let instance;
 
 class ChatService {
@@ -30,10 +33,11 @@ class ChatService {
 
     /**
      * все чаты у компании
-     * @param companyId
      * @returns {Promise<*>}
      */
-    async getAllChatsFroCompany(companyId) {
+    async getAllChatsFroCompany(userId) {
+        let company = await companyService.findByUserId(userId);
+        let companyId = company.id;
         let chats = await Chats.findAll({
             where: {
                 company_id: {[Op.eq]: companyId}
@@ -46,9 +50,11 @@ class ChatService {
     /**
      * все чаты у работника
      * @returns {Promise<*>}
-     * @param employeeId
      */
-    async getAllChatsFroEmployee(employeeId) {
+    async getAllChatsFroEmployee(userId) {
+        let employee = await employeeService.getByUserId(userId);
+        let employeeId = employee.id;
+
         let chats = await Chats.findAll({
             where: {
                 employee_id: {[Op.eq]: employeeId}
@@ -65,14 +71,17 @@ class ChatService {
      * @returns {Promise<*>}
      */
     async getChatBetweenEmployeeAndCompany(employeeId, companyId) {
-        let chat = await Chats.findOne({
+        let chat = await Chats.findOrCreate({
             where: {
-                employee_id: {[Op.eq]: employeeId},
-                company_id: {[Op.eq]: companyId}
+                employee_id: employeeId,
+                company_id: companyId
+            },
+            defaults: {
+                employee_id: employeeId,
+                company_id: companyId
             }
         });
-
-        return chat;
+        return chat[0];
     }
 
 
@@ -140,10 +149,11 @@ class ChatService {
 
     /**
      * все чаты с непрочитаными сообщенияя для компании
-     * @param companyId
      * @returns {Promise<*>}
      */
-    async getAllChatsWithNewMessageForCompany(companyId) {
+    async getAllChatsWithNewMessageForCompany(userId) {
+        let company = await companyService.findByUserId(userId);
+        let companyId = company.id;
         let chats = this.getAllChatWithNewMessage(companyId, null);
         return chats;
     }
@@ -151,10 +161,11 @@ class ChatService {
 
     /**
      * все чаты с непрочитаными сообщенияя для работника
-     * @param employeeId
      * @returns {Promise<*>}
      */
-    async getAllChatsWithNewMessageForEmployee(employeeId) {
+    async getAllChatsWithNewMessageForEmployee(userId) {
+        let employee = await employeeService.getByUserId(userId);
+        let employeeId = employee.id;
         let chats = this.getAllChatWithNewMessage(null, employeeId);
         return chats;
     }

@@ -6,6 +6,7 @@ const config = require('../utils/config');
 const MiddlewaresIniter = require('./middlewaresIniter');
 const models = require("./models");
 const fileSystem = require("./fileSystem");
+const socketSender = require("./socketSender");
 const ip = require('ip');
 let appInstance;
 
@@ -28,6 +29,7 @@ class Application {
         //инициализация ассоциаций в моделях
         models.associateModels();
         fileSystem.init();
+        this.server = socketSender.init(this.server);
         this.server.listen(this.port, (err) => {
             if (err) {
                 return Logger.error(err.message);
@@ -37,6 +39,7 @@ class Application {
             logger.log(`LAN: http://${ip.address()}:${this.port}`);
             logger.log("Press CTRL-C to stop");
         });
+
     }
 
     getServer() {

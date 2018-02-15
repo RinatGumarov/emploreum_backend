@@ -1,6 +1,8 @@
 const skillService = require('../../specialisation/services/skillService');
 const cvService = require('../services/cvService');
 const employeeService = require('../services/employeeService');
+const companyService = require('../../company/services/companyService');
+const messageService = require('../../message/services/messageService');
 const vacancyService = require('../../company/services/vacancyService');
 const logger = require('../../../utils/logger');
 
@@ -8,47 +10,31 @@ module.exports.func = (router) => {
 
     router.get('/vacancy/:vacancyId/add', async (req, res) => {
         try {
-            let employee = await employeeService.getByUserId(req.user.id);
-            await employeeService.attachVacancy(employee, req.params.vacancyId);
+            await employeeService.attachVacancy(req.user.id, req.params.vacancyId);
+            let company = await companyService.findByVacancyId(req.params.vacancyId);
+            await messageService.sendToCompany(req.user.id, company.id, "Вам постучались на вакансию");
             res.send({data: 'success'});
         }
         catch (err) {
-            logger.error(err.stack);
+            logger.error(err.message);
             res.status(500).send({error: 'Could not attach vacancy'});
         }
     });
 
     router.get('/vacancy/recommended', async (req, res) => {
-        try {
-            let employee = await employeeService.getByUserId(req.user.id);
-            let employeeSkills = await skillService.getEmployeeSkills(employee.id);
-            let recommendedVacancies = await vacancyService.getRecommended(employeeSkills, employee.id);
-            res.json(recommendedVacancies);
-        } catch (err) {
-            logger.error(err.stack);
-            res.status(500).send({error: 'Could not get recommended vacancy'});
-        }
+        let employeeSkills = await skillService.getEmployeeSkills(req.user.id);
+        let recommendedVacancies = await vacancyService.getRecommended(employeeSkills, req.user.id);
+        res.json(recommendedVacancies);
     });
 
     router.get('/info', async (req, res) => {
-        try {
-            let employee = await employeeService.getByUserId(req.user.id);
-            res.json(employee);
-        } catch (err) {
-            logger.error(err.stack);
-            res.status(500).send({error: 'Could not get user info'});
-        }
+        let employee = await employeeService.getByUserId(req.user.id);
+        res.json(employee);
     });
 
     router.get('/skills', async (req, res) => {
-        try {
-            let employee = await employeeService.getByUserId(req.user.id);
-            let employeeSkills = await cvService.getEmployeeSkills(employee.id);
-            res.json(employeeSkills);
-        } catch (err) {
-            logger.error(err.stack);
-            res.status(500).send({error: 'Could not get user skills'});
-        }
+        let employeeSkills = await cvService.getEmployeeSkillsWithProfiles(req.user.id);
+        res.json(employeeSkills);
     });
 
     router.get('/contracts/current', async (req, res) => {
@@ -56,7 +42,7 @@ module.exports.func = (router) => {
             return res.send([]);
         }
         catch (err) {
-            logger.error(err.stack);
+            logger.error(err.trace);
             return res.status(500).send({error: 'Could not get current works for the employee'});
         }
     });
