@@ -1,7 +1,8 @@
 const skillService = require('../../specialisation/services/skillService');
-const profilesService = require('../../specialisation/services/profileService');
+const cvService = require('../services/cvService');
 const employeeService = require('../services/employeeService');
 const vacancyService = require('../../company/services/vacancyService');
+const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
 
@@ -29,10 +30,9 @@ module.exports.func = (router) => {
         res.json(employee);
     });
 
-    // toDo переделать на профили - скилы
     router.get('/skills', async (req, res) => {
         let employee = await employeeService.getByUserId(req.user.id);
-        let employeeSkills = await skillService.getEmployeeSkills(employee.id);
+        let employeeSkills = await cvService.getEmployeeSkills(employee.id);
         res.json(employeeSkills);
     });
 

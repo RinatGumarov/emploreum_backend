@@ -2,6 +2,7 @@ const usersService = require('../services/userService');
 const cvService = require('../../employee/services/cvService');
 const employeesService = require('../../employee/services/employeeService');
 const companiesService = require('../../company/services/companyService');
+const messageService = require('../../message/services/messageService');
 const logger = require('../../../utils/logger');
 
 const FIRST_STATE = 1;
@@ -45,7 +46,7 @@ module.exports.func = (router) => {
             req.session.email = req.body.email;
             req.session.password = req.body.password;
             req.session.role = req.body.role;
-            req.session.verifyCode = usersService.sendCodeToUser(req.body.email);
+            req.session.verifyCode = messageService.sendCodeToUser(req.body.email);
             res.json({data: "success"});
 
             logger.log(req.session.verifyCode);

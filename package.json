@@ -47,7 +47,6 @@
     "pg": "обертка для postgres, предоставляет javascript api",
     "pg-hstore": "для json представляения данных postgres"
   },
-  "devDependencies": {},
   "scripts": {
     "start": "node src/index.js",
     "debug": "node $NODE_DEBUG_OPTION src/index.js",
