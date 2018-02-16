@@ -4,6 +4,7 @@ const Op = models.sequelize.Op;
 
 const mailSender = require('../utils/mailSender');
 const chatService = require('../services/chatService');
+const userService = require('../../auth/services/userService');
 const employeeService = require('../../employee/services/employeeService');
 const companyService = require('../../company/services/companyService');
 const socketSender = require('../../../core/socketSender');
@@ -25,7 +26,8 @@ class MessageService {
             is_company_message: isCompanyCessage
         });
 
-        if (socketChatId) {
+        if (typeof socketChatId !== "undefined") {
+            logger.log("send socket message");
             socketSender.sendSocketMessage(socketChatId, message);
         }
 
@@ -38,7 +40,8 @@ class MessageService {
      */
     async sendToEmployee(userId, employeeId, text) {
         let company = companyService.findByUserId(userId);
-        let message = await this.save(company.id, employeeId, text, false, true, userId);
+        let user = await userService.getUserByEmployeeId(employeeId);
+        let message = await this.save(company.id, employeeId, text, false, true, user.id);
         return message;
     }
 
@@ -48,7 +51,8 @@ class MessageService {
      */
     async sendToCompany(userId, companyId, text) {
         let employee = await employeeService.getByUserId(userId);
-        let message = await this.save(companyId, employee.id, text, true, false, userId);
+        let user = await userService.getUserByCompanyId(companyId);
+        let message = await this.save(companyId, employee.id, text, true, false, user.id);
         return message;
     }
 

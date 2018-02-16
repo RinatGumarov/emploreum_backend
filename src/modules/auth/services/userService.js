@@ -9,6 +9,41 @@ let instance;
 
 class UsersService {
 
+    async getUserByCompanyId(companyId) {
+        let user = await Users.findOne({
+            include: [{
+                required: true,
+                attributes: [],
+                model: models.companies,
+                where: {
+                    id: {
+                        [Op.eq]: companyId
+                    }
+                }
+            }]
+        });
+
+        return user;
+    }
+
+    async getUserByEmployeeId(employeeId) {
+        let user = await Users.findOne({
+            include: [{
+                required: true,
+                attributes: [],
+                model: models.employees,
+                where: {
+                    id: {
+                        [Op.eq]: employeeId
+                    }
+                }
+            }]
+        });
+
+        return user;
+    }
+
+
     /**
      * @param email
      * @returns {Promise<boolean>}

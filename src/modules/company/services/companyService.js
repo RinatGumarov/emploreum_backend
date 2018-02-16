@@ -91,6 +91,7 @@ class CompaniesService {
 
     async findByVacancyId(vacancyId) {
         return await Companies.findOne({
+
             include: [{
                 attributes: [],
                 required: true,

@@ -18,10 +18,9 @@ class SocketSender {
     }
 
     sendSocketMessage(chatId, object) {
+        logger.log("поссылка "+chatId+" "+object)
 
-        io.on('connection', function (socket) {
-            socket.emit(chatId, object);
-        });
+        io.emit(chatId, object);
     }
 
 }
