@@ -73,26 +73,29 @@ class RegistrationUtil {
      *  Register employee in blockchain by main contract.
      *
      * @param employee
-     * @returns {Promise.<TResult>}
+     * @returns {Promise.<boolean>}
      */
-    registerEmployee(employee) {
+    async registerEmployee(employee) {
         let address = config.main_contract_path;
         let gas = config.create_contract_gas_count;
         let contractInfo = require('./abi/Main.json');
 
-        return contractUtil.readContractFromAddress(contractInfo, address).then(contract => {
-            return contract.newEmployee(employee.firstName, employee.lastName, employee.email, employee.raiting,
-                                        employee.address, employee.positionCodes, employee.skillCodes,
-                                        employee.skillToPosition, {gas}
-            )
-        }).then(data => {
+        // TODO check Bulat metodology
+
+        try {
+            const data = await contractUtil.readContractFromAddress(contractInfo, address).then(contract => {
+                contract.newEmployee(employee.firstName, employee.lastName, employee.email, employee.raiting,
+                                     employee.address, employee.positionCodes, employee.skillCodes,
+                                     employee.skillToPosition, {gas});
+
+            });
             logger.log(`employee registeration complite!`);
-            logger.log(`'transaction hash: ', ${data.tx}`);
+            logger.log(`transaction hash: ${data.tx}`);
             return true;
-        }).catch(err => {
+        } catch (e) {
             logger.error(err);
             return false;
-        })
+        }
     }
 
     /**
