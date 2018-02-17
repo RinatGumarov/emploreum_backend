@@ -58,5 +58,3 @@ if (typeof instance !== WorkService) {
 }
 
 module.exports = instance;
-
-console.log(d);

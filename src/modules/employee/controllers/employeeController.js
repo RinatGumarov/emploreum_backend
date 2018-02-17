@@ -9,7 +9,6 @@ const Account = require('../../blockchain/utils/account');
 const logger = require('../../../utils/logger');
 const Web3InitError = require('../../blockchain/utils/Web3Error');
 const work = require('../../blockchain/utils/work');
-const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
 
