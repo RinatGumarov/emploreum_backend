@@ -4,6 +4,7 @@ const employeeService = require('../services/employeeService');
 const companyService = require('../../company/services/companyService');
 const messageService = require('../../message/services/messageService');
 const vacancyService = require('../../company/services/vacancyService');
+const workService = require('../services/workService');
 const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
@@ -13,16 +14,16 @@ module.exports.func = (router) => {
             let vacancyId = req.params.vacancyId;
             let vacancy = await vacancyService.findById(vacancyId);
             let employee = await employeeService.getByUserId(req.user.id);
-            let company = await companyService.findByUserIdWithUser(req.body.companyId);
-            await employeeService.attachVacancy(employee, vacancyId);
+            let company = await companyService.findByVacancyId(vacancyId);
+            await employeeService.attachVacancy(req.user.id, vacancyId);
             // первоначальное создание контракта в блокчайн для работника если у него еше нет контракта
             if (!(await employeeService.wasWorking(employee.id))) {
-                employeeService.createBlockchainAccountForEmployee(
+                await employeeService.createBlockchainAccountForEmployee(
                     employee.name, employee.name, 10, req.user.email, req.user.account_address);
             }
             // создание контракта для компании если его еше нет в блокчайн
             if (!(await companyService.hasContracts(company.id))) {
-                companyService.createBlockchainAccountForCompany(company.name, 10, company.user.account_address)
+                await companyService.createBlockchainAccountForCompany(company.name, 10, company.user.account_address)
             }
             workService.createWork(employee, company, vacancyId);
             await messageService.sendToCompany(req.user.id, company.id, "Вам постучались на вакансию");
@@ -74,7 +75,7 @@ module.exports.func = (router) => {
             return res.send(await workService.findAllByEmployeeId(employee.id));
         }
         catch (err) {
-            logger.error(err.trace);
+            logger.error(err);
             return res.status(500).send({error: 'Could not get current works for the employee'});
         }
     });
