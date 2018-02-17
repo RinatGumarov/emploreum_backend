@@ -59,7 +59,7 @@ module.exports.func = (router) => {
         }
     });
     
-    router.get('/vacancy/:id([0-9]+)/skills', async (req, res) => {
+    router.get('/vacancy/:id([0-9]+)/specifications', async (req, res) => {
         try {
             let skills = await vacancyService.getVacancyProfiles(req.params.id);
             res.send(skills);
