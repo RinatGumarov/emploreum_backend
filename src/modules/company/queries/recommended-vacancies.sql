@@ -1,4 +1,6 @@
-SELECT vacancies.*
+SELECT
+  vacancies.*,
+  c2.name
 FROM (SELECT
         vac_skill_array.v_id,
         vac_skill_array.count_skills,
@@ -16,12 +18,8 @@ FROM (SELECT
              GROUP BY v_id
            ) AS vac_skill_array
         JOIN (
-               SELECT
-                 employee_skills,
-                 cvs.profile_id
+               SELECT employee_skills
                FROM unnest(string_to_array(:skillsString, ',') :: INT []) AS employee_skills
-                 JOIN cv_skills ON cv_skills.skill_id = employee_skills
-                 JOIN cvs ON cv_skills.cv_id = cvs.id AND cvs.employee_id = :employeeId
              ) AS excepted_skills_array
           ON excepted_skills_array.employee_skills = ANY (vac_skill_array.skills_array :: INT [])
       GROUP BY
@@ -29,4 +27,5 @@ FROM (SELECT
         vac_skill_array.count_skills
      ) AS employ_vac_accept
   JOIN vacancies ON vacancies.id = employ_vac_accept.v_id
+  JOIN companies c2 ON vacancies.company_id = c2.id
 WHERE employ_vac_accept.count_merged_skill_from_vacancy * 100 / employ_vac_accept.count_skills > 70

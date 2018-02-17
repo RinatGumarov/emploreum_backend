@@ -20,7 +20,7 @@ class Models {
 
     addModel(pathToModel) {
 
-        logger.log(`Инициализирую ${pathToModel} модель`);
+        logger.log(`Initialization ${pathToModel} model`);
         const model = this.sequelize.import(pathToModel);
         this[model.name] = model;
     }

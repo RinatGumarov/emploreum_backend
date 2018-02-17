@@ -2,7 +2,10 @@ const usersService = require('../services/userService');
 const cvService = require('../../employee/services/cvService');
 const employeesService = require('../../employee/services/employeeService');
 const companiesService = require('../../company/services/companyService');
+const messageService = require('../../message/services/messageService');
 const logger = require('../../../utils/logger');
+const account = require('../../blockchain/utils/account');
+const web3 = require('../../blockchain/utils/web3');
 
 const FIRST_STATE = 1;
 const SECOND_STATE = 2;
@@ -26,6 +29,8 @@ module.exports.func = (router) => {
             user = await usersService.incrementStep(req.user);
         }
         return res.json({
+                            registrationStep: user.status,
+            userId: user.id,
             registrationStep: user.status,
         });
     };
@@ -45,7 +50,7 @@ module.exports.func = (router) => {
             req.session.email = req.body.email;
             req.session.password = req.body.password;
             req.session.role = req.body.role;
-            req.session.verifyCode = usersService.sendCodeToUser(req.body.email);
+            req.session.verifyCode = messageService.sendCodeToUser(req.body.email);
             res.json({data: "success"});
 
             logger.log(req.session.verifyCode);
@@ -60,22 +65,36 @@ module.exports.func = (router) => {
     router.post('/signup/verification', async (req, res) => {
         try {
             if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
+                let encryptedKey = '';
+                let keyPassword = web3.utils.randomHex(32);
+                switch (req.session.role) {
+                    case 'EMPLOYEE':
+                        encryptedKey = JSON.stringify(account.generateEmployeeAccount(keyPassword));
+                        break;
+                    case 'COMPANY':
+                        encryptedKey = JSON.stringify(account.generateCompanyAccount(keyPassword));
+                }
+                let account_address = account.decryptAccount(JSON.parse(encryptedKey), keyPassword).address;
                 let user = await usersService.saveUser(
                     req.session.email,
                     req.session.password,
                     req.session.role,
-                    FIRST_STATE
+                    FIRST_STATE,
+                    encryptedKey,
+                    keyPassword,
+                    account_address
                 );
                 req.login(user, (err) => {
                     if (err) {
                         return res.status(401).send({
-                            error: 'Unauthorized'
-                        });
+                                                        error: 'Unauthorized'
+                                                    });
                     } else {
                         return res.send({
-                            registrationStep: user.status,
-                            role: req.session.role
-                        });
+                                            registrationStep: user.status,
+                                            role: req.session.role,
+                            userId: req.user.id,
+                                        });
                     }
                 });
             } else {
@@ -84,8 +103,8 @@ module.exports.func = (router) => {
         } catch (err) {
             logger.error(err.stack);
             return res.status(500).json({
-                error: err.message
-            })
+                                            error: err.message
+                                        })
         }
     });
 
@@ -121,8 +140,8 @@ module.exports.func = (router) => {
         } catch (err) {
             logger.error(err);
             res.status(500).json({
-                error: err.message
-            });
+                                     error: err.message
+                                 });
         }
     });
 
@@ -142,8 +161,8 @@ module.exports.func = (router) => {
             await incrementStatusAndReturnResponse(req, res, SECOND_STATE);
         } catch (err) {
             res.status(500).json({
-                error: err.message
-            })
+                                     error: err.message
+                                 })
         }
     });
 

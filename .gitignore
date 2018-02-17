@@ -1,3 +1,7 @@
 node_modules
 configs/*.json
+public/upload/*
+package-lock.json
+logs.txt
+*.log
 .idea

@@ -3,6 +3,7 @@ const Cvs = models.cvs;
 const Profiles = models.profiles;
 const Op = models.sequelize.Op;
 
+const employeeService = require("./employeeService");
 let instance;
 
 class CvsService {
@@ -50,6 +51,28 @@ class CvsService {
             }
         });
         return cvs;
+    }
+
+    /**
+     * поиск скилов по направлению работника
+     */
+    async getEmployeeSkillsWithProfiles(userId) {
+        let employee = await employeeService.getByUserId(userId);
+        let employeeId = employee.id;
+        let skills = await Cvs.findAll({
+            include: [
+                models.skills,
+                models.profiles,
+                {
+                    attributes: [],
+                    required: true,
+                    model: models.employees,
+                    where: {
+                        id: {[Op.eq]: employeeId}
+                    }
+                }]
+        });
+        return skills;
     }
 
 }

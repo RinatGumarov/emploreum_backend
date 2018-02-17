@@ -3,6 +3,7 @@ const Profiles = models.profiles;
 const Skills = models.skills;
 
 const Op = models.sequelize.Op;
+const employeeService = require('../../employee/services/employeeService');
 
 let instance;
 
@@ -27,18 +28,19 @@ class SkillService {
     }
 
     /**
-     * поиск скила по работнику
+     * @param userId
+     * @returns {Promise<*>}
      */
-    async getEmployeeSkills(employeeId) {
+    async getEmployeeSkills(userId) {
+        let employee = await employeeService.getByUserId(userId);
+        let employeeId = employee.id;
         let skills = await Skills.findAll({
             include: [{
                 attributes: [],
                 model: models.cvs,
-                as: "cvs",
                 required: true,
                 include: {
                     attributes: [],
-                    as: "employee",
                     required: true,
                     model: models.employees,
                     where: {
@@ -49,7 +51,6 @@ class SkillService {
         });
         return skills;
     }
-
 
 
 }

@@ -1,14 +1,15 @@
 const models = require('../../../core/models');
 const Companies = models.companies;
 const CompanyProfiles = models.company_profiles;
+const Account = require('../../blockchain/utils/account');
 const logger = require('../../../utils/logger');
 
 const Op = models.sequelize.Op;
-
+const Web3InitError = require("../../blockchain/utils/Web3Error");
 let instance;
 
 class CompaniesService {
-
+    
     /**
      * создание профиля для компании
      * @param companyId
@@ -20,7 +21,7 @@ class CompaniesService {
             profile_id: profileId
         });
     }
-
+    
     async save(userId) {
         return (await Companies.findOrCreate({
             where: {
@@ -33,7 +34,7 @@ class CompaniesService {
             }
         }))[0];
     }
-
+    
     async update(userId, params) {
         return await Companies.update(params, {
             where: {
@@ -41,12 +42,71 @@ class CompaniesService {
             }
         });
     }
-
+    
     async findByUserId(userId) {
         return await Companies.findOne({
             where: {
                 user_id: {
                     [Op.eq]: userId,
+                },
+            },
+        })
+    }
+    
+    async findByUserIdWithUser(id) {
+        return await Companies.findOne({
+            include: [{
+                model: models.users,
+            }],
+            where: {
+                id: {
+                    [Op.eq]: id,
+                },
+            },
+        })
+    }
+    
+    async hasContracts(companyId) {
+        let works = await models.works.find({
+            where: {
+                company_id: {
+                    [Op.eq]: companyId,
+                },
+            },
+        });
+        return works !== null;
+    }
+    
+    async createBlockchainAccountForCompany(name, rating, address) {
+        let blockchainCompany = {
+            name,
+            raiting: rating,
+            address,
+        };
+        await Account.registerCompany(blockchainCompany).then(result => {
+            if (!result)
+                throw new Web3InitError('Could not register company in blockchain');
+        });
+    }
+    
+    async findByVacancyId(vacancyId) {
+        return await Companies.findOne({
+            include: [models.users, {
+                attributes: [],
+                required: true,
+                model: models.vacancies,
+                where: {
+                    id: {[Op.eq]: vacancyId}
+                }
+            }]
+        })
+    }
+    
+    async findById(id) {
+        return await Companies.findOne({
+            where: {
+                id: {
+                    [Op.eq]: id,
                 },
             },
         })

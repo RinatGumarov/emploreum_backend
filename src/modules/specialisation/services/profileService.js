@@ -3,11 +3,8 @@ const Profiles = models.profiles;
 
 const Op = models.sequelize.Op;
 
-console.log(Profiles);
-
-
 class ProfileService {
-
+    
     /**
      * @returns {Promise<Array<Model>>}
      */
@@ -15,7 +12,7 @@ class ProfileService {
         let profiles = await Profiles.findAll();
         return profiles;
     }
-
+    
 }
 
 if (typeof instance !== ProfileService) {

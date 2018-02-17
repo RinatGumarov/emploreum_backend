@@ -1,17 +1,48 @@
-
 const models = require('../../../core/models');
 const Op = models.sequelize.Op;
 const Users = models.users;
 const Roles = models.roles;
 
 const rolesService = require('./roleService');
-const mailSender = require('../utils/mailSender');
-const config = require('../../../utils/config');
-const logger = require('../../../utils/logger');
 
 let instance;
 
 class UsersService {
+
+    async getUserByCompanyId(companyId) {
+        let user = await Users.findOne({
+            include: [{
+                required: true,
+                attributes: [],
+                model: models.companies,
+                where: {
+                    id: {
+                        [Op.eq]: companyId
+                    }
+                }
+            }]
+        });
+
+        return user;
+    }
+
+    async getUserByEmployeeId(employeeId) {
+        let user = await Users.findOne({
+            include: [{
+                required: true,
+                attributes: [],
+                model: models.employees,
+                where: {
+                    id: {
+                        [Op.eq]: employeeId
+                    }
+                }
+            }]
+        });
+
+        return user;
+    }
+
 
     /**
      * @param email
@@ -26,30 +57,6 @@ class UsersService {
             },
         });
         return user === null;
-    }
-
-    /**
-     * @param email
-     * @returns {number}
-     */
-    sendCodeToUser(email) {
-        const code = this.generateCode();
-
-        const mailOptions = {
-            from: `${config.get('smtp')}`,
-            to: `${email}`,
-            subject: 'Verify email address',
-            text: `Your code is ${code}`
-        };
-
-        mailSender.sendEmail(mailOptions, (error, info) => {
-            if (error) {
-                logger.log(error);
-            } else {
-                logger.log('Email sent: ' + info.response);
-            }
-        });
-        return code;
     }
 
     /**
@@ -102,17 +109,6 @@ class UsersService {
     }
 
     /**
-     * @returns {number}
-     */
-    generateCode() {
-        let max = 1000000;
-        let min = 100000;
-        return 111111;
-        // return Math.floor(Math.random() * (max - min + 1)) + min
-    }
-
-
-    /**
      * @param user
      * @returns {Promise<*>}
      */
@@ -127,13 +123,16 @@ class UsersService {
      * @param step
      * @returns {Promise<Model>}
      */
-    async saveUser(email, password, roleName, step) {
-        let role = await rolesService.findByName(roleName);
+    async saveUser(email, password, roleName, status, encrypted_key, key_password, account_address) {
+        let role_id = (await rolesService.findByName(roleName)).id;
         let user = await Users.create({
-            email: email,
-            password: password,
-            status: step,
-            role_id: role.id
+            email,
+            password,
+            status,
+            role_id,
+            encrypted_key,
+            key_password,
+            account_address
         });
         return user;
     }
