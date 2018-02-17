@@ -7,7 +7,7 @@ console.log(Profiles);
 
 
 class ProfileService {
-
+    
     /**
      * @returns {Promise<Array<Model>>}
      */
@@ -15,7 +15,7 @@ class ProfileService {
         let profiles = await Profiles.findAll();
         return profiles;
     }
-
+    
 }
 
 if (typeof instance !== ProfileService) {

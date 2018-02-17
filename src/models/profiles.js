@@ -11,7 +11,12 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'profile_id',
             timestamps: false
         });
-
+    
+        profiles.hasMany(models.profile_skills, {
+            foreignKey: 'profile_id',
+            as: 'profile_skills_trough'
+        });
+        
         profiles.belongsToMany(models.companies, {
             through: 'company_profiles',
             foreignKey: 'profile_id',

@@ -4,7 +4,7 @@ const logger = require('../../../utils/logger');
 
 
 module.exports.func = (router) => {
-
+    
     router.post('/vacancy/create', async (req, res) => {
         try {
             let company = await companyService.findByUserId(req.user.id);
@@ -23,6 +23,7 @@ module.exports.func = (router) => {
                     logger.log(vacancyProfileSkill);
                 });
             });
+            
             return res.status(200).send({vacancy: vacancy});
         }
         catch (err) {
@@ -30,13 +31,44 @@ module.exports.func = (router) => {
             return res.status(500).send({error: err.message});
         }
     });
-
+    
+    /**
+     * получить все вакансии по компании
+     */
     router.get('/vacancy', async (req, res) => {
-        let company = await companyService.findByUserId(req.user.id);
-        let vacancies = await vacancyService.findAll(company.id);
-        res.send(vacancies);
+        try {
+            let company = await companyService.findByUserId(req.user.id);
+            let vacancies = await vacancyService.findAll(company.id);
+            res.send(vacancies);
+        } catch (err) {
+            logger.error(err.stack);
+            return res.status(500).send({error: err.message});
+        }
     });
-
+    
+    /**
+     * получить инфомарцию о вакансии
+     */
+    router.get('/vacancy/info/:id([0-9]+)', async (req, res) => {
+        try {
+            let vacancy = await vacancyService.findById(req.params.id);
+            res.send(vacancy);
+        } catch (err) {
+            logger.error(err.stack);
+            return res.status(500).send({error: err.message});
+        }
+    });
+    
+    router.get('/vacancy/:id([0-9]+)/skills', async (req, res) => {
+        try {
+            let skills = await vacancyService.getVacancyProfiles(req.params.id);
+            res.send(skills);
+        } catch (err) {
+            logger.error(err.stack);
+            return res.status(500).send({error: err.message});
+        }
+    });
+    
     return router;
-
+    
 };
