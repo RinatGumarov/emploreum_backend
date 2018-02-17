@@ -5,6 +5,7 @@ const Employees = models.employees;
 const Vacancies = models.vacancies;
 const Works = models.works;
 
+const Web3InitError = require('../../blockchain/utils/Web3Error');
 const Op = models.sequelize.Op;
 
 let instance;
