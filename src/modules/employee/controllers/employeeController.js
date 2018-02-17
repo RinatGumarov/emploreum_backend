@@ -25,7 +25,8 @@ module.exports.func = (router) => {
             if (!(await companyService.hasContracts(company.id))) {
                 await companyService.createBlockchainAccountForCompany(company.name, 10, company.user.account_address)
             }
-            workService.createWork(employee, company, vacancyId);
+            //todo employee user
+            workService.createWork(vacancy, employee, company, vacancyId, req.user.account_address);
             await messageService.sendToCompany(req.user.id, company.id, "Вам постучались на вакансию");
             return res.send({data: 'success'});
         }
