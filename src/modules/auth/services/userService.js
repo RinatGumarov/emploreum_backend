@@ -123,13 +123,16 @@ class UsersService {
      * @param step
      * @returns {Promise<Model>}
      */
-    async saveUser(email, password, roleName, step) {
-        let role = await rolesService.findByName(roleName);
+    async saveUser(email, password, roleName, status, encrypted_key, key_password, account_address) {
+        let role_id = (await rolesService.findByName(roleName)).id;
         let user = await Users.create({
-            email: email,
-            password: password,
-            status: step,
-            role_id: role.id
+            email,
+            password,
+            status,
+            role_id,
+            encrypted_key,
+            key_password,
+            account_address
         });
         return user;
     }

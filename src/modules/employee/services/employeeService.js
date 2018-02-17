@@ -1,7 +1,9 @@
 const models = require('../../../core/models');
+const Account = require('../../blockchain/utils/account');
+
 const Employees = models.employees;
 const Vacancies = models.vacancies;
-
+const Works = models.works;
 
 const Op = models.sequelize.Op;
 
@@ -55,7 +57,7 @@ class EmployeesService {
         });
         return employee;
     }
-    
+
     /**
      * Прикрепить работника к вакансии по нажатию "Откликнуться".
      * @param userId
@@ -65,6 +67,17 @@ class EmployeesService {
     async attachVacancy(userId, vacancyId) {
         let employee = await this.getByUserId(userId);
         await employee.addVacancy(vacancyId);
+    }
+    
+    async wasWorking(employeeId){
+        let works = await Works.find({
+            where: {
+                employee_id: {
+                    [Op.eq]: employeeId,
+                },
+            },
+        });
+        return works !== null;
     }
     
     /**
@@ -88,6 +101,24 @@ class EmployeesService {
         return vacancies;
         
     }
+    
+    async createBlockchainAccountForEmployee(firstName, lastName, rating, email, address){
+        let blockchainEmployee = {
+            firstName,
+            lastName,
+            email,
+            raiting: rating,
+            address,
+            positionCodes: [],
+            skillCodes: [],
+            skillToPosition: [],
+        };
+        await Account.registerEmployee(blockchainEmployee).then(result => {
+            if (!result)
+                throw new Web3InitError('Could not register employee in blockchain');
+        });
+    }
+    
 }
 
 if (typeof instance !== EmployeesService) {

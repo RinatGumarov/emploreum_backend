@@ -102,6 +102,10 @@ class VacanciesService {
         
         return vacancies;
     }
+
+    async findById(id){
+        return await Vacancies.findById(id);
+    }
     
     /**
      * найти все профили и скилы вакансии
@@ -146,7 +150,6 @@ class VacanciesService {
         });
         return profiles;
     }
-    
 }
 
 if (typeof instance !== VacanciesService) {
