@@ -32,7 +32,7 @@ class SkillService {
      * @returns {Promise<*>}
      */
     async getEmployeeSkills(userId) {
-        let employee = employeeService.getByUserId(userId);
+        let employee = await employeeService.getByUserId(userId);
         let employeeId = employee.id;
         let skills = await Skills.findAll({
             include: [{

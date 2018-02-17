@@ -13,7 +13,8 @@ const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
 
-    router.post('/vacancy/:vacancyId/add', async (req, res) => {
+
+    router.get('/vacancy/enroll/:vacancyId([0-9]+)', async (req, res) => {
         try {
             let vacancyId = req.params.vacancyId;
             let vacancy = await vacancyService.findById(vacancyId);

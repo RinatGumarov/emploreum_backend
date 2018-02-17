@@ -9,7 +9,7 @@ const Op = models.sequelize.Op;
 let instance;
 
 class CompaniesService {
-
+    
     /**
      * создание профиля для компании
      * @param companyId
@@ -21,7 +21,7 @@ class CompaniesService {
             profile_id: profileId
         });
     }
-
+    
     async save(userId) {
         return (await Companies.findOrCreate({
             where: {
@@ -34,7 +34,7 @@ class CompaniesService {
             }
         }))[0];
     }
-
+    
     async update(userId, params) {
         return await Companies.update(params, {
             where: {
@@ -42,7 +42,7 @@ class CompaniesService {
             }
         });
     }
-
+    
     async findByUserId(userId) {
         return await Companies.findOne({
             where: {
@@ -91,7 +91,7 @@ class CompaniesService {
 
     async findByVacancyId(vacancyId) {
         return await Companies.findOne({
-
+            
             include: [{
                 attributes: [],
                 required: true,
@@ -100,6 +100,16 @@ class CompaniesService {
                     id: {[Op.eq]: vacancyId}
                 }
             }]
+        })
+    }
+    
+    async findById(id) {
+        return await Companies.findOne({
+            where: {
+                id: {
+                    [Op.eq]: id,
+                },
+            },
         })
     }
 }
