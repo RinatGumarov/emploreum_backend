@@ -44,6 +44,19 @@ module.exports.func = (router) => {
         }
     });
     
+    /**
+     * получить инфу о компании по вокансии
+     */
+    router.get('/info/vacancy/:id([0-9]+)', async (req, res) => {
+        try {
+            let company = await companyService.findByVacancyId(req.params.id);
+            res.status(200).send({company: company});
+        } catch (err) {
+            logger.error(err);
+            res.status(500).send({error: err});
+        }
+    });
+    
     return router;
     
 };
