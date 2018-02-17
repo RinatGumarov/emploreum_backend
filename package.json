@@ -57,7 +57,7 @@
     "socket.io": "работа с сокетами"
   },
   "scripts": {
-    "start": "nodemon src/index.js",
+    "start": "node src/index.js",
     "debug": "node $NODE_DEBUG_OPTION src/index.js",
     "migrate:up": "cross-env NODE_ENV=production sequelize db:migrate",
     "migrate:down": "cross-env NODE_ENV=production sequelize db:migrate:undo",
