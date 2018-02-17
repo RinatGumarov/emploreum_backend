@@ -2,7 +2,7 @@ const companyService = require('../services/companyService');
 const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
-
+    
     /**
      *  получить компанию, зная сессию.
      */
@@ -15,22 +15,48 @@ module.exports.func = (router) => {
             } else {
                 res.status(400).send({error: `There is no company for user ${req.user.email}`});
             }
-        } catch(err){
+        } catch (err) {
             logger.error(err);
             res.status(500).send({error: err});
         }
     });
-
+    
     router.post('/update', async (req, res) => {
         try {
             let company = await companyService.update(req.user.id, req.body);
             res.status(200).send({success: true});
-        } catch(err){
+        } catch (err) {
             logger.error(err);
             res.status(500).send({error: err});
         }
     });
-
+    
+    /**
+     * получить инфу по коипании
+     */
+    router.get('/info/:id([0-9]+)', async (req, res) => {
+        try {
+            let company = await companyService.findById(req.params.id);
+            res.status(200).send({company: company});
+        } catch (err) {
+            logger.error(err);
+            res.status(500).send({error: err});
+        }
+    });
+    
+    /**
+     * получить инфу о компании по вокансии
+     */
+    router.get('/info/vacancy/:id([0-9]+)', async (req, res) => {
+        try {
+            let company = await companyService.findByVacancyId(req.params.id);
+            res.status(200).send({company: company});
+        } catch (err) {
+            logger.error(err);
+            res.status(500).send({error: err});
+        }
+    });
+    
     return router;
-
+    
 };
