@@ -30,7 +30,12 @@ module.exports.func = (router) => {
             res.status(500).send({error: err});
         }
     });
-    
+
+    router.get('/address', async (req, res) => {
+       return res.send(req.user.address);
+    });
+
+
     /**
      * получить инфу по коипании
      */

@@ -1,6 +1,8 @@
 const models = require('../../../core/models');
 const Companies = models.companies;
 const CompanyProfiles = models.company_profiles;
+const Account = require('../../blockchain/utils/account');
+const logger = require('../../../utils/logger');
 
 const Op = models.sequelize.Op;
 
@@ -50,7 +52,43 @@ class CompaniesService {
             },
         })
     }
-    
+
+    async findByUserIdWithUser(id) {
+        return await Companies.findOne({
+            include: [{
+                model: models.users,
+            }],
+            where: {
+                id: {
+                    [Op.eq]: id,
+                },
+            },
+        })
+    }
+
+    async hasContracts(companyId) {
+        let works = await models.works.find({
+            where: {
+                company_id: {
+                    [Op.eq]: companyId,
+                },
+            },
+        });
+        return works !== null;
+    }
+
+    async createBlockchainAccountForCompany(name, rating, address) {
+        let blockchainCompany = {
+            name,
+            raiting: rating,
+            address,
+        };
+        await Account.registerCompany(blockchainCompany).then(result => {
+            if (!result)
+                throw new Web3InitError('Could not register company in blockchain');
+        });
+    }
+
     async findByVacancyId(vacancyId) {
         return await Companies.findOne({
             

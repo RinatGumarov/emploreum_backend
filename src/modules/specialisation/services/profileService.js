@@ -3,9 +3,6 @@ const Profiles = models.profiles;
 
 const Op = models.sequelize.Op;
 
-console.log(Profiles);
-
-
 class ProfileService {
     
     /**

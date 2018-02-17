@@ -10,14 +10,27 @@ module.exports.func = (router) => {
     
     router.get('/vacancy/enroll/:vacancyId([0-9]+)', async (req, res) => {
         try {
-            await employeeService.attachVacancy(req.user.id, req.params.vacancyId);
-            let company = await companyService.findByVacancyId(req.params.vacancyId);
+            let vacancyId = req.params.vacancyId;
+            let vacancy = await vacancyService.findById(vacancyId);
+            let employee = await employeeService.getByUserId(req.user.id);
+            let company = await companyService.findByUserIdWithUser(req.body.companyId);
+            await employeeService.attachVacancy(employee, vacancyId);
+            // первоначальное создание контракта в блокчайн для работника если у него еше нет контракта
+            if (!(await employeeService.wasWorking(employee.id))) {
+                employeeService.createBlockchainAccountForEmployee(
+                    employee.name, employee.name, 10, req.user.email, req.user.account_address);
+            }
+            // создание контракта для компании если его еше нет в блокчайн
+            if (!(await companyService.hasContracts(company.id))) {
+                companyService.createBlockchainAccountForCompany(company.name, 10, company.user.account_address)
+            }
+            workService.createWork(employee, company, vacancyId);
             await messageService.sendToCompany(req.user.id, company.id, "Вам постучались на вакансию");
-            res.send({data: 'success'});
+            return res.send({data: 'success'});
         }
         catch (err) {
             logger.error(err.message);
-            res.status(500).send({error: 'Could not attach vacancy'});
+            return res.status(500).send({error: 'Could not attach vacancy'});
         }
     });
     
@@ -37,6 +50,10 @@ module.exports.func = (router) => {
         res.json(employeeSkills);
     });
     
+    router.get('/address', async (req, res) => {
+        return res.send(req.user.account_address);
+    });
+    
     /**
      * вакансии на котороые откликнулся чувак
      */
@@ -53,7 +70,8 @@ module.exports.func = (router) => {
     
     router.get('/contracts/current', async (req, res) => {
         try {
-            return res.send([]);
+            let employee = await employeeService.getByUserId(req.user.id);
+            return res.send(await workService.findAllByEmployeeId(employee.id));
         }
         catch (err) {
             logger.error(err.trace);
