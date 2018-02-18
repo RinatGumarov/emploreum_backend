@@ -27,7 +27,7 @@ class WorkService {
     //toDo
     async createWork(employee, company, vacancyId){
         let today = new Date();
-        
+
         let workData = {
             vacancy_id: vacancyId,
             begin_date: today,

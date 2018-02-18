@@ -1,10 +1,9 @@
-const logger = require('../../../utils/logger');
+const logger = require("../../../utils/logger");
 const utilConfig = require("../../../utils/config");
 const config = utilConfig.get("web3");
 const contractUtil = require("./contract");
 let instance;
 
-//const addressen = await zusatzaufgabe.addressen.call(0);
 
 class Work {
 
@@ -17,11 +16,12 @@ class Work {
     createWork(work) {
         let address = config.main_contract_path;
         let gas = config.create_contract_gas_count;
-        let contractInfo = require('./abi/Main.json');
+        let contractInfo = require("./abi/Main.json");
 
         return contractUtil.readContractFromAddress(contractInfo, address).then(contract => {
             return contract.newContract(work.skillCodes, work.skillToPosition, work.startDate, work.endDate,
-                                        work.empoloyee, work.company, work.weekPayment, {gas});
+                                        work.empoloyee, work.company, work.weekPayment, {gas}
+            );
         }).then(data => {
             logger.log(`contract creation complite!`);
             logger.log(data);
@@ -31,6 +31,10 @@ class Work {
             logger.error(err);
             return false
         });
+    }
+
+    sendWeekSalary(workAddress) {
+
     }
 }
 

@@ -1,6 +1,7 @@
 {
-  "main_contract_path": "0x99Ac2ba5891648C108ccfe16FA778840Db4A1d15",
+  "main_contract_path": "0x0e9d6A77B48326A96Ec582eE625A12104b3e2280",
   "create_contract_gas_count": 1400000,
+  "gasPrice": 1000000000,
   "defaultAccount": 1,
   "account_password": "password",
   "unlock_time": 1000

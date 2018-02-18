@@ -1,13 +1,13 @@
-const contractService = require('truffle-contract');
+const contractService = require("truffle-contract");
 const web3 = require("./web3");
 const utilConfig = require("../../../utils/config");
 const config = utilConfig.get("web3");
-const logger = require('../../../utils/logger');
-const Web3InitError = require('./Web3Error');
-const accountUtil = require('./accountUtil');
+const logger = require("../../../utils/logger");
+const Web3InitError = require("./Web3Error");
+const accountUtil = require("./accountUtil");
 
 let instance;
-let gasPrice = web3.utils.toWei('1', 'gwei');
+let gasPrice = web3.utils.toWei("1", "gwei");
 
 var initContract = function (contractInfo) {
     if (!web3)
@@ -15,6 +15,14 @@ var initContract = function (contractInfo) {
 
     let contract = contractService(contractInfo);
     contract.setProvider(web3.currentProvider);
+
+    if (typeof contract.currentProvider.sendAsync !== "function") {
+        contract.currentProvider.sendAsync = function () {
+            return contract.currentProvider.send.apply(
+                contract.currentProvider, arguments
+            );
+        };
+    }
 
     return accountUtil.unlockMainAccount(contract);
 }
