@@ -1,6 +1,6 @@
 const models = require('../../../core/models');
 const Works = models.works;
-// const blockchainWork = require('../../blockchain/utils/work');
+const blockchainWork = require('../../blockchain/utils/work');
 const logger = require('../../../utils/logger');
 
 const Op = models.sequelize.Op;
@@ -25,7 +25,7 @@ class WorkService {
     }
 
     //toDo
-    async createWork(employee, company, vacancyId){
+    async createWork(vacancy, employee, company, vacancyId, account_address){
         let today = new Date();
         
         let workData = {
@@ -39,17 +39,17 @@ class WorkService {
         let blockchainWorkData = {
             skillCodes: [],
             skillToPosition: [],
-            startDate: today,
+            startDate: 1518898463,
             endDate: workData.end_date,
-            empoloyee: req.user.account_address,
+            empoloyee: account_address,
             company: company.user.account_address,
-            weekPayment: vacancy.pricePerWeek,
+            weekPayment: vacancy.week_payment,
         };
         await blockchainWork.createWork(blockchainWorkData).then(result => {
             if (!result)
                 throw new Web3InitError('Could not registrate company in blockchain');
         });
-        save(workData, employee);
+        await this.save(workData, employee);
     }
 
 }
