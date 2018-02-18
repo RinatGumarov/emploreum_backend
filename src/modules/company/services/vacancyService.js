@@ -10,6 +10,7 @@ const VacancyProfileSkills = models.vacancy_profile_skills;
 const queryScanner = require('../../../core/queryScanner');
 const employeeService = require('../../employee/services/employeeService');
 const messageService = require('../../message/services/messageService');
+const skillService = require('../../specialisation/services/skillService');
 
 const Op = models.sequelize.Op;
 
@@ -83,13 +84,11 @@ class VacanciesService {
      * Добавить обработку в скрипте array_positions
      * для выявления сходства направления скила работника и направления
      * скила вакансии
-     * @param skills
      * @param userId
      * @returns {Promise<*>}
      */
-    async getRecommended(skills, userId) {
-        let employee = await employeeService.getByUserId(userId);
-        let employeeId = employee.id;
+    async getRecommended(userId) {
+        let skills = await skillService.getEmployeeSkills(userId);
         let skillsIds = skills.map((skill) => {
             return skill.id
         });
@@ -181,14 +180,14 @@ class VacanciesService {
     async rejectCandidatesByVacancyId(vacancyId, userId) {
         let employee = await employeeService.getByUserId(userId);
         let employeeId = employee.id;
-        
         let vacancyEmployees = await VacancyEmployees.destroy({
             where: {
                 employee_id: {[Op.eq]: employeeId},
                 vacancy_id: {[Op.eq]: vacancyId}
             }
         });
-        
+        let company = await companyService.findByVacancyId(vacancyId);
+        await messageService.sendToEmployee(company.user_id, userId, "вам отклонили в вакансии");
         return true;
     }
     

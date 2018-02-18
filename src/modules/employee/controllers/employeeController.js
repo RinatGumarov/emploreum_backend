@@ -22,8 +22,7 @@ module.exports.func = (router) => {
     });
 
     router.get('/vacancy/recommended', async (req, res) => {
-        let employeeSkills = await skillService.getEmployeeSkills(req.user.id);
-        let recommendedVacancies = await vacancyService.getRecommended(employeeSkills, req.user.id);
+        let recommendedVacancies = await vacancyService.getRecommended(req.user.id);
         res.json(recommendedVacancies);
     });
 
