@@ -148,9 +148,10 @@ class VacanciesService {
         return profiles;
     }
     
-    async getCandidatesByVacancyId(vacancyId){
+    async getCandidatesByVacancyId(vacancyId) {
         let candidates = await Employees.findAll({
-            include: [{
+            
+            include: [models.users, {
                 attributes: [],
                 required: true,
                 model: models.vacancies,
