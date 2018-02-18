@@ -68,6 +68,13 @@ module.exports.func = (router) => {
             return res.status(500).send({error: err.message});
         }
     });
+
+    /**
+     * Только для работника
+     */
+    router.get('/vacancy/available', (req, res) => {
+
+    });
     
     
     return router;

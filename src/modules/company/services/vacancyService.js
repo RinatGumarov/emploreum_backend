@@ -146,6 +146,11 @@ class VacanciesService {
         });
         return profiles;
     }
+
+    async isAvailable(vacancyId, employee){
+        let vacancy = await Vacancies.findById(vacancyId);
+        return vacancy.getEmployees().includes(employee)
+    }
     
 }
 
