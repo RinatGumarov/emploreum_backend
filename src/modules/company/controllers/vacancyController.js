@@ -53,6 +53,10 @@ module.exports.func = (router) => {
     router.get('/vacancy/info/:id([0-9]+)', async (req, res) => {
         try {
             let vacancy = await vacancyService.findById(req.params.id);
+            if (req.user.role === "EMPLOYEE") {
+                let available = await vacancyService.isAvailable(req.params.id, req.user.id);
+                vacancy.setDataValue("available", available);
+            }
             res.send(vacancy);
         } catch (err) {
             logger.error(err.stack);
@@ -69,15 +73,17 @@ module.exports.func = (router) => {
             return res.status(500).send({error: err.message});
         }
     });
-
-    /**
-     * Только для работника
-     */
-    router.get('/vacancy/available', async (req, res) => {
-        let employee = await employeeService.getByUserId(req.user.id);
-        res.send(await vacancyService.isAvailable(req.query.vacancyId, employee.id));
-    });
     
+    
+    router.get('/vacancy/:id([0-9]+)/candidates', async (req, res) => {
+        try {
+            let candidates = await vacancyService.getCandidatesByVacancyId(req.params.id);
+            res.send(candidates);
+        } catch (err) {
+            logger.error(err.stack);
+            return res.status(500).send({error: err.message});
+        }
+    });
     
     return router;
     

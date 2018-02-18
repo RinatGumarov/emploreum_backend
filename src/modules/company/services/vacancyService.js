@@ -1,6 +1,7 @@
 const models = require('../../../core/models');
 const Vacancies = models.vacancies;
 const Companies = models.companies;
+const Employees = models.employees;
 const ProfileSkills = models.profile_skills;
 const Profiles = models.profiles;
 const VacancyProfileSkills = models.vacancy_profile_skills;
@@ -146,8 +147,24 @@ class VacanciesService {
         });
         return profiles;
     }
-
-    async isAvailable(vacancyId, employeeId){
+    
+    async getCandidatesByVacancyId(vacancyId){
+        let candidates = await Employees.findAll({
+            include: [{
+                attributes: [],
+                required: true,
+                model: models.vacancies,
+                where: {
+                    id: {[Op.eq]: vacancyId}
+                }
+            }]
+        });
+        return candidates
+    }
+    
+    async isAvailable(vacancyId, userId) {
+        let employee = await employeeService.getByUserId(userId);
+        let employeeId = employee.id;
         let vacancy = await Vacancies.findById(vacancyId);
         let result = await Vacancies.findOne({
             include: [{
@@ -159,13 +176,14 @@ class VacanciesService {
                 }
             }],
             where: {
-                id : {
+                id: {
                     [Op.eq]: vacancyId,
                 }
             }
         });
         return result === null;
     }
+    
     
 }
 
