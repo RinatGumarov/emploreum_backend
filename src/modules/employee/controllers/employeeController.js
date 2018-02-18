@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const skillService = require('../../specialisation/services/skillService');
 const cvService = require('../services/cvService');
 const employeeService = require('../services/employeeService');
@@ -6,28 +7,40 @@ const messageService = require('../../message/services/messageService');
 const vacancyService = require('../../company/services/vacancyService');
 const workService = require('../../work/services/workService');
 const logger = require('../../../utils/logger');
+=======
+const skillService = require("../../specialisation/services/skillService");
+const cvService = require("../services/cvService");
+const employeeService = require("../services/employeeService");
+const companyService = require("../../company/services/companyService");
+const messageService = require("../../message/services/messageService");
+const vacancyService = require("../../company/services/vacancyService");
+const workService = require("../services/workService");
+const logger = require("../../../utils/logger");
+>>>>>>> web3
 
 module.exports.func = (router) => {
-    
-    router.get('/vacancy/enroll/:vacancyId([0-9]+)', async (req, res) => {
+
+    router.get("/vacancy/enroll/:vacancyId([0-9]+)", async (req, res) => {
         try {
             let vacancyId = req.params.vacancyId;
             await employeeService.attachVacancy(req.user.id, vacancyId);
             await messageService.sendToCompany(req.user.id, company.id, "Вам постучались на вакансию");
-            return res.send({data: 'success'});
+
+            return res.send({data: "success"});
         }
         catch (err) {
             logger.error(err.message);
-            return res.status(500).send({error: 'Could not attach vacancy'});
+            return res.status(500).send({error: "Could not attach vacancy"});
         }
     });
-    
-    router.get('/vacancy/recommended', async (req, res) => {
+
+    router.get("/vacancy/recommended", async (req, res) => {
         let employeeSkills = await skillService.getEmployeeSkills(req.user.id);
         let recommendedVacancies = await vacancyService.getRecommended(employeeSkills, req.user.id);
         res.json(recommendedVacancies);
     });
 
+<<<<<<< HEAD
     router.get('/info/:employeeUserId', async (req, res) => {
         let employee = await employeeService.getByUserId(req.params.employeeUserId);
         res.json(employee);
@@ -35,38 +48,47 @@ module.exports.func = (router) => {
 
     router.get('/skills/:employeeUserId', async (req, res) => {
         let employeeSkills = await cvService.getEmployeeSkillsWithProfiles(req.params.employeeUserId);
+=======
+    router.get("/info", async (req, res) => {
+        let employee = await employeeService.getByUserId(req.user.id);
+        res.json(employee);
+    });
+
+    router.get("/skills", async (req, res) => {
+        let employeeSkills = await cvService.getEmployeeSkillsWithProfiles(req.user.id);
+>>>>>>> web3
         res.json(employeeSkills);
     });
-    
-    router.get('/address', async (req, res) => {
+
+    router.get("/address", async (req, res) => {
         return res.send(req.user.account_address);
     });
-    
+
     /**
      * вакансии на котороые откликнулся чувак
      */
-    router.get('/contracts/awaited', async (req, res) => {
+    router.get("/contracts/awaited", async (req, res) => {
         try {
             let contracts = await employeeService.getAwaitedContracts(req.user.id);
             return res.send(contracts);
         }
         catch (err) {
             logger.error(err.trace);
-            return res.status(500).send({error: 'Could not get awaited contracts for the employee'});
+            return res.status(500).send({error: "Could not get awaited contracts for the employee"});
         }
     });
-    
-    router.get('/contracts/current', async (req, res) => {
+
+    router.get("/contracts/current", async (req, res) => {
         try {
             let employee = await employeeService.getByUserId(req.user.id);
             return res.send(await workService.findAllByEmployeeId(employee.id));
         }
         catch (err) {
             logger.error(err);
-            return res.status(500).send({error: 'Could not get current works for the employee'});
+            return res.status(500).send({error: "Could not get current works for the employee"});
         }
     });
-    
+
     return router;
 };
 
