@@ -41,14 +41,14 @@ module.exports.func = (router) => {
         let recommendedVacancies = await vacancyService.getRecommended(employeeSkills, req.user.id);
         res.json(recommendedVacancies);
     });
-    
-    router.get('/info', async (req, res) => {
-        let employee = await employeeService.getByUserId(req.user.id);
+
+    router.get('/info/:employeeUserId', async (req, res) => {
+        let employee = await employeeService.getByUserId(req.params.employeeUserId);
         res.json(employee);
     });
-    
-    router.get('/skills', async (req, res) => {
-        let employeeSkills = await cvService.getEmployeeSkillsWithProfiles(req.user.id);
+
+    router.get('/skills/:employeeUserId', async (req, res) => {
+        let employeeSkills = await cvService.getEmployeeSkillsWithProfiles(req.params.employeeUserId);
         res.json(employeeSkills);
     });
     

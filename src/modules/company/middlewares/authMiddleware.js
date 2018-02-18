@@ -4,5 +4,13 @@ module.exports.func = (router) => {
 
     router.all('*', authMiddleware);
 
+    router.get('/vacancy/available', (req, res, next) => {
+        if (req.user.role === 'EMPLOYEE')
+            return next();
+        else
+            return res.status(403).send({error: 'only for employee'});
+
+    });
+
     return router;
 };

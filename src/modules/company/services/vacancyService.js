@@ -150,6 +150,26 @@ class VacanciesService {
         });
         return profiles;
     }
+
+    async isAvailable(vacancyId, employeeId){
+        let vacancy = await Vacancies.findById(vacancyId);
+        let result = await Vacancies.findOne({
+            include: [{
+                model: models.employees,
+                where: {
+                    id: {
+                        [Op.eq]: employeeId,
+                    }
+                }
+            }],
+            where: {
+                id : {
+                    [Op.eq]: vacancyId,
+                }
+            }
+        });
+        return result === null;
+    }
 }
 
 if (typeof instance !== VacanciesService) {
