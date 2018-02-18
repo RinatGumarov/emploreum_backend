@@ -1,6 +1,6 @@
 const companyService = require('../services/companyService');
 const vacancyService = require('../services/vacancyService');
-const employeeService = require('../../employee/services/employeeService');
+const messageService = require('../../message/services/messageService');
 const logger = require('../../../utils/logger');
 
 
@@ -79,6 +79,21 @@ module.exports.func = (router) => {
         try {
             let candidates = await vacancyService.getCandidatesByVacancyId(req.params.id);
             res.send(candidates);
+        } catch (err) {
+            logger.error(err.stack);
+            return res.status(500).send({error: err.message});
+        }
+    });
+    
+    /**
+     * отклонить постучавшегося кандидата
+     */
+    router.get('/vacancy/:vacancyId([0-9]+)/candidates/:candidatesId([0-9]+)/reject', async (req, res) => {
+        try {
+            await vacancyService.rejectCandidatesByVacancyId(req.params.vacancyId, req.params.candidatesId);
+            let company = await companyService.findByVacancyId(req.params.vacancyId);
+            await messageService.sendToEmployee(company.user_id, req.params.candidatesId, "вам отклонили в вакансии");
+            res.send({data: "success"});
         } catch (err) {
             logger.error(err.stack);
             return res.status(500).send({error: err.message});

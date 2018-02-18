@@ -2,12 +2,15 @@ const models = require('../../../core/models');
 const Vacancies = models.vacancies;
 const Companies = models.companies;
 const Employees = models.employees;
+const VacancyEmployees = models.vacancy_employees;
 const ProfileSkills = models.profile_skills;
 const Profiles = models.profiles;
 const VacancyProfileSkills = models.vacancy_profile_skills;
 
 const queryScanner = require('../../../core/queryScanner');
 const employeeService = require('../../employee/services/employeeService');
+const messageService = require('../../message/services/messageService');
+
 const Op = models.sequelize.Op;
 
 let instance;
@@ -30,6 +33,7 @@ class VacanciesService {
             }
         });
     }
+    
     
     async addProfileSkillToVacancy(options) {
         return await VacancyProfileSkills.create(
@@ -148,6 +152,11 @@ class VacanciesService {
         return profiles;
     }
     
+    /**
+     * получить всех кто постучался
+     * @param vacancyId
+     * @returns {Promise<*>}
+     */
     async getCandidatesByVacancyId(vacancyId) {
         let candidates = await Employees.findAll({
             
@@ -163,10 +172,35 @@ class VacanciesService {
         return candidates
     }
     
+    /**
+     * отклонить постучавщегося кандидата
+     * @param vacancyId
+     * @param userId
+     * @returns {Promise<boolean>}
+     */
+    async rejectCandidatesByVacancyId(vacancyId, userId) {
+        let employee = await employeeService.getByUserId(userId);
+        let employeeId = employee.id;
+        
+        let vacancyEmployees = await VacancyEmployees.destroy({
+            where: {
+                employee_id: {[Op.eq]: employeeId},
+                vacancy_id: {[Op.eq]: vacancyId}
+            }
+        });
+        
+        return true;
+    }
+    
+    /**
+     * может ли данный емплой постучаться на вакансию
+     * @param vacancyId
+     * @param userId
+     * @returns {Promise<boolean>}
+     */
     async isAvailable(vacancyId, userId) {
         let employee = await employeeService.getByUserId(userId);
         let employeeId = employee.id;
-        let vacancy = await Vacancies.findById(vacancyId);
         let result = await Vacancies.findOne({
             include: [{
                 model: models.employees,
