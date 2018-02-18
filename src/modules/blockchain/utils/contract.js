@@ -13,6 +13,7 @@ var initContract = function (contractInfo) {
     if (!web3)
         throw new Web3InitError();
 
+
     let contract = contractService(contractInfo);
     contract.setProvider(web3.currentProvider);
 

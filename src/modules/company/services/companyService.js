@@ -5,7 +5,7 @@ const Account = require('../../blockchain/utils/account');
 const logger = require('../../../utils/logger');
 
 const Op = models.sequelize.Op;
-
+const Web3InitError = require("../../blockchain/utils/Web3Error");
 let instance;
 
 class CompaniesService {
@@ -52,7 +52,7 @@ class CompaniesService {
             },
         })
     }
-
+    
     async findByUserIdWithUser(id) {
         return await Companies.findOne({
             include: [{
@@ -65,7 +65,7 @@ class CompaniesService {
             },
         })
     }
-
+    
     async hasContracts(companyId) {
         let works = await models.works.find({
             where: {
@@ -76,7 +76,7 @@ class CompaniesService {
         });
         return works !== null;
     }
-
+    
     async createBlockchainAccountForCompany(name, rating, address) {
         let blockchainCompany = {
             name,
@@ -88,11 +88,10 @@ class CompaniesService {
                 throw new Web3InitError('Could not register company in blockchain');
         });
     }
-
+    
     async findByVacancyId(vacancyId) {
         return await Companies.findOne({
-            
-            include: [{
+            include: [models.users, {
                 attributes: [],
                 required: true,
                 model: models.vacancies,

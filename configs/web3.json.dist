@@ -5,4 +5,6 @@
   "defaultAccount": 1,
   "account_password": "password",
   "unlock_time": 1000
+  "host": "http://89.223.28.86",
+  "port": "8545"
 }
