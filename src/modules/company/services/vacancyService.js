@@ -147,9 +147,24 @@ class VacanciesService {
         return profiles;
     }
 
-    async isAvailable(vacancyId, employee){
+    async isAvailable(vacancyId, employeeId){
         let vacancy = await Vacancies.findById(vacancyId);
-        return vacancy.getEmployees().includes(employee)
+        let result = await Vacancies.findOne({
+            include: [{
+                model: models.employees,
+                where: {
+                    id: {
+                        [Op.eq]: employeeId,
+                    }
+                }
+            }],
+            where: {
+                id : {
+                    [Op.eq]: vacancyId,
+                }
+            }
+        });
+        return result === null;
     }
     
 }

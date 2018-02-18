@@ -1,5 +1,6 @@
 const companyService = require('../services/companyService');
 const vacancyService = require('../services/vacancyService');
+const employeeService = require('../../employee/services/employeeService');
 const logger = require('../../../utils/logger');
 
 
@@ -72,8 +73,9 @@ module.exports.func = (router) => {
     /**
      * Только для работника
      */
-    router.get('/vacancy/available', (req, res) => {
-
+    router.get('/vacancy/available', async (req, res) => {
+        let employee = await employeeService.getByUserId(req.user.id);
+        res.send(await vacancyService.isAvailable(req.query.vacancyId, employee.id));
     });
     
     
