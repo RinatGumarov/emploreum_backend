@@ -87,7 +87,7 @@ module.exports.func = (router) => {
     /**
      * отклонить постучавшегося кандидата
      */
-    router.get('/vacancy/:vacancyId([0-9]+)/candidates/:candidatesId([0-9]+)/reject', async (req, res) => {
+    router.get('/vacancy/:vacancyId([0-9]+)/candidate/:candidatesId([0-9]+)/reject', async (req, res) => {
         try {
             await vacancyService.rejectCandidatesByVacancyId(req.params.vacancyId, req.params.candidatesId);
             res.send({data: "success"});
