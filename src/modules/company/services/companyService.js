@@ -80,12 +80,13 @@ class CompaniesService {
     async createBlockchainAccountForCompany(name, rating, address) {
         let blockchainCompany = {
             name,
-            raiting: rating,
+            rating,
             address,
         };
-        await Account.registerCompany(blockchainCompany).then(result => {
+        let contract = await Account.registerCompany(blockchainCompany).then(result => {
             if (!result)
                 throw new Web3InitError('Could not register company in blockchain');
+            return result;
         });
     }
     
@@ -99,7 +100,7 @@ class CompaniesService {
                     id: {[Op.eq]: vacancyId}
                 }
             }]
-        })
+        });
     }
     
     async findById(id) {

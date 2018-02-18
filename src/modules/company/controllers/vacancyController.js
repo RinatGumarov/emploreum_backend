@@ -71,7 +71,7 @@ module.exports.func = (router) => {
     });
 
     /**
-     * Только для работника
+     * Только для работника. Узнать может ли он постучаться на вакансию.
      */
     router.get('/vacancy/available', async (req, res) => {
         let employee = await employeeService.getByUserId(req.user.id);

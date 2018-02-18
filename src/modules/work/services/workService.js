@@ -1,6 +1,7 @@
 const models = require('../../../core/models');
 const Works = models.works;
 const blockchainWork = require('../../blockchain/utils/work');
+const Web3InitError = require('../../blockchain/utils/Web3Error');
 const logger = require('../../../utils/logger');
 
 const Op = models.sequelize.Op;
@@ -9,7 +10,7 @@ let instance;
 
 class WorkService {
 
-    async save(workData, employee) {
+    async save(workData) {
         return await Works.build(workData).save();
     }
 
@@ -25,13 +26,14 @@ class WorkService {
     }
 
     //toDo
-    async createWork(vacancy, employee, company, vacancyId, account_address){
-        let today = new Date();
-        
+    async createWork(vacancy, employee, company, account_address) {
+        let begin = new Date();
+        let end = new Date().setMonth(begin.getMonth() + vacancy.duration);
+
         let workData = {
-            vacancy_id: vacancyId,
-            begin_date: today,
-            end_date: 1519827609,
+            vacancy_id: vacancy.id,
+            begin_date: begin,
+            end_date: end,
             employee_id: employee.id,
             company_id: company.id,
             status: 0,
@@ -39,17 +41,18 @@ class WorkService {
         let blockchainWorkData = {
             skillCodes: [],
             skillToPosition: [],
-            startDate: 1518898463,
-            endDate: workData.end_date,
-            empoloyee: account_address,
+            startDate: Math.floor(workData.begin_date / 1000),
+            endDate: Math.floor(workData.end_date / 1000),
+            employee: account_address,
             company: company.user.account_address,
             weekPayment: vacancy.week_payment,
         };
-        await blockchainWork.createWork(blockchainWorkData).then(result => {
+        let contract = await blockchainWork.createWork(blockchainWorkData).then(result => {
             if (!result)
                 throw new Web3InitError('Could not registrate company in blockchain');
+            return result;
         });
-        await this.save(workData, employee);
+        await this.save(workData);
     }
 
 }

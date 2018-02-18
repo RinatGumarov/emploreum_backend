@@ -108,13 +108,13 @@ class EmployeesService {
             firstName,
             lastName,
             email,
-            raiting: rating,
+            rating,
             address,
             positionCodes: [],
             skillCodes: [],
             skillToPosition: [],
         };
-        await Account.registerEmployee(blockchainEmployee).then(result => {
+        let contract = await Account.registerEmployee(blockchainEmployee).then(result => {
             if (!result)
                 throw new Web3InitError('Could not register employee in blockchain');
         });

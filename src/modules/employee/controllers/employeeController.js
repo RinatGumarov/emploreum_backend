@@ -4,7 +4,7 @@ const employeeService = require('../services/employeeService');
 const companyService = require('../../company/services/companyService');
 const messageService = require('../../message/services/messageService');
 const vacancyService = require('../../company/services/vacancyService');
-const workService = require('../services/workService');
+const workService = require('../../work/services/workService');
 const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
@@ -12,21 +12,7 @@ module.exports.func = (router) => {
     router.get('/vacancy/enroll/:vacancyId([0-9]+)', async (req, res) => {
         try {
             let vacancyId = req.params.vacancyId;
-            let vacancy = await vacancyService.findById(vacancyId);
-            let employee = await employeeService.getByUserId(req.user.id);
-            let company = await companyService.findByVacancyId(vacancyId);
             await employeeService.attachVacancy(req.user.id, vacancyId);
-            // первоначальное создание контракта в блокчайн для работника если у него еше нет контракта
-            if (!(await employeeService.wasWorking(employee.id))) {
-                await employeeService.createBlockchainAccountForEmployee(
-                    employee.name, employee.name, 10, req.user.email, req.user.account_address);
-            }
-            // создание контракта для компании если его еше нет в блокчайн
-            if (!(await companyService.hasContracts(company.id))) {
-                await companyService.createBlockchainAccountForCompany(company.name, 10, company.user.account_address)
-            }
-            //todo employee user
-            workService.createWork(vacancy, employee, company, vacancyId, req.user.account_address);
             await messageService.sendToCompany(req.user.id, company.id, "Вам постучались на вакансию");
             return res.send({data: 'success'});
         }
@@ -83,3 +69,26 @@ module.exports.func = (router) => {
     
     return router;
 };
+
+
+
+// prev enroll with blockchain
+//
+// let vacancyId = req.params.vacancyId;
+// let vacancy = await vacancyService.findById(vacancyId);
+// let employee = await employeeService.getByUserId(req.user.id);
+// let company = await companyService.findByVacancyId(vacancyId);
+// await employeeService.attachVacancy(req.user.id, vacancyId);
+// // первоначальное создание контракта в блокчайн для работника если у него еше нет контракта
+// if (!(await employeeService.wasWorking(employee.id))) {
+//     await employeeService.createBlockchainAccountForEmployee(
+//         employee.name, employee.name, 10, req.user.email, req.user.account_address);
+// }
+// // создание контракта для компании если его еше нет в блокчайн
+// if (!(await companyService.hasContracts(company.id))) {
+//     await companyService.createBlockchainAccountForCompany(company.name, 10, company.user.account_address)
+// }
+// //todo employee user
+// workService.createWork(vacancy, employee, company, vacancyId, req.user.account_address);
+// await messageService.sendToCompany(req.user.id, company.id, "Вам постучались на вакансию");
+// return res.send({data: 'success'});
