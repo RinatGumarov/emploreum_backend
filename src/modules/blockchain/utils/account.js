@@ -2,7 +2,7 @@ const contractUtil = require("./contract");
 const web3 = require("./web3");
 const utilConfig = require("../../../utils/config");
 const config = utilConfig.get("web3");
-const logger = require('../../../utils/logger');
+const logger = require("../../../utils/logger");
 
 let instance;
 
@@ -60,62 +60,51 @@ class RegistrationUtil {
         return web3.eth.accounts.signTransaction(tx, privateKey)
             .then(data => {
                 return web3.eth.sendSignedTransaction(data.rawTransaction)
-                    .once('transactionHash', function (hash) {
+                    .once("transactionHash", function (hash) {
                         console.log(hash);
                         callback(hash)
                     })
-                    .on('receipt', console.log);
+                    .on("receipt", console.log);
             });
 
     }
 
     /**
-     *  Register employee in blockchain by main contract.
+     * Register employee in blockchain.
      *
      * @param employee
-     * @returns {Promise.<boolean>}
+     * @returns {Promise.<Contract instance || false>}
      */
-    async registerEmployee(employee) {
-        let address = config.main_contract_path;
-        let gas = config.create_contract_gas_count;
-        let contractInfo = require('./abi/Main.json');
+    registerEmployee(employee) {
+        let gas = config.employee_create_gas_amount;
+        var contractInfo = require("./abi/Employee.json");
 
-        // TODO check Bulat metodology
-
-        try {
-            const data = await contractUtil.readContractFromAddress(contractInfo, address).then(contract => {
-                contract.newEmployee(employee.firstName, employee.lastName, employee.email, employee.raiting,
-                                     employee.address, employee.positionCodes, employee.skillCodes,
-                                     employee.skillToPosition, {gas});
-
-            });
-            logger.log(`employee registeration complite!`);
-            logger.log(`transaction hash: ${data.tx}`);
-            return true;
-        } catch (e) {
+        return contractUtil.createContract(contractInfo, gas, employee.firstName, employee.lastName, employee.email,
+                                           employee.address
+        ).then(contract => {
+            logger.log(`Employee contract created: ${contract}`);
+            return contract;
+        }).catch(err => {
             logger.error(err);
-            return false;
-        }
+            return false
+        });
     }
 
     /**
-     *  Register company in blockchain by main contract.
+     *  Register company in blockchain.
      *
      * @param company
-     * @returns {Promise.<TResult>}
+     * @returns {Promise.<Contract instance || false>}
      */
     registerCompany(company) {
-        let address = config.main_contract_path;
-        let gas = config.create_contract_gas_count;
-        let contractInfo = require('./abi/Main.json');
+        let gas = config.employee_create_gas_amount;
+        var contractInfo = require("./abi/Company.json");
 
-        return contractUtil.readContractFromAddress(contractInfo, address).then(contract => {
-            return contract.newCompany(company.name, company.raiting, company.address, {gas})
-        }).then(data => {
-            logger.log(`company registeration complite!`);
-            logger.log(`'transaction hash: ', ${data.tx}`);
-            return true
-        }).catch(err => {
+        return contractUtil.createContract(contractInfo, gas, company.name, company.raiting, company.address).then(
+            contract => {
+                logger.log(`Company contract created: ${contract}`);
+                return contract;
+            }).catch(err => {
             logger.error(err);
             return false
         });

@@ -14,19 +14,14 @@ class Work {
      * @returns {Promise.<TResult>}
      */
     createWork(work) {
-        let address = config.main_contract_path;
-        let gas = config.create_contract_gas_count;
-        let contractInfo = require("./abi/Main.json");
+        let gas = config.create_contract_gas_amount;
+        var contractInfo = require("./abi/Contract.json");
 
-        return contractUtil.readContractFromAddress(contractInfo, address).then(contract => {
-            return contract.newContract(work.skillCodes, work.skillToPosition, work.startDate, work.endDate,
-                                        work.empoloyee, work.company, work.weekPayment, {gas}
-            );
-        }).then(data => {
-            logger.log(`contract creation complite!`);
-            logger.log(data);
-            logger.log(`'transaction hash: ', ${data.tx}`);
-            return true
+        return contractUtil.createContract(contractInfo, gas, work.skillCodes, work.skillToPosition, work.startDate,
+                                           work.endDate, work.empoloyee, work.company, work.weekPayment
+        ).then(contract => {
+            logger.log(`Work contract created: ${contract}`);
+            return contract;
         }).catch(err => {
             logger.error(err);
             return false
