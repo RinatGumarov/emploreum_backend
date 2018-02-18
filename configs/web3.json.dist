@@ -1,0 +1,9 @@
+{
+  "main_contract_path": "0x99Ac2ba5891648C108ccfe16FA778840Db4A1d15",
+  "create_contract_gas_count": 1400000,
+  "defaultAccount": 0,
+  "account_password": "0=kenda[]",
+  "unlock_time": 1000,
+  "host": "http://89.223.28.86",
+  "port": "8545"
+}

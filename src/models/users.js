@@ -5,6 +5,9 @@ module.exports = (sequelize, DataTypes) => {
         email: DataTypes.STRING,
         password: DataTypes.STRING,
         status: DataTypes.INTEGER,
+        encrypted_key: DataTypes.TEXT,
+        key_password: DataTypes.STRING,
+        account_address: DataTypes.STRING,
     }, {
         timestamps: false
     });
