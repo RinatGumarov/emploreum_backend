@@ -5,12 +5,13 @@ module.exports = {
         return queryInterface.sequelize.transaction(() => {
             return Promise.all([
                 queryInterface.addColumn("employees", "contract", {
-                    type: Sequelize.BOOLEAN,
-                    defaultValue: false,
+                    type: Sequelize.STRING,
                 }, {}),
                 queryInterface.addColumn("companies", "contract", {
-                    type: Sequelize.BOOLEAN,
-                    defaultValue: false,
+                    type: Sequelize.STRING,
+                }, {}),
+                queryInterface.addColumn("works", "contract", {
+                    type: Sequelize.STRING,
                 }, {}),
             ]);
         });
