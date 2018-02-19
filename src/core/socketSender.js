@@ -5,6 +5,7 @@ const logger = require('../utils/logger');
 const passportSocketIo = require("passport.socketio");
 const configUtil = require('../utils/config');
 const cookieParser = require('cookie-parser');
+const sessionStoreIniter = require('./sessionStoreIniter');
 
 let socketSenderInstance;
 
@@ -19,19 +20,18 @@ class SocketSender {
     }
     
     init(server) {
-        let config = configUtil.get("session");
+        
+        let configSession = configUtil.get("session");
         let newServer = http.Server(server);
         
         io.attach(newServer);
-        
         io.use(passportSocketIo.authorize({
             cookieParser: cookieParser,
-            secret: config.secret,
+            secret: configSession.secret,
             key: 'express.sid',
+            store: sessionStoreIniter.getStore(),
             success: function (data, accept) {
-                
                 accept(null, true);
-                
                 // if (socket.request.session.passportые) {
                 //     let userId = socket.request.session.passport.user.id;
                 //     for (let i = 0; i < this.funcOnUserConnecting.length; i++) {
