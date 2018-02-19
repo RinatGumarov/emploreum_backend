@@ -29,8 +29,10 @@ module.exports.func = (router) => {
 
     router.post('/:workId([0-9]+)/start', async (req, res) => {
         await workService.startWork(req.params.workId);
-        res.send({data: 'successful'});s
+        res.send({data: 'successful'});
     });
+
+
 
     return router;
 

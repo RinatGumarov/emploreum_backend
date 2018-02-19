@@ -5,6 +5,7 @@ const companyService = require('../../company/services/companyService');
 const vacancyService = require('../../company/services/vacancyService');
 const Web3InitError = require('../../blockchain/utils/Web3Error');
 const Account = require('../../blockchain/utils/account');
+const web3 = require('../../blockchain/utils/web3');
 const logger = require('../../../utils/logger');
 
 const Op = models.sequelize.Op;
@@ -60,12 +61,13 @@ class WorkService {
         return contract;
     }
 
+
     async startWork(id) {
         let work = await Works.findById(id);
         let company = await companyService.findByIdWithUser(work.company_id);
         let vacancy = await vacancyService.findById(work.vacancy_id);
         let privateKey = await Account.decryptAccount(company.user.encrypted_key, company.user.key_password).privateKey;
-        if (await blockchainWork.start(work.address, vacancy.duration * vacancy.week_payment, privateKey))
+        if (await blockchainWork.start(work.contract, web3.utils.toWei('0.0000001', "ether"), privateKey))
             logger.log('work started');
         else
             logger.error('couldn\'t start work');
