@@ -204,6 +204,11 @@ class VacanciesService {
         let employee = await employeeService.getByUserId(userId);
         let employeeId = employee.id;
         let result = await Vacancies.findOne({
+            where: {
+                id: {
+                    [Op.eq]: vacancyId,
+                }
+            },
             include: [{
                 model: models.employees,
                 where: {
@@ -211,12 +216,7 @@ class VacanciesService {
                         [Op.eq]: employeeId,
                     }
                 }
-            }],
-            where: {
-                id: {
-                    [Op.eq]: vacancyId,
-                }
-            }
+            }]
         });
         return result === null;
     }
