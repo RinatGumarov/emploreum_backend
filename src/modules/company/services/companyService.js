@@ -53,7 +53,7 @@ class CompaniesService {
         })
     }
     
-    async findByUserIdWithUser(id) {
+    async findByIdWithUser(id) {
         return await Companies.findOne({
             include: [{
                 model: models.users,
@@ -77,7 +77,7 @@ class CompaniesService {
         return works !== null;
     }
     
-    async createBlockchainAccountForCompany(name, rating, address) {
+    async createBlockchainAccountForCompany(company, name, rating, address) {
         let blockchainCompany = {
             name,
             rating,
@@ -88,7 +88,9 @@ class CompaniesService {
                 throw new Web3InitError('Could not register company in blockchain');
             return result;
         });
-        console.log(contract);
+        company.contract = contract.address;
+        company.save();
+
         return contract;
     }
     

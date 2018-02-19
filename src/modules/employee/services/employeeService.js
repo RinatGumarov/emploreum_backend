@@ -103,7 +103,7 @@ class EmployeesService {
 
     }
 
-    async createBlockchainAccountForEmployee(firstName, lastName, email, address) {
+    async createBlockchainAccountForEmployee(employee, firstName, lastName, email, address) {
         let blockchainEmployee = {
             firstName,
             lastName,
@@ -115,7 +115,8 @@ class EmployeesService {
                 throw new Web3InitError("Could not register employee in blockchain");
             return result;
         });
-        logger.log(contract.transactionHash);
+        employee.contract = contract.address;
+        employee.save();
         return contract;
     }
 

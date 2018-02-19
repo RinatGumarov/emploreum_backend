@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
         logo: DataTypes.STRING,
         city: DataTypes.STRING,
         response_text: DataTypes.TEXT,
-        has_contract: DataTypes.BOOLEAN
+        contract: DataTypes.STRING,
     }, {
         timestamps: false
     });

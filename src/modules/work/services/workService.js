@@ -1,7 +1,10 @@
 const models = require('../../../core/models');
 const Works = models.works;
 const blockchainWork = require('../../blockchain/utils/work');
+const companyService = require('../../company/services/companyService');
+const vacancyService = require('../../company/services/vacancyService');
 const Web3InitError = require('../../blockchain/utils/Web3Error');
+const Account = require('../../blockchain/utils/account');
 const logger = require('../../../utils/logger');
 
 const Op = models.sequelize.Op;
@@ -52,8 +55,20 @@ class WorkService {
             return result;
         });
         console.log(contract);
+        workData.contract = contract.address;
         await this.save(workData);
         return contract;
+    }
+
+    async startWork(id) {
+        let work = await Works.findById(id);
+        let company = await companyService.findByIdWithUser(work.company_id);
+        let vacancy = await vacancyService.findById(work.vacancy_id);
+        let privateKey = await Account.decryptAccount(company.user.encrypted_key, company.user.key_password).privateKey;
+        if (await blockchainWork.start(work.address, vacancy.duration * vacancy.week_payment, privateKey))
+            logger.log('work started');
+        else
+            logger.error('couldn\'t start work');
     }
 
 }

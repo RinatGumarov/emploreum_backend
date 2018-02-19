@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
         status: DataTypes.INTEGER,
         begin_date: DataTypes.DATE,
         end_date: DataTypes.DATE,
+        contract: DataTypes.STRING,
     }, {
         timestamps: false
     });
