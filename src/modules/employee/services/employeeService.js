@@ -4,6 +4,7 @@ const Account = require("../../blockchain/utils/account");
 const Employees = models.employees;
 const Vacancies = models.vacancies;
 const Works = models.works;
+const logger = require('../../../utils/logger');
 
 const Web3InitError = require("../../blockchain/utils/Web3Error");
 const Op = models.sequelize.Op;
@@ -16,7 +17,6 @@ class EmployeesService {
      * сохранение работника и создание для него
      * резюме с определенными специализациями
      * @param userId
-     * @param profiles
      */
     async save(userId) {
 
@@ -113,7 +113,14 @@ class EmployeesService {
         let contract = await Account.registerEmployee(blockchainEmployee).then(result => {
             if (!result)
                 throw new Web3InitError("Could not register employee in blockchain");
+            return result;
         });
+        logger.log(contract.transactionHash);
+        return contract;
+    }
+
+    async getById(employeeId){
+        return await Employees.findById(employeeId);
     }
 
 }

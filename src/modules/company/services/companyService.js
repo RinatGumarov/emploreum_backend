@@ -88,6 +88,8 @@ class CompaniesService {
                 throw new Web3InitError('Could not register company in blockchain');
             return result;
         });
+        console.log(contract);
+        return contract;
     }
     
     async findByVacancyId(vacancyId) {

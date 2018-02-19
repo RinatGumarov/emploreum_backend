@@ -41,8 +41,7 @@ class WorkService {
         let blockchainWorkData = {
             skillCodes: [],
             skillToPosition: [],
-            startDate: Math.floor(workData.begin_date / 1000),
-            endDate: Math.floor(workData.end_date / 1000),
+            duration: vacancy.duration,
             employee: account_address,
             company: company.user.account_address,
             weekPayment: vacancy.week_payment,
@@ -52,7 +51,9 @@ class WorkService {
                 throw new Web3InitError('Could not registrate company in blockchain');
             return result;
         });
+        console.log(contract);
         await this.save(workData);
+        return contract;
     }
 
 }

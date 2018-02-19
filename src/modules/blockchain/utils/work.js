@@ -17,8 +17,8 @@ class Work {
         let gas = config.create_contract_gas_amount;
         var contractInfo = require("./abi/Contract.json");
 
-        return contractUtil.createContract(contractInfo, gas, work.skillCodes, work.skillToPosition, work.startDate,
-                                           work.endDate, work.empoloyee, work.company, work.weekPayment
+        return contractUtil.createContract(contractInfo, gas, work.skillCodes, work.skillToPosition,
+                                           work.duration, work.empoloyee, work.company, work.weekPayment
         ).then(contract => {
             logger.log(`Work contract created: ${contract}`);
             return contract;

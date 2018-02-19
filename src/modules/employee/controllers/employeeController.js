@@ -1,28 +1,18 @@
-<<<<<<< HEAD
 const skillService = require('../../specialisation/services/skillService');
 const cvService = require('../services/cvService');
 const employeeService = require('../services/employeeService');
-const companyService = require('../../company/services/companyService');
 const messageService = require('../../message/services/messageService');
 const vacancyService = require('../../company/services/vacancyService');
+const companyService = require('../../company/services/companyService');
 const workService = require('../../work/services/workService');
 const logger = require('../../../utils/logger');
-=======
-const skillService = require("../../specialisation/services/skillService");
-const cvService = require("../services/cvService");
-const employeeService = require("../services/employeeService");
-const companyService = require("../../company/services/companyService");
-const messageService = require("../../message/services/messageService");
-const vacancyService = require("../../company/services/vacancyService");
-const workService = require("../services/workService");
-const logger = require("../../../utils/logger");
->>>>>>> web3
 
 module.exports.func = (router) => {
 
     router.get("/vacancy/enroll/:vacancyId([0-9]+)", async (req, res) => {
         try {
             let vacancyId = req.params.vacancyId;
+            let company = await companyService.findByVacancyId(vacancyId);
             await employeeService.attachVacancy(req.user.id, vacancyId);
             await messageService.sendToCompany(req.user.id, company.id, "Вам постучались на вакансию");
 
@@ -40,7 +30,6 @@ module.exports.func = (router) => {
         res.json(recommendedVacancies);
     });
 
-<<<<<<< HEAD
     router.get('/info/:employeeUserId', async (req, res) => {
         let employee = await employeeService.getByUserId(req.params.employeeUserId);
         res.json(employee);
@@ -48,15 +37,6 @@ module.exports.func = (router) => {
 
     router.get('/skills/:employeeUserId', async (req, res) => {
         let employeeSkills = await cvService.getEmployeeSkillsWithProfiles(req.params.employeeUserId);
-=======
-    router.get("/info", async (req, res) => {
-        let employee = await employeeService.getByUserId(req.user.id);
-        res.json(employee);
-    });
-
-    router.get("/skills", async (req, res) => {
-        let employeeSkills = await cvService.getEmployeeSkillsWithProfiles(req.user.id);
->>>>>>> web3
         res.json(employeeSkills);
     });
 
