@@ -2,6 +2,8 @@ const logger = require("../../../utils/logger");
 const utilConfig = require("../../../utils/config");
 const config = utilConfig.get("web3");
 const contractUtil = require("./contract");
+const account = require("./account");
+const web3 = require("./web3");
 let instance;
 
 
@@ -28,17 +30,17 @@ class Work {
         });
     }
 
-    start(workAddress, value) {
-        let gas = config.create_contract_gas_count;
+    start(workAddress, value, privateKey) {
+        let gas = config.work_start_transaction_gas_amount;
         let contractInfo = require("./abi/Contract.json");
 
-        return contractUtil.readContractFromAddress(contractInfo, workAddress).then(contract => {
-            return contract.start({gas, value});
-        }).then(data => {
-            logger.log(`Contract ${workAddress} start working!`);
-            logger.log(data);
-            logger.log(`'transaction hash: ', ${data.tx}`);
-            return true
+        let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
+        let data = contract.methods.start().encodeABI();
+
+        return account.sendTransaction(value, workAddress, privateKey, gas, data).then(data => {
+            logger.log(`Contract ${workAddress} starting work now!`);
+            logger.log(`'Transaction hash: ', ${data.transactionHash}`);
+            return true;
         }).catch(err => {
             logger.error(err);
             return false
@@ -49,9 +51,11 @@ class Work {
         let gas = config.create_contract_gas_count;
         let contractInfo = require("./abi/Contract.json");
 
-        return contractUtil.readContractFromAddress(contractInfo, workAddress).then(contract => {
-            return contract.deposite({gas, value});
-        }).then(data => {
+
+        let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
+        let data = contract.methods.deposit().encodeABI();
+
+        return account.sendTransaction(value, workAddress, privateKey, gas, data).then(data => {
             logger.log(`Send deposite to ${workAddress} contract!`);
             logger.log(data);
             logger.log(`'transaction hash: ', ${data.tx}`);
@@ -62,13 +66,14 @@ class Work {
         });
     }
 
-    sendWeekSalary(workAddress) {
+    sendWeekSalary(workAddress, value) {
         let gas = config.create_contract_gas_count;
         let contractInfo = require("./abi/Main.json");
 
-        return contractUtil.readContractFromAddress(contractInfo, workAddress).then(contract => {
-            return contract.sendWeekSalary({gas});
-        }).then(data => {
+        let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
+        let data = contract.methods.sendWeekSalary().encodeABI();
+
+        return account.sendTransaction(value, workAddress, privateKey, gas, data).then(data => {
             logger.log(`Week payment send to ${workAddress} contract!`);
             logger.log(data);
             logger.log(`'transaction hash: ', ${data.tx}`);
@@ -83,9 +88,10 @@ class Work {
         let gas = config.create_contract_gas_count;
         let contractInfo = require("./abi/Contract.json");
 
-        return contractUtil.readContractFromAddress(contractInfo, workAddress).then(contract => {
-            return contract.solveFrizzing({gas, value});
-        }).then(data => {
+        let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
+        let data = contract.methods.solveFrizzing().encodeABI();
+
+        return account.sendTransaction(value, workAddress, privateKey, gas, data).then(data => {
             logger.log(`Contract ${workAddress} start working!`);
             logger.log(data);
             logger.log(`'transaction hash: ', ${data.tx}`);
@@ -96,7 +102,7 @@ class Work {
         });
     }
 
-    solveDispute(winner) {
+    solveDispute(workAddress, winner) {
         let gas = config.create_contract_gas_count;
         let contractInfo = require("./abi/Contract.json");
 
@@ -113,7 +119,7 @@ class Work {
         });
     }
 
-    finish(winner) {
+    finish(workAddress) {
         let gas = config.create_contract_gas_count;
         let contractInfo = require("./abi/Contract.json");
 
@@ -121,6 +127,23 @@ class Work {
             return contract.finish();
         }).then(data => {
             logger.log(`Contract ${workAddress} finished!`);
+            logger.log(data);
+            logger.log(`'transaction hash: ', ${data.tx}`);
+            return true
+        }).catch(err => {
+            logger.error(err);
+            return false
+        });
+    }
+
+    getWorkData(workAddress) {
+        let gas = config.create_contract_gas_count;
+        let contractInfo = require("./abi/Contract.json");
+
+        return contractUtil.readContractFromAddress(contractInfo, workAddress).then(contract => {
+            return contract.getWorkData();
+        }).then(data => {
+            logger.log(`Current data from ${workAddress}!`);
             logger.log(data);
             logger.log(`'transaction hash: ', ${data.tx}`);
             return true

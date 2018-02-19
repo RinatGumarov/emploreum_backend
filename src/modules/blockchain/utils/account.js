@@ -54,17 +54,23 @@ class RegistrationUtil {
      * @param callback
      * @returns {Promise.<TResult>}
      */
-    sendTransaction(value, to, privateKey, callback) {
+    sendTransaction(value, to, privateKey) {
+        let args = Array.prototype.slice.call(arguments, 3);
+        let gas = args[0] || config.send_transaction_gas_amount;
+        let data = args[1];
 
-        let tx = {to, value, gas: 1036820};
+        let tx = {to, value, gas, data};
+
         return web3.eth.accounts.signTransaction(tx, privateKey)
             .then(data => {
                 return web3.eth.sendSignedTransaction(data.rawTransaction)
                     .once("transactionHash", function (hash) {
-                        console.log(hash);
-                        callback(hash)
+                        logger.log(hash);
                     })
-                    .on("receipt", console.log);
+                    // .on("confirmation", console.log)
+                    .on("error", (error) => {
+                        logger.log(error)
+                    })
             });
 
     }
