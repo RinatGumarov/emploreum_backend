@@ -67,8 +67,8 @@ class Work {
     }
 
     sendWeekSalary(workAddress, value) {
-        let gas = config.create_contract_gas_count;
-        let contractInfo = require("./abi/Main.json");
+        let gas = config.send_week_salary_gas_amount;
+        let contractInfo = require("./abi/Contract.json");
 
         let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
         let data = contract.methods.sendWeekSalary().encodeABI();

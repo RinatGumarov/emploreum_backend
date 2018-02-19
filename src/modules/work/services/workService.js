@@ -73,6 +73,12 @@ class WorkService {
             logger.error('couldn\'t start work');
     }
 
+
+    async pay(id){
+        let work = await Works.findById(id);
+        await blockchainWork.sendWeekSalary(work.contract, web3.utils.toWei('0.00000001', "ether"));
+    }
+
 }
 
 if (typeof instance !== WorkService) {
