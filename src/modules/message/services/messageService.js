@@ -39,7 +39,7 @@ class MessageService {
      * от лользователя компании к сотруднику
      */
     async sendToEmployee(userId, employeeId, text) {
-        let company = companyService.findByUserId(userId);
+        let company = await companyService.findByUserId(userId);
         let user = await userService.getUserByEmployeeId(employeeId);
         let message = await this.save(company.id, employeeId, text, false, true, user.id);
         return message;

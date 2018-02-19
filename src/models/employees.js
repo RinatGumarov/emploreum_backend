@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         city: DataTypes.STRING,
         birthday: DataTypes.DATE,
         about: DataTypes.TEXT,
+        has_contract: DataTypes.BOOLEAN,
     }, {
         timestamps: false
     });

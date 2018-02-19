@@ -11,7 +11,7 @@ let instance;
 class WorkService {
 
     async save(workData) {
-        return await Works.build(workData).save();
+        return await Works.create(workData);
     }
 
     async findAllByEmployeeId(employeeId) {
@@ -48,7 +48,7 @@ class WorkService {
         };
         let contract = await blockchainWork.createWork(blockchainWorkData).then(result => {
             if (!result)
-                throw new Web3InitError('Could not registrate company in blockchain');
+                throw new Web3InitError('Could not register company in blockchain');
             return result;
         });
         console.log(contract);
