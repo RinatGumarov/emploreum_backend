@@ -51,9 +51,11 @@ class Work {
         let gas = config.create_contract_gas_count;
         let contractInfo = require("./abi/Contract.json");
 
-        return contractUtil.readContractFromAddress(contractInfo, workAddress).then(contract => {
-            return contract.deposite({gas, value});
-        }).then(data => {
+
+        let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
+        let data = contract.methods.deposit().encodeABI();
+
+        return account.sendTransaction(value, workAddress, privateKey, gas, data).then(data => {
             logger.log(`Send deposite to ${workAddress} contract!`);
             logger.log(data);
             logger.log(`'transaction hash: ', ${data.tx}`);
@@ -64,13 +66,14 @@ class Work {
         });
     }
 
-    sendWeekSalary(workAddress) {
+    sendWeekSalary(workAddress, value) {
         let gas = config.create_contract_gas_count;
         let contractInfo = require("./abi/Main.json");
 
-        return contractUtil.readContractFromAddress(contractInfo, workAddress).then(contract => {
-            return contract.sendWeekSalary({gas});
-        }).then(data => {
+        let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
+        let data = contract.methods.sendWeekSalary().encodeABI();
+
+        return account.sendTransaction(value, workAddress, privateKey, gas, data).then(data => {
             logger.log(`Week payment send to ${workAddress} contract!`);
             logger.log(data);
             logger.log(`'transaction hash: ', ${data.tx}`);
@@ -85,9 +88,10 @@ class Work {
         let gas = config.create_contract_gas_count;
         let contractInfo = require("./abi/Contract.json");
 
-        return contractUtil.readContractFromAddress(contractInfo, workAddress).then(contract => {
-            return contract.solveFrizzing({gas, value});
-        }).then(data => {
+        let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
+        let data = contract.methods.solveFrizzing().encodeABI();
+
+        return account.sendTransaction(value, workAddress, privateKey, gas, data).then(data => {
             logger.log(`Contract ${workAddress} start working!`);
             logger.log(data);
             logger.log(`'transaction hash: ', ${data.tx}`);
