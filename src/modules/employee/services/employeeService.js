@@ -65,6 +65,28 @@ class EmployeesService {
         let employee = await this.getByUserId(userId);
         await employee.addVacancy(vacancyId);
     }
+
+    /**
+     * получить все вакансии на которые откликнулся чувак
+     * @param userId
+     * @returns {Promise<void>}
+     */
+    async getAwaitedContracts(userId) {
+        let vacancies = await models.vacancies.findAll({
+            include: [{
+                model: models.companies
+            }, {
+                attributes: [],
+                required: true,
+                model: models.employees,
+                where: {
+                    user_id: {[Op.eq]: userId}
+                }
+            }]
+        });
+        return vacancies;
+
+    }
 }
 
 if (typeof instance !== EmployeesService) {
