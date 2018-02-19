@@ -4,7 +4,7 @@ module.exports.func = (router) => {
 
     router.all('*', authMiddleware);
 
-    router.get('/vacancy/available', (req, res, next) => {
+    router.get('/vacancy/:vacancyId([0-9]+)/available', (req, res, next) => {
         if (req.user.role === 'EMPLOYEE')
             return next();
         else
