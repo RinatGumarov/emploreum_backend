@@ -2,6 +2,7 @@
 const io = require('socket.io')();
 const http = require('http');
 const logger = require('../utils/logger');
+const session = require('express-session');
 
 let socketSenderInstance;
 
@@ -18,6 +19,7 @@ class SocketSender {
     init(server) {
         
         let newServer = http.Server(server);
+        
         io.on('connection', function (socket) {
             let userId = socket.request.session.passport.user.id;
             for (let i = 0; i < this.funcOnUserConnecting.length; i++) {
@@ -27,6 +29,14 @@ class SocketSender {
             logger.log(userId + " socket connected")
         });
         io.attach(newServer);
+        io.use(function (socket, next) {
+            /**
+             * сделано для испоьзования passport в сокетах
+             */
+            session({
+                secret: 'keyboard cat'
+            })(socket.request, {}, next);
+        });
         return newServer;
     }
     
