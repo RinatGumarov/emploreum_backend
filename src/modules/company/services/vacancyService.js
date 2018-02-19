@@ -202,8 +202,6 @@ class VacanciesService {
      */
     async isAvailable(vacancyId, userId) {
         let employee = await employeeService.getByUserId(userId);
-        if (!employee)
-            return false;
         let employeeId = employee.id;
         let result = await Vacancies.findOne({
             include: [{
