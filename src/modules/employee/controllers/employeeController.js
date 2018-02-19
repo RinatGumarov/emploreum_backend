@@ -3,7 +3,6 @@ const cvService = require('../services/cvService');
 const employeeService = require('../services/employeeService');
 const companyService = require('../../company/services/companyService');
 const messageService = require('../../message/services/messageService');
-const testService = require('../../blockchain/services/blockChainEventService');
 const vacancyService = require('../../company/services/vacancyService');
 const workService = require('../services/workService');
 const logger = require('../../../utils/logger');
@@ -29,7 +28,6 @@ module.exports.func = (router) => {
             //todo employee user
             workService.createWork(vacancy, employee, company, vacancyId, req.user.account_address);
             await messageService.sendToCompany(req.user.id, company.id, "Вам постучались на вакансию");
-            testService.set(req.user.id, "asd");
             return res.send({data: 'success'});
         }
         catch (err) {
