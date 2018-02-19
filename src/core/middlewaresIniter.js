@@ -25,6 +25,7 @@ module.exports = class MiddlewaresIniter {
         }));
         this.server.use(cookieParser());
         this.server.use(session({
+            key: 'express.sid',
             secret: configSession.secret,
             store: sessionStoreIniter.getStore(),
             resave: false,
