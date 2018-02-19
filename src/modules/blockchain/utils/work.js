@@ -47,7 +47,7 @@ class Work {
         });
     }
 
-    deposit(workAddress, value) {
+    deposit(workAddress, value, privateKey) {
         let gas = config.create_contract_gas_count;
         let contractInfo = require("./abi/Contract.json");
 
@@ -66,7 +66,7 @@ class Work {
         });
     }
 
-    sendWeekSalary(workAddress, value) {
+    sendWeekSalary(workAddress, value, privateKey) {
         let gas = config.send_week_salary_gas_amount;
         let contractInfo = require("./abi/Contract.json");
 
@@ -84,7 +84,7 @@ class Work {
         });
     }
 
-    solveFrizzing(workAddress, value) {
+    solveFrizzing(workAddress, value, privateKey) {
         let gas = config.create_contract_gas_count;
         let contractInfo = require("./abi/Contract.json");
 
@@ -102,7 +102,7 @@ class Work {
         });
     }
 
-    solveDispute(workAddress, winner) {
+    solveDispute(workAddress, winner, privateKey) {
         let gas = config.create_contract_gas_count;
         let contractInfo = require("./abi/Contract.json");
 

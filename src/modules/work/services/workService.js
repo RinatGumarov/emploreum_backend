@@ -76,7 +76,9 @@ class WorkService {
 
     async pay(id){
         let work = await Works.findById(id);
-        await blockchainWork.sendWeekSalary(work.contract, web3.utils.toWei('0.00000001', "ether"));
+        let company = await companyService.findByIdWithUser(work.company_id);
+        let privateKey = await Account.decryptAccount(company.user.encrypted_key, company.user.key_password).privateKey;
+        await blockchainWork.sendWeekSalary(work.contract, web3.utils.toWei('0.00000001', "ether"), privateKey);
     }
 
 }
