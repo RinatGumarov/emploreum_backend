@@ -25,11 +25,11 @@ class BlockChainEventService {
      * @param userId
      * @param event
      */
-    set(userId, event) {
+    set(userId, event, desc) {
         if (!this.events[userId]) {
-            this.events[userId] = [];
+            this.events[userId] = {};
         }
-        this.events[userId].push(event);
+        this.events[userId][event] = desc;
         let contracts = this.get(userId);
         socketSender.sendSocketMessage(`${userId}:blockchain`, {
             success: false,
@@ -43,23 +43,24 @@ class BlockChainEventService {
      * @param event
      */
     unset(userId, event) {
-        if (!this.events[userId]) {
-            let eventIndex = this.events[userId].indexOf(event);
+        if (this.events[userId] && this.events[userId][event]) {
             // если такой эвент еще идет и мы говорим что он закончился
-            if (eventIndex != -1) {
-                delete this.events[userId][eventIndex];
-                if (this.events[userId].length == 0) {
-                    socketSender.sendSocketMessage(`${userId}:blockchain`, {
-                        success: true
-                    });
-                    delete this.events[userId];
-                } else {
-                    let contracts = this.get(userId);
-                    socketSender.sendSocketMessage(`${userId}:blockchain`, {
-                        success: false,
-                        contracts: contracts
-                    });
-                }
+            delete this.events[userId][event];
+            let hasEvents = false;
+            if (Object.keys(this.events[userId]).length > 0) {
+                hasEvents = true
+            }
+            if (!hasEvents) {
+                socketSender.sendSocketMessage(`${userId}:blockchain`, {
+                    success: true
+                });
+                delete this.events[userId];
+            } else {
+                let contracts = this.get(userId);
+                socketSender.sendSocketMessage(`${userId}:blockchain`, {
+                    success: false,
+                    contracts: contracts
+                });
             }
         }
     }
