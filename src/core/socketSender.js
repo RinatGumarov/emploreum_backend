@@ -26,9 +26,10 @@ class SocketSender {
         
         io.use(passportSocketIo.authorize({
             cookieParser: cookieParser,
-            key: config.secret,
+            secret: config.secret,
+            key: 'express.sid',
             success: function (data, accept) {
-    
+                
                 accept(null, true);
                 
                 // if (socket.request.session.passportые) {
