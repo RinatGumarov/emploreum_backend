@@ -30,7 +30,11 @@ class BlockChainEventService {
             this.events[userId] = [];
         }
         this.events[userId].push(event);
-        socketSender.sendSocketMessage(`${userId}:blockchain`, true);
+        let contracts = this.get(userId);
+        socketSender.sendSocketMessage(`${userId}:blockchain`, {
+            success: false,
+            contracts: contracts
+        });
     }
     
     /**
@@ -45,7 +49,9 @@ class BlockChainEventService {
             if (eventIndex != -1) {
                 delete this.events[userId][eventIndex];
                 if (this.events[userId].length == 0) {
-                    socketSender.sendSocketMessage(`${userId}:blockchain`, false);
+                    socketSender.sendSocketMessage(`${userId}:blockchain`, {
+                        success: true
+                    });
                     delete this.events[userId];
                 }
             }
