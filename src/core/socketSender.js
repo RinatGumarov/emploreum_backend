@@ -7,26 +7,28 @@ const session = require('express-session');
 let socketSenderInstance;
 
 class SocketSender {
-    
+
     constructor() {
         this.funcOnUserConnecting = [];
     };
-    
+
     addConnectingFunction(func) {
         this.funcOnUserConnecting.push(func)
     }
-    
+
     init(server) {
-        
+
         let newServer = http.Server(server);
-        
+
         io.on('connection', function (socket) {
-            let userId = socket.request.session.passport.user.id;
-            for (let i = 0; i < this.funcOnUserConnecting.length; i++) {
-                let func = this.funcOnUserConnecting[i];
-                func(userId, socket)
+            if (socket.request.session.passportые) {
+                let userId = socket.request.session.passport.user.id;
+                for (let i = 0; i < this.funcOnUserConnecting.length; i++) {
+                    let func = this.funcOnUserConnecting[i];
+                    func(userId, socket)
+                }
+                logger.log(userId + " socket connected")
             }
-            logger.log(userId + " socket connected")
         });
         io.attach(newServer);
         io.use(function (socket, next) {
@@ -39,12 +41,12 @@ class SocketSender {
         });
         return newServer;
     }
-    
+
     sendSocketMessage(chatId, object) {
         logger.log("поссылка " + chatId + " " + object)
         io.emit(chatId, object);
     }
-    
+
 }
 
 // singelton
