@@ -53,6 +53,12 @@ class BlockChainEventService {
                         success: true
                     });
                     delete this.events[userId];
+                } else {
+                    let contracts = this.get(userId);
+                    socketSender.sendSocketMessage(`${userId}:blockchain`, {
+                        success: false,
+                        contracts: contracts
+                    });
                 }
             }
         }
