@@ -24,9 +24,9 @@ module.exports.func = (router) => {
         }
     });
 
-    router.get("/vacancy/recommended", async (req, res) => {
-        let employeeSkills = await skillService.getEmployeeSkills(req.user.id);
-        let recommendedVacancies = await vacancyService.getRecommended(employeeSkills, req.user.id);
+
+    router.get('/vacancy/recommended', async (req, res) => {
+        let recommendedVacancies = await vacancyService.getRecommended(req.user.id);
         res.json(recommendedVacancies);
     });
     
@@ -66,6 +66,20 @@ module.exports.func = (router) => {
         catch (err) {
             logger.error(err);
             return res.status(500).send({error: "Could not get current works for the employee"});
+        }
+    });
+
+    /**
+     * вакансии на котороые откликнулся чувак
+     */
+    router.get('/contracts/awaited', async (req, res) => {
+        try {
+            let contracts = await employeeService.getAwaitedContracts(req.user.id);
+            return res.send(contracts);
+        }
+        catch (err) {
+            logger.error(err.trace);
+            return res.status(500).send({error: 'Could not get awaited contracts for the employee'});
         }
     });
 

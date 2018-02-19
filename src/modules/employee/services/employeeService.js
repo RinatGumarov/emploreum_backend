@@ -2,7 +2,6 @@ const models = require("../../../core/models");
 const Account = require("../../blockchain/utils/account");
 
 const Employees = models.employees;
-const Vacancies = models.vacancies;
 const Works = models.works;
 const blockchainInfo = require('../../blockchain/services/blockchainEventService');
 const logger = require('../../../utils/logger');
@@ -22,13 +21,13 @@ class EmployeesService {
     async save(userId) {
 
         let savedEmployees = await Employees.findOrCreate({
-                                                              where: {
-                                                                  user_id: {[Op.eq]: userId}
-                                                              },
-                                                              defaults: {
-                                                                  user_id: userId
-                                                              }
-                                                          });
+            where: {
+                user_id: {[Op.eq]: userId}
+            },
+            defaults: {
+                user_id: userId
+            }
+        });
 
         return savedEmployees[0]
     }
@@ -53,10 +52,10 @@ class EmployeesService {
      */
     async getByUserId(userId) {
         let employee = await Employees.findOne({
-                                                   where: {
-                                                       user_id: {[Op.eq]: userId}
-                                                   }
-                                               });
+            where: {
+                user_id: {[Op.eq]: userId}
+            }
+        });
         return employee;
     }
 
@@ -73,12 +72,12 @@ class EmployeesService {
 
     async wasWorking(employeeId) {
         let works = await Works.find({
-                                         where: {
-                                             employee_id: {
-                                                 [Op.eq]: employeeId,
-                                             },
-                                         },
-                                     });
+            where: {
+                employee_id: {
+                    [Op.eq]: employeeId,
+                },
+            },
+        });
         return works !== null;
     }
 
@@ -88,18 +87,18 @@ class EmployeesService {
      * @returns {Promise<void>}
      */
     async getAwaitedContracts(userId) {
-        let vacancies = await Vacancies.findAll({
-                                                    include: [{
-                                                        model: models.companies
-                                                    }, {
-                                                        attributes: [],
-                                                        required: true,
-                                                        model: models.employees,
-                                                        where: {
-                                                            user_id: {[Op.eq]: userId}
-                                                        }
-                                                    }]
-                                                });
+        let vacancies = await models.vacancies.findAll({
+            include: [{
+                model: models.companies
+            }, {
+                attributes: [],
+                required: true,
+                model: models.employees,
+                where: {
+                    user_id: {[Op.eq]: userId}
+                }
+            }]
+        });
         return vacancies;
 
     }
@@ -123,7 +122,7 @@ class EmployeesService {
         return contract;
     }
 
-    async getById(employeeId){
+    async getById(employeeId) {
         return await Employees.findById(employeeId);
     }
 
