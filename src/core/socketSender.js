@@ -2,51 +2,55 @@
 const io = require('socket.io')();
 const http = require('http');
 const logger = require('../utils/logger');
-const session = require('express-session');
+const passportSocketIo = require("passport.socketio");
+const configUtil = require('../utils/config');
+const cookieParser = require('cookie-parser');
 
 let socketSenderInstance;
 
 class SocketSender {
-
+    
     constructor() {
         this.funcOnUserConnecting = [];
     };
-
+    
     addConnectingFunction(func) {
         this.funcOnUserConnecting.push(func)
     }
-
+    
     init(server) {
-
+        let config = configUtil.get("session");
         let newServer = http.Server(server);
-
-        io.on('connection', function (socket) {
-            if (socket.request.session.passportые) {
-                let userId = socket.request.session.passport.user.id;
-                for (let i = 0; i < this.funcOnUserConnecting.length; i++) {
-                    let func = this.funcOnUserConnecting[i];
-                    func(userId, socket)
-                }
-                logger.log(userId + " socket connected")
-            }
-        });
+        
         io.attach(newServer);
-        io.use(function (socket, next) {
-            /**
-             * сделано для испоьзования passport в сокетах
-             */
-            session({
-                secret: 'keyboard cat'
-            })(socket.request, {}, next);
-        });
+        
+        io.use(passportSocketIo.authorize({
+            cookieParser: cookieParser,
+            key: config.secret,
+            success: function (data, accept) {
+    
+                accept(null, true);
+                
+                // if (socket.request.session.passportые) {
+                //     let userId = socket.request.session.passport.user.id;
+                //     for (let i = 0; i < this.funcOnUserConnecting.length; i++) {
+                //         let func = this.funcOnUserConnecting[i];
+                //         func(userId, socket)
+                //     }
+                //     logger.log(userId + " socket connected")
+                // }
+            },
+        }));
+        
+        
         return newServer;
     }
-
+    
     sendSocketMessage(chatId, object) {
         logger.log("поссылка " + chatId + " " + object)
         io.emit(chatId, object);
     }
-
+    
 }
 
 // singelton

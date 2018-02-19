@@ -23,14 +23,15 @@
     "nodemon": "^1.14.12",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "passport.socketio": "^3.7.0",
     "pg": "^6.4.2",
     "pg-hstore": "^2.3.2",
     "randomstring": "^1.1.5",
     "sequelize": "^4.32.2",
     "sequelize-cli": "^3.2.0",
+    "socket.io": "^2.0.4",
     "truffle-contract": "^3.0.3",
-    "web3": "^1.0.0-beta.29",
-    "socket.io": "^2.0.4"
+    "web3": "^1.0.0-beta.29"
   },
   "dependenciesComments": {
     "bcrypt-nodejs": "либа для хеширования пароля",
@@ -46,6 +47,7 @@
     "passport": "нужен для авторизации пользователя",
     "randomstring": "генерация рандомных строк",
     "passport-local": "стратегия для пасспорта, вход по логину и паролю",
+    "passport.socketio": "вешь для доступа к аунтифицированному пользователю в сокете",
     "sequelize": "orm для работы с реляционными бд",
     "sequelize-cli": "консольная утилита для генерации миграций модейлей и.т.д.",
     "cross-env": "для установки env переменных при запуске скриптов",
