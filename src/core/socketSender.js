@@ -25,24 +25,25 @@ class SocketSender {
         let newServer = http.Server(server);
         
         io.attach(newServer);
+       
         io.use(passportSocketIo.authorize({
             cookieParser: cookieParser,
             secret: configSession.secret,
             key: 'express.sid',
             store: sessionStoreIniter.getStore(),
-            success: function (data, accept) {
-                accept(null, true);
-                // if (socket.request.session.passportые) {
-                //     let userId = socket.request.session.passport.user.id;
-                //     for (let i = 0; i < this.funcOnUserConnecting.length; i++) {
-                //         let func = this.funcOnUserConnecting[i];
-                //         func(userId, socket)
-                //     }
-                //     logger.log(userId + " socket connected")
-                // }
-            },
         }));
         
+        
+        io.on('connection', function (socket) {
+            if (socket.request.user) {
+                let userId = socket.request.user.id;
+                for (let i = 0; i < this.funcOnUserConnecting.length; i++) {
+                    let func = this.funcOnUserConnecting[i];
+                    func(userId, socket)
+                }
+                logger.log(userId + " socket connected")
+            }
+        });
         
         return newServer;
     }
