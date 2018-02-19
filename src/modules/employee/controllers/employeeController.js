@@ -29,12 +29,12 @@ module.exports.func = (router) => {
         let recommendedVacancies = await vacancyService.getRecommended(employeeSkills, req.user.id);
         res.json(recommendedVacancies);
     });
-
+    
     router.get('/info/:employeeUserId', async (req, res) => {
         let employee = await employeeService.getByUserId(req.params.employeeUserId);
         res.json(employee);
     });
-
+    
     router.get('/skills/:employeeUserId', async (req, res) => {
         let employeeSkills = await cvService.getEmployeeSkillsWithProfiles(req.params.employeeUserId);
         res.json(employeeSkills);
