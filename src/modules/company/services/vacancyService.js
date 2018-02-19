@@ -17,11 +17,11 @@ const Op = models.sequelize.Op;
 let instance;
 
 class VacanciesService {
-    
+
     async save(params) {
         return await Vacancies.create(params);
     }
-    
+
     async findProfileSkill(profileId, skillId) {
         return await ProfileSkills.findOne({
             where: {
@@ -34,14 +34,14 @@ class VacanciesService {
             }
         });
     }
-    
-    
+
+
     async addProfileSkillToVacancy(options) {
         return await VacancyProfileSkills.create(
             options
         )
     }
-    
+
     async findById(id) {
         let vacancy = await Vacancies.findOne({
             where: {
@@ -50,34 +50,34 @@ class VacanciesService {
                 }
             }
         })
-        
+
         return vacancy;
     }
-    
+
     async findAll(companyId) {
-        
+
         let option = {where: {}};
-        
+
         if (companyId) {
             option.where.company_id = {
                 [Op.eq]: companyId,
             }
         }
-        
+
         // преобразовыываем в нормалььный вид
         let vacancies = await Vacancies.findAll(option);
-        
+
         // преобразовывем в человечиский вид)
         for (let i = 0; vacancies.length && i < vacancies.length; ++i) {
-            
+
             let profiles = await this.getVacancyProfiles(vacancies[i].id);
             vacancies[i].dataValues.profiles = profiles;
         }
-        
+
         return vacancies;
-        
+
     }
-    
+
     /**
      * //toDo
      * метод получения рекомендуемых вакансий по профилю работника
@@ -92,7 +92,7 @@ class VacanciesService {
         let skillsIds = skills.map((skill) => {
             return skill.id
         });
-        
+
         let queryStr = queryScanner.company.recommended_vacancies;
         let vacancies = await models.sequelize.query(queryStr,
             {
@@ -103,10 +103,10 @@ class VacanciesService {
                 model: Vacancies,
                 include: [models.companies]
             });
-        
+
         return vacancies;
     }
-    
+
     /**
      * найти все профили и скилы вакансии
      * @param vacancyId
@@ -150,7 +150,7 @@ class VacanciesService {
         });
         return profiles;
     }
-    
+
     /**
      * получить всех кто постучался
      * @param vacancyId
@@ -158,8 +158,11 @@ class VacanciesService {
      */
     async getCandidatesByVacancyId(vacancyId) {
         let candidates = await Employees.findAll({
-            
-            include: [models.users, {
+            attributes: ["name", "photo_path"],
+            include: [{
+                model: models.users,
+                attributes: ["id"]
+            }, {
                 attributes: [],
                 required: true,
                 model: models.vacancies,
@@ -170,7 +173,7 @@ class VacanciesService {
         });
         return candidates
     }
-    
+
     /**
      * отклонить постучавщегося кандидата
      * @param vacancyId
@@ -190,7 +193,7 @@ class VacanciesService {
         await messageService.sendToEmployee(company.user_id, userId, "вам отклонили в вакансии");
         return true;
     }
-    
+
     /**
      * может ли данный емплой постучаться на вакансию
      * @param vacancyId
@@ -217,8 +220,8 @@ class VacanciesService {
         });
         return result === null;
     }
-    
-    
+
+
 }
 
 if (typeof instance !== VacanciesService) {
