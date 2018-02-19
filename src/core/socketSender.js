@@ -25,7 +25,7 @@ class SocketSender {
         let newServer = http.Server(server);
         
         io.attach(newServer);
-       
+        
         io.use(passportSocketIo.authorize({
             cookieParser: cookieParser,
             secret: configSession.secret,
@@ -33,12 +33,12 @@ class SocketSender {
             store: sessionStoreIniter.getStore(),
         }));
         
-        
+        let meSocketSender = this;
         io.on('connection', function (socket) {
             if (socket.request.user) {
                 let userId = socket.request.user.id;
-                for (let i = 0; i < this.funcOnUserConnecting.length; i++) {
-                    let func = this.funcOnUserConnecting[i];
+                for (let i = 0; i < meSocketSender.funcOnUserConnecting.length; i++) {
+                    let func = meSocketSender.funcOnUserConnecting[i];
                     func(userId, socket)
                 }
                 logger.log(userId + " socket connected")
