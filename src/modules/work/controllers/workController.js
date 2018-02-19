@@ -14,12 +14,12 @@ module.exports.func = (router) => {
         let employee = await employeeService.getById(req.body.employeeId);
         let company = await companyService.findByVacancyId(vacancyId);
         // первоначальное создание контракта в блокчайн для работника если у него еше нет контракта
-        if (!(await employeeService.wasWorking(employee.id))) {
+        if (!employee.has_contract) {
             await employeeService.createBlockchainAccountForEmployee(
                 employee.name, employee.name, req.user.email, req.user.account_address);
         }
         // создание контракта для компании если его еше нет в блокчайн
-        if (!(await companyService.hasContracts(company.id))) {
+        if (!company.has_contract) {
             await companyService.createBlockchainAccountForCompany(company.name, 10, req.user.account_address)
         }
         await workService.createWork(vacancy, employee, company, vacancyId, req.user.account_address);
