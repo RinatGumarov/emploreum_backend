@@ -28,4 +28,4 @@ FROM (SELECT
      ) AS employ_vac_accept
   JOIN vacancies ON vacancies.id = employ_vac_accept.v_id
   JOIN companies c2 ON vacancies.company_id = c2.id
-WHERE employ_vac_accept.count_merged_skill_from_vacancy * 100 / employ_vac_accept.count_skills > 70
+WHERE employ_vac_accept.count_merged_skill_from_vacancy * 100 / employ_vac_accept.count_skills > 70 AND vacancies.opened = true

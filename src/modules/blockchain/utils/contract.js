@@ -1,13 +1,13 @@
-const contractService = require('truffle-contract');
+const contractService = require("truffle-contract");
 const web3 = require("./web3");
 const utilConfig = require("../../../utils/config");
 const config = utilConfig.get("web3");
-const logger = require('../../../utils/logger');
-const Web3InitError = require('./Web3Error');
-const accountUtil = require('./accountUtil');
+const logger = require("../../../utils/logger");
+const Web3InitError = require("./Web3Error");
+const accountUtil = require("./accountUtil");
 
 let instance;
-let gasPrice = web3.utils.toWei('1', 'gwei');
+let gasPrice = web3.utils.toWei("1", "gwei");
 
 var initContract = function (contractInfo) {
     if (!web3)
@@ -69,9 +69,7 @@ class ContractUtil {
 
         return initContract(contractInfo).then(contract => {
             return contract.new.apply(null, args).then(contract => {
-                logger.log("Created new contract");
-                logger.log(contract);
-
+                logger.log(`Created new contract: ${contract.address}. Transaction hash: ${contract.transactionHash}`);
                 return contract;
             })
         })

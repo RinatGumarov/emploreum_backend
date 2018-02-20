@@ -1,11 +1,11 @@
-const logger = require('../../../utils/logger');
-const blockchainRegisterService = require('../utils/account');
-const creator = require('../utils/creator');
+const logger = require("../../../utils/logger");
+const blockchainRegisterService = require("../utils/account");
+const work = require("../utils/work");
 
-const web3 = require('../utils/web3');
+const web3 = require("../utils/web3");
 
 module.exports.func = (router) => {
-    router.get('/account', (req, res) => {
+    router.get("/account", (req, res) => {
         // let encryptedAccount = blockchainRegisterService.generateEmployeeAccount("password")
         // let key = {
         //     "version": 3,
@@ -32,19 +32,31 @@ module.exports.func = (router) => {
         // let value = web3.utils.toWei('0.0005', 'ether');
         // let to = '0x118E5B7539ceb7d6293388a51a6c3fAbfDD458b4';
         // return blockchainRegisterService.sendTransaction(value, to, privateKey, (data) => {res.json(data)});
-
-
     });
-    router.get('/test', (req, res) => {
+    // Address: 0xadd49242A4a1552bBfaB39A804467Fa4D27a7333
+    // PK: 0xe5a23b6c28e5983108a59855d5c2d5de104abe207e00a786e5a95f146778eee7
+    // work : 0x99c4aA94CDF3eb2f8750F83EC023d7B7699eFFc5
+
+
+    router.get("/test", (req, res) => {
+
+
+        return work.getWorkData("0x99c4aA94CDF3eb2f8750F83EC023d7B7699eFFc5").then(() => res.json(0));
+
+        // return work.start("0x99c4aA94CDF3eb2f8750F83EC023d7B7699eFFc5", web3.utils.toWei('0.000001', 'ether'),
+        //                   "0xe5a23b6c28e5983108a59855d5c2d5de104abe207e00a786e5a95f146778eee7"
+        // ).then(() => res.json(0));
+
+
         // var begin = (new Date()).getTime();
         // var address = '0x24959b8bECaCA482225aE24EF0d7b415e1c1c84a';
         // contractLibrary.createContract(contractInfo, gas, [], [], begin, 1716924800,
         //                                '0xF2f757BAE0F8681Da6315cED951b3ac566CB5ED7',
         //                                '0xF54934698F6D4Daa0D6F8354A7599629DBAcb9EE', Math.pow(10, 12)).then(
-        creator.createMainContract().then(contract => {
-            console.log(contract);
-        })
-        res.json(0);
+        // creator.createMainContract().then(contract => {
+        //     console.log(contract);
+        // })
+
         // contractLibrary.readContractFromAddress(contractInfo, address).then(contract => {
         //     console.log(contract)
         // contract.newEmployee("_firstName", "_lastName", "_email", 1,

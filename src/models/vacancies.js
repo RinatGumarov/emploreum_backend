@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
         info: DataTypes.TEXT,
         week_payment: DataTypes.DOUBLE,
         duration: DataTypes.INTEGER,
+        opened: DataTypes.BOOLEAN,
     }, {
         timestamps: false
     });

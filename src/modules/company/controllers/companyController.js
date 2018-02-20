@@ -41,7 +41,7 @@ module.exports.func = (router) => {
      */
     router.get('/info/:id([0-9]+)', async (req, res) => {
         try {
-            let company = await companyService.findById(req.params.id);
+            let company = await companyService.findByUserId(req.params.id);
             res.status(200).send({company: company});
         } catch (err) {
             logger.error(err);
@@ -59,6 +59,17 @@ module.exports.func = (router) => {
         } catch (err) {
             logger.error(err);
             res.status(500).send({error: err});
+        }
+    });
+
+
+    router.get('/employees', async (req, res) => {
+        try {
+            let company = await companyService.findByUserId(req.user.id);
+            res.send(await companyService.findAllEmployees(company.id));
+        } catch(err){
+            logger.error(err);
+            res.status(500).send("errore=(");
         }
     });
     
