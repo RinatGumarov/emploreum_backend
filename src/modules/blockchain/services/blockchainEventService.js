@@ -32,6 +32,7 @@ class BlockChainEventService {
         }
         this.events[userId][event] = desc;
         let contracts = this.get(userId);
+        logger.log(`=====================\nsockeTTT!!!!OLOLO\n==================`);
         socketSender.sendSocketMessage(`${userId}:blockchain`, {
             success: false,
             contracts: contracts

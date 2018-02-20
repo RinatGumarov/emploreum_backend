@@ -10,6 +10,7 @@ const VacancyProfileSkills = models.vacancy_profile_skills;
 const queryScanner = require('../../../core/queryScanner');
 const employeeService = require('../../employee/services/employeeService');
 const messageService = require('../../message/services/messageService');
+const companyService = require('./companyService');
 const skillService = require('../../specialisation/services/skillService');
 
 const Op = models.sequelize.Op;
@@ -49,7 +50,7 @@ class VacanciesService {
                     [Op.eq]: id,
                 }
             }
-        })
+        });
 
         return vacancy;
     }
@@ -63,6 +64,8 @@ class VacanciesService {
                 [Op.eq]: companyId,
             }
         }
+
+        option.where.opened = true;
 
         // преобразовыываем в нормалььный вид
         let vacancies = await Vacancies.findAll(option);
@@ -194,7 +197,7 @@ class VacanciesService {
             }
         });
         let company = await companyService.findByVacancyId(vacancyId);
-        await messageService.sendToEmployee(company.user_id, userId, "вам отклонили в вакансии");
+        await messageService.sendToEmployee(company.user_id, employee.id, "вам отклонили в вакансии");
         return true;
     }
 

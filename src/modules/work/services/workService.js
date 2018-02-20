@@ -21,6 +21,13 @@ class WorkService {
 
     async findAllByEmployeeId(employeeId) {
         let works = await Works.findAll({
+            include: [{
+                attributes: ["name"],
+                model: models.companies
+            }, {
+                model: models.vacancies,
+                attributes: ["week_payment"]
+            }],
             where: {
                 employee_id: {
                     [Op.eq]: employeeId
@@ -51,16 +58,19 @@ class WorkService {
             company: company.user.account_address,
             weekPayment: vacancy.week_payment,
         };
-        await blockchainInfo.set(companyUserId, account_address, `creating contract for work ${vacancy.id}`);
+        await blockchainInfo.set(companyUserId, `work${account_address}`, `creating contract for work ${vacancy.id}`);
         let contract = await blockchainWork.createWork(blockchainWorkData).then(async (result) => {
             if (!result)
                 throw new Web3InitError('Could not register company in blockchain');
-            await blockchainInfo.unset(companyUserId, account_address);
+            await blockchainInfo.unset(companyUserId, `work${account_address}`);
             return result;
         });
         console.log(contract);
         workData.contract = contract.address;
         await this.save(workData);
+        // Закрыть вакансию
+        vacancy.opened = false;
+        await vacancy.save();
         return contract;
     }
 

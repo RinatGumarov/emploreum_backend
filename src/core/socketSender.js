@@ -49,7 +49,7 @@ class SocketSender {
     }
     
     sendSocketMessage(chatId, object) {
-        logger.log("поссылка " + chatId + " " + object)
+        logger.log("поссылка " + chatId + " " + object);
         io.emit(chatId, object);
     }
     

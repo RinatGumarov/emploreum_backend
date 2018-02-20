@@ -4,13 +4,14 @@ const CompanyProfiles = models.company_profiles;
 const Account = require('../../blockchain/utils/account');
 const blockchainInfo = require('../../blockchain/services/blockchainEventService');
 const logger = require('../../../utils/logger');
+const _ = require('lodash');
 
 const Op = models.sequelize.Op;
 const Web3InitError = require("../../blockchain/utils/Web3Error");
 let instance;
 
 class CompaniesService {
-    
+
     /**
      * создание профиля для компании
      * @param companyId
@@ -22,7 +23,7 @@ class CompaniesService {
             profile_id: profileId
         });
     }
-    
+
     async save(userId) {
         return (await Companies.findOrCreate({
             where: {
@@ -35,7 +36,7 @@ class CompaniesService {
             }
         }))[0];
     }
-    
+
     async update(userId, params) {
         return await Companies.update(params, {
             where: {
@@ -43,7 +44,7 @@ class CompaniesService {
             }
         });
     }
-    
+
     async findByUserId(userId) {
         return await Companies.findOne({
             where: {
@@ -53,7 +54,7 @@ class CompaniesService {
             },
         })
     }
-    
+
     async findByIdWithUser(id) {
         return await Companies.findOne({
             include: [{
@@ -66,7 +67,7 @@ class CompaniesService {
             },
         })
     }
-    
+
     async hasContracts(companyId) {
         let works = await models.works.find({
             where: {
@@ -77,18 +78,18 @@ class CompaniesService {
         });
         return works !== null;
     }
-    
+
     async createBlockchainAccountForCompany(companyUserId, company, name, rating, address) {
         let blockchainCompany = {
             name,
             rating,
             address,
         };
-        await blockchainInfo.set(companyUserId, address, `creating contract for company ${company.name}`);
+        await blockchainInfo.set(companyUserId, `company${address}`, `creating contract for company ${company.name}`);
         let contract = await Account.registerCompany(blockchainCompany).then(async (result) => {
             if (!result)
                 throw new Web3InitError('Could not register company in blockchain');
-            await blockchainInfo.unset(companyUserId, address);
+            await blockchainInfo.unset(companyUserId, `company${address}`);
             return result;
         });
         company.contract = contract.address;
@@ -96,7 +97,7 @@ class CompaniesService {
 
         return contract;
     }
-    
+
     async findByVacancyId(vacancyId) {
         return await Companies.findOne({
             include: [models.users, {
@@ -109,7 +110,7 @@ class CompaniesService {
             }]
         });
     }
-    
+
     async findById(id) {
         return await Companies.findOne({
             where: {
@@ -118,6 +119,23 @@ class CompaniesService {
                 },
             },
         })
+    }
+
+    async findAllEmployees(companyId) {
+        let employees = await models.works.findAll({
+            attributes: [],
+            distinct: "company_id",
+            where: {
+                company_id: {
+                    [Op.eq]: companyId,
+                },
+            },
+            include: [{
+                attributes: ["photo_path", "name", "user_id"],
+                model: models.employees,
+            }],
+        });
+        return _.uniqBy(employees, 'employee.user_id');
     }
 }
 

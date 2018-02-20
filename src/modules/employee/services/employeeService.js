@@ -95,9 +95,12 @@ class EmployeesService {
                 required: true,
                 model: models.employees,
                 where: {
-                    user_id: {[Op.eq]: userId}
+                    user_id: {[Op.eq]: userId},
                 }
-            }]
+            }],
+            where:{
+                opened: {[Op.eq]: true}
+            }
         });
         return vacancies;
 
@@ -110,11 +113,11 @@ class EmployeesService {
             email,
             address,
         };
-        await blockchainInfo.set(companyUserId, address, `creating contract for employee ${firstName}`);
+        await blockchainInfo.set(companyUserId, `employee${address}`, `creating contract for employee ${firstName}`);
         let contract = await Account.registerEmployee(blockchainEmployee).then(async (result) => {
             if (!result)
                 throw new Web3InitError("Could not register employee in blockchain");
-            await blockchainInfo.unset(companyUserId, address);
+            await blockchainInfo.unset(companyUserId, `employee${address}`);
             return result;
         });
         employee.contract = contract.address;
