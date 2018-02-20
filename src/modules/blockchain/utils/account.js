@@ -2,7 +2,7 @@ const contractUtil = require("./contract");
 const web3 = require("./web3");
 const utilConfig = require("../../../utils/config");
 const config = utilConfig.get("web3");
-const logger = require('../../../utils/logger');
+const logger = require("../../../utils/logger");
 
 let instance;
 
@@ -54,65 +54,63 @@ class RegistrationUtil {
      * @param callback
      * @returns {Promise.<TResult>}
      */
-    sendTransaction(value, to, privateKey, callback) {
+    sendTransaction(value, to, privateKey) {
+        let args = Array.prototype.slice.call(arguments, 3);
+        let gas = args[0] || process.env.SEND_TRANSACTION_GAS_AMOUNT || config.send_transaction_gas_amount;
+        let data = args[1];
 
-        let tx = {to, value, gas: 1036820};
+        let tx = {to, value, gas, data};
+
         return web3.eth.accounts.signTransaction(tx, privateKey)
             .then(data => {
                 return web3.eth.sendSignedTransaction(data.rawTransaction)
-                    .once('transactionHash', function (hash) {
-                        console.log(hash);
-                        callback(hash)
+                    .once("transactionHash", function (hash) {
+                        logger.log(hash);
                     })
-                    .on('receipt', console.log);
+                    // .on("confirmation", console.log)
+                    .on("error", (error) => {
+                        logger.log(error)
+                    })
             });
 
     }
 
     /**
-     *  Register employee in blockchain by main contract.
+     * Register employee in blockchain.
      *
      * @param employee
-     * @returns {Promise.<TResult>}
+     * @returns {Promise.<Contract instance || false>}
      */
     registerEmployee(employee) {
-        let address = config.main_contract_path;
-        let gas = config.create_contract_gas_count;
-        let contractInfo = require('./abi/Main.json');
+        let gas = process.env.EMPLOYEE_CREATE_GAS_AMOUNT || config.employee_create_gas_amount;
+        var contractInfo = require("./abi/Employee.json");
 
-        return contractUtil.readContractFromAddress(contractInfo, address).then(contract => {
-            return contract.newEmployee(employee.firstName, employee.lastName, employee.email, employee.raiting,
-                                        employee.address, employee.positionCodes, employee.skillCodes,
-                                        employee.skillToPosition, {gas}
-            )
-        }).then(data => {
-            logger.log(`employee registeration complite!`);
-            logger.log(`'transaction hash: ', ${data.tx}`);
-            return true;
+        return contractUtil.createContract(contractInfo, gas, employee.firstName, employee.lastName, employee.email,
+                                           employee.address
+        ).then(contract => {
+            logger.log(`Employee contract created: ${contract}`);
+            return contract;
         }).catch(err => {
             logger.error(err);
-            return false;
-        })
+            return false
+        });
     }
 
     /**
-     *  Register company in blockchain by main contract.
+     *  Register company in blockchain.
      *
      * @param company
-     * @returns {Promise.<TResult>}
+     * @returns {Promise.<Contract instance || false>}
      */
     registerCompany(company) {
-        let address = config.main_contract_path;
-        let gas = config.create_contract_gas_count;
-        let contractInfo = require('./abi/Main.json');
+        let gas = process.env.EMPLOYEE_CREATE_GAS_AMOUNT || config.employee_create_gas_amount;
+        var contractInfo = require("./abi/Company.json");
 
-        return contractUtil.readContractFromAddress(contractInfo, address).then(contract => {
-            return contract.newCompany(company.name, company.raiting, company.address, {gas})
-        }).then(data => {
-            logger.log(`company registeration complite!`);
-            logger.log(`'transaction hash: ', ${data.tx}`);
-            return true
-        }).catch(err => {
+        return contractUtil.createContract(contractInfo, gas, company.name, company.raiting, company.address).then(
+            contract => {
+                logger.log(`Company contract created: ${contract}`);
+                return contract;
+            }).catch(err => {
             logger.error(err);
             return false
         });

@@ -1,5 +1,3 @@
-const employeeService = require('../../employee/services/employeeService');
-const companyService = require('../../company/services/companyService');
 const chatService = require('../services/chatService');
 
 module.exports.func = (router) => {
@@ -7,7 +5,6 @@ module.exports.func = (router) => {
     router.get('/chats/all', async (req, res) => {
 
         let chats;
-
         if (req.user.role === "EMPLOYEE") {
             chats = await chatService.getAllChatsFroEmployee(req.user.id);
         } else {

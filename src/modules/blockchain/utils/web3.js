@@ -5,9 +5,10 @@ const configService = require("../../../utils/config");
  */
 let instance;
 let configuration = configService.get("web3");
-
+let blockchainHost = process.env.BLOCKCHAIN_HOST || configuration.host;
+let blockchainPort = process.env.BLOCKCHAIN_PORT || configuration.port;
 if (!instance) {
-    instance = new Web3(new Web3.providers.HttpProvider(`${configuration.host}:${configuration.port}`));
+    instance = new Web3(new Web3.providers.HttpProvider(`${blockchainHost}:${blockchainPort}`));
 }
 
 module.exports = instance;
