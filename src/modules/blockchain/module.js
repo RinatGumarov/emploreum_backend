@@ -16,7 +16,8 @@ var module = new ModuleClass("blockchain", controllersPath);
 socketSender.addConnectingFunction(function (userId, socket) {
     let isLoad = blockChainEventService.isLoad(userId);
     if (isLoad) {
-        socket.emit(`${userId}:blockchain`, true)
+        let contracts = blockChainEventService.get(userId);
+        socket.emit(`${userId}:blockchain`, {success: false, contracts: contracts})
     }
 });
 

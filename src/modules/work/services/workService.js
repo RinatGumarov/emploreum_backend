@@ -1,6 +1,7 @@
 const models = require('../../../core/models');
 const Works = models.works;
 const blockchainWork = require('../../blockchain/utils/work');
+const blockchainInfo = require('../../blockchain/services/blockchainEventService');
 const companyService = require('../../company/services/companyService');
 const vacancyService = require('../../company/services/vacancyService');
 const Web3InitError = require('../../blockchain/utils/Web3Error');
@@ -50,9 +51,11 @@ class WorkService {
             company: company.user.account_address,
             weekPayment: vacancy.week_payment,
         };
-        let contract = await blockchainWork.createWork(blockchainWorkData).then(result => {
+        await blockchainInfo.set(companyUserId, address, `creating contract for work ${vacancy.id}`);
+        let contract = await blockchainWork.createWork(blockchainWorkData).then(async (result) => {
             if (!result)
                 throw new Web3InitError('Could not register company in blockchain');
+            await blockchainInfo.unset(companyUserId, address);
             return result;
         });
         console.log(contract);

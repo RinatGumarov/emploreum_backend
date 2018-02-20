@@ -2,6 +2,7 @@ const models = require('../../../core/models');
 const Companies = models.companies;
 const CompanyProfiles = models.company_profiles;
 const Account = require('../../blockchain/utils/account');
+const blockchainInfo = require('../../blockchain/services/blockchainEventService');
 const logger = require('../../../utils/logger');
 
 const Op = models.sequelize.Op;
@@ -77,15 +78,17 @@ class CompaniesService {
         return works !== null;
     }
     
-    async createBlockchainAccountForCompany(company, name, rating, address) {
+    async createBlockchainAccountForCompany(companyUserId, company, name, rating, address) {
         let blockchainCompany = {
             name,
             rating,
             address,
         };
-        let contract = await Account.registerCompany(blockchainCompany).then(result => {
+        await blockchainInfo.set(companyUserId, address, `creating contract for company ${company.name}`);
+        let contract = await Account.registerCompany(blockchainCompany).then(async (result) => {
             if (!result)
                 throw new Web3InitError('Could not register company in blockchain');
+            await blockchainInfo.unset(companyUserId, address);
             return result;
         });
         company.contract = contract.address;

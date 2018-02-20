@@ -19,11 +19,12 @@ class BlockChainEventService {
         }
         return false;
     }
-    
+
     /**
      * создает новуый евент транзакции в блокчейне
      * @param userId
      * @param event
+     * @param desc
      */
     set(userId, event, desc) {
         if (!this.events[userId]) {

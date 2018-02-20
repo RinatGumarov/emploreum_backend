@@ -103,18 +103,18 @@ class EmployeesService {
 
     }
 
-    async createBlockchainAccountForEmployee(employee, firstName, lastName, email, address) {
+    async createBlockchainAccountForEmployee(companyUserId, employee, firstName, lastName, email, address) {
         let blockchainEmployee = {
             firstName,
             lastName,
             email,
             address,
         };
-        blockchainInfo.set(employee.user_id, address, `creating contract for employee ${firstName}`);
-        let contract = await Account.registerEmployee(blockchainEmployee).then(result => {
+        await blockchainInfo.set(companyUserId, address, `creating contract for employee ${firstName}`);
+        let contract = await Account.registerEmployee(blockchainEmployee).then(async (result) => {
             if (!result)
                 throw new Web3InitError("Could not register employee in blockchain");
-            blockchainInfo.unset(employee.user_id, address);
+            await blockchainInfo.unset(companyUserId, address);
             return result;
         });
         employee.contract = contract.address;
