@@ -8,12 +8,12 @@ const sessionStoreIniter = require('./sessionStoreIniter');
 
 
 module.exports = class MiddlewaresIniter {
-    
+
     constructor(server, express) {
         this.server = server;
         this.express = express;
     }
-    
+
     correctRequest() {
         let configSession = configUtil.get("session");
         this.server.use(this.express.static('public'));
