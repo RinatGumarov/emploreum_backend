@@ -24,9 +24,10 @@ module.exports = class MiddlewaresIniter {
             limit: '10mb'
         }));
         this.server.use(cookieParser());
+        let sessionSecret = process.env.SESSION_SECRET || configSession.secret;
         this.server.use(session({
             key: 'express.sid',
-            secret: configSession.secret,
+            secret: sessionSecret,
             store: sessionStoreIniter.getStore(),
             resave: false,
         }));
