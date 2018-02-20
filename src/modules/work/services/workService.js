@@ -31,7 +31,7 @@ class WorkService {
     }
 
     //toDo
-    async createWork(vacancy, employee, company, account_address) {
+    async createWork(companyUserId, vacancy, employee, company, account_address) {
         let begin = new Date();
         let end = new Date().setMonth(begin.getMonth() + vacancy.duration);
 
@@ -51,11 +51,11 @@ class WorkService {
             company: company.user.account_address,
             weekPayment: vacancy.week_payment,
         };
-        await blockchainInfo.set(companyUserId, address, `creating contract for work ${vacancy.id}`);
+        await blockchainInfo.set(companyUserId, account_address, `creating contract for work ${vacancy.id}`);
         let contract = await blockchainWork.createWork(blockchainWorkData).then(async (result) => {
             if (!result)
                 throw new Web3InitError('Could not register company in blockchain');
-            await blockchainInfo.unset(companyUserId, address);
+            await blockchainInfo.unset(companyUserId, account_address);
             return result;
         });
         console.log(contract);
