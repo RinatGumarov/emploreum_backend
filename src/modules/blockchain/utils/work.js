@@ -16,7 +16,7 @@ class Work {
      * @returns {Promise.<TResult>}
      */
     createWork(work) {
-        let gas = config.create_contract_gas_amount;
+        let gas = process.env.CREATE_CONTRACT_GAS_AMOUNT || config.create_contract_gas_amount;
         var contractInfo = require("./abi/Contract.json");
 
         return contractUtil.createContract(contractInfo, gas, work.skillCodes, work.skillToPosition,
@@ -31,7 +31,7 @@ class Work {
     }
 
     start(workAddress, value, privateKey) {
-        let gas = config.work_start_transaction_gas_amount;
+        let gas = process.env.WORK_START_TRANSACTION_GAS_AMOUNT || config.work_start_transaction_gas_amount;
         let contractInfo = require("./abi/Contract.json");
 
         let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
@@ -48,7 +48,7 @@ class Work {
     }
 
     deposit(workAddress, value, privateKey) {
-        let gas = config.create_contract_gas_count;
+        let gas = process.env.CREATE_CONTRACT_GAS_AMOUNT || config.create_contract_gas_count;
         let contractInfo = require("./abi/Contract.json");
 
 
@@ -67,7 +67,7 @@ class Work {
     }
 
     sendWeekSalary(workAddress, value, privateKey) {
-        let gas = config.send_week_salary_gas_amount;
+        let gas = process.env.SEND_WEEK_SALARY_GAS_AMOUNT || config.send_week_salary_gas_amount;
         let contractInfo = require("./abi/Contract.json");
 
         let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
@@ -85,7 +85,7 @@ class Work {
     }
 
     solveFrizzing(workAddress, value, privateKey) {
-        let gas = config.create_contract_gas_count;
+        let gas = process.env.CREATE_CONTRACT_GAS_COUNT || config.create_contract_gas_count;
         let contractInfo = require("./abi/Contract.json");
 
         let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
@@ -103,7 +103,7 @@ class Work {
     }
 
     solveDispute(workAddress, winner, privateKey) {
-        let gas = config.create_contract_gas_count;
+        let gas = process.env.CREATE_CONTRACT_GAS_COUNT || config.create_contract_gas_count;
         let contractInfo = require("./abi/Contract.json");
 
         return contractUtil.readContractFromAddress(contractInfo, workAddress).then(contract => {
@@ -120,7 +120,7 @@ class Work {
     }
 
     finish(workAddress) {
-        let gas = config.create_contract_gas_count;
+        let gas = process.env.CREATE_CONTRACT_GAS_COUNT || config.create_contract_gas_count;
         let contractInfo = require("./abi/Contract.json");
 
         return contractUtil.readContractFromAddress(contractInfo, workAddress).then(contract => {
@@ -137,7 +137,7 @@ class Work {
     }
 
     getWorkData(workAddress) {
-        let gas = config.create_contract_gas_count;
+        let gas = process.env.CREATE_CONTRACT_GAS_COUNT || config.create_contract_gas_count;
         let contractInfo = require("./abi/Contract.json");
 
         return contractUtil.readContractFromAddress(contractInfo, workAddress).then(contract => {

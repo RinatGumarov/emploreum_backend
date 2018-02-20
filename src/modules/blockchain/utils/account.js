@@ -56,7 +56,7 @@ class RegistrationUtil {
      */
     sendTransaction(value, to, privateKey) {
         let args = Array.prototype.slice.call(arguments, 3);
-        let gas = args[0] || config.send_transaction_gas_amount;
+        let gas = args[0] || process.env.SEND_TRANSACTION_GAS_AMOUNT || config.send_transaction_gas_amount;
         let data = args[1];
 
         let tx = {to, value, gas, data};
@@ -82,7 +82,7 @@ class RegistrationUtil {
      * @returns {Promise.<Contract instance || false>}
      */
     registerEmployee(employee) {
-        let gas = config.employee_create_gas_amount;
+        let gas = process.env.EMPLOYEE_CREATE_GAS_AMOUNT || config.employee_create_gas_amount;
         var contractInfo = require("./abi/Employee.json");
 
         return contractUtil.createContract(contractInfo, gas, employee.firstName, employee.lastName, employee.email,
@@ -103,7 +103,7 @@ class RegistrationUtil {
      * @returns {Promise.<Contract instance || false>}
      */
     registerCompany(company) {
-        let gas = config.employee_create_gas_amount;
+        let gas = process.env.EMPLOYEE_CREATE_GAS_AMOUNT || config.employee_create_gas_amount;
         var contractInfo = require("./abi/Company.json");
 
         return contractUtil.createContract(contractInfo, gas, company.name, company.raiting, company.address).then(
