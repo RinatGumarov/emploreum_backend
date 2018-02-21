@@ -94,6 +94,10 @@ class WorkService {
         await blockchainWork.sendWeekSalary(work.contract, web3.utils.toWei('0.00000001', "ether"), privateKey);
     }
 
+    async deposit(workId, amount){
+
+    }
+
 }
 
 if (typeof instance !== WorkService) {

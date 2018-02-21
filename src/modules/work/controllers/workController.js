@@ -42,6 +42,15 @@ module.exports.func = (router) => {
         }
     });
 
+    router.post('/:workId([0-9]+)/deposit', async (req, res) => {
+        try {
+            await workService.deposit(req.params.workId, req.body.amount);
+        } catch (err) {
+            logger.error(err.trace);
+            res.status(500).send({error: "Deposit could not be made"})
+        }
+    });
+
 
 
     return router;
