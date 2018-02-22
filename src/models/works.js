@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    let works = sequelize.define('work_transactions', {
+    let works = sequelize.define('works', {
         status: DataTypes.INTEGER,
         currency: DataTypes.STRING,
         created_at: DataTypes.DATE,
