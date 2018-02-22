@@ -13,11 +13,6 @@ class LanguagesService {
         return languages;
     }
 
-    async findByName(name) {
-        let role = await Roles.findOne({where: {role: {[Op.eq]: name}}});
-        return role;
-    }
-
 }
 
 if (typeof instance !== LanguagesService)
