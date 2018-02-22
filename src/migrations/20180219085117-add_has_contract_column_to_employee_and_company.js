@@ -18,6 +18,10 @@ module.exports = {
     },
 
     down(queryInterface, Sequelize) {
-        //no need for down method
+        return Promise.all([
+            queryInterface.removeColumn("employees", "contract"),
+            queryInterface.removeColumn("companies", "contract"),
+            queryInterface.removeColumn("works", "contract"),
+        ]);
     }
 };

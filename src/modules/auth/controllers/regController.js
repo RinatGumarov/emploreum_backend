@@ -1,4 +1,5 @@
 const usersService = require('../services/userService');
+const languageService = require('../services/languageService');
 const cvService = require('../../employee/services/cvService');
 const employeesService = require('../../employee/services/employeeService');
 const companiesService = require('../../company/services/companyService');
@@ -175,6 +176,11 @@ module.exports.func = (router) => {
         } else {
             return res.status(500).send('server error');
         }
+    });
+
+
+    router.get('/languages', async (req, res) => {
+        res.send(await languageService.findAll());
     });
 
     return router;
