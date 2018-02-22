@@ -105,6 +105,10 @@ class WorkService {
             logger.error('couldn\'t make deposit to work');
     }
 
+    async payAll(){
+
+    }
+
 }
 
 if (typeof instance !== WorkService) {
