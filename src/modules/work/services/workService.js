@@ -95,7 +95,14 @@ class WorkService {
     }
 
     async deposit(workId, amount){
-
+        let work = await Works.findById(workId);
+        let company = await companyService.findByIdWithUser(work.company_id);
+        let vacancy = await vacancyService.findById(work.vacancy_id);
+        let privateKey = await Account.decryptAccount(company.user.encrypted_key, company.user.key_password).privateKey;
+        if (await blockchainWork.start(work.contract, web3.utils.toWei(amount.toString(), "ether"), privateKey))
+            logger.log('deposit made successfully');
+        else
+            logger.error('couldn\'t make deposit to work');
     }
 
 }
