@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
         created_at: DataTypes.DATE,
         amount: DataTypes.DOUBLE,
         transaction_hash: DataTypes.STRING,
-        interval_id: DataTypes.INTEGER,
+        pay_date: DataTypes.DATE,
     }, {
         timestamps: false
     });
