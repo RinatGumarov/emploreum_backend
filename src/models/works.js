@@ -1,10 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
     let works = sequelize.define('works', {
         status: DataTypes.INTEGER,
-        currency: DataTypes.STRING,
-        created_at: DataTypes.DATE,
-        amount: DataTypes.DOUBLE,
-        transaction_hash: DataTypes.STRING,
+        begin_date: DataTypes.DATE,
+        end_date: DataTypes.DATE,
+        contract: DataTypes.STRING,
         pay_date: DataTypes.DATE,
     }, {
         timestamps: false
