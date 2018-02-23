@@ -5,8 +5,8 @@ const employeesService = require('../../employee/services/employeeService');
 const companiesService = require('../../company/services/companyService');
 const messageService = require('../../message/services/messageService');
 const logger = require('../../../utils/logger');
-const account = require('../../blockchain/utils/account');
-const web3 = require('../../blockchain/utils/web3');
+const account = require('../../work/utils/account');
+const web3 = require('../../work/utils/web3');
 
 const FIRST_STATE = 1;
 const SECOND_STATE = 2;

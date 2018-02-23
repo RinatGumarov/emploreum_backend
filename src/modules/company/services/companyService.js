@@ -1,13 +1,13 @@
 const models = require('../../../core/models');
 const Companies = models.companies;
 const CompanyProfiles = models.company_profiles;
-const Account = require('../../blockchain/utils/account');
-const blockchainInfo = require('../../blockchain/services/blockchainEventService');
+const Account = require('../../work/utils/account');
+const blockchainInfo = require('../../work/services/blockchainEventService');
 const logger = require('../../../utils/logger');
 const _ = require('lodash');
 
 const Op = models.sequelize.Op;
-const Web3InitError = require("../../blockchain/utils/Web3Error");
+const Web3InitError = require("../../work/utils/Web3Error");
 let instance;
 
 class CompaniesService {
