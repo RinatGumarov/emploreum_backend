@@ -15,7 +15,6 @@ module.exports.func = (router) => {
             let company = await companyService.findByVacancyId(vacancyId);
             await employeeService.attachVacancy(req.user.id, vacancyId);
             await messageService.sendToCompany(req.user.id, company.id, "Вам постучались на вакансию");
-
             return res.send({data: "success"});
         }
         catch (err) {
