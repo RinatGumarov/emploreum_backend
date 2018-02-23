@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
         tests.belongsTo(models.vacancies, {
             foreignKey: 'vacancy_id'
         });
+        tests.hasMany(models.questions);
     };
 
 
