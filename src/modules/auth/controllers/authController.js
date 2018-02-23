@@ -1,4 +1,5 @@
 const passport = require('passport');
+const logout = require('express-passport-logout');
 
 module.exports.func = (router) => {
 
@@ -18,10 +19,7 @@ module.exports.func = (router) => {
         }
     });
 
-    router.get('/logout', async (req, res) => {
-        await req.logout();
-        res.send(true);
-    });
+    router.get('/logout', logout());
 
 
     return router;
