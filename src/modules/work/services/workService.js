@@ -38,7 +38,8 @@ class WorkService {
     }
 
     //toDo
-    async createWork(companyUserId, vacancy, employee, company, account_address) {
+    async createWork(companyUserId, vacancyId, employee, company, account_address) {
+        let vacancy = vacancyService.findById(vacancyId);
         let begin = new Date();
         let end = new Date().setMonth(begin.getMonth() + vacancy.duration);
 
