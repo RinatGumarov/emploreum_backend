@@ -5,8 +5,9 @@ const blockChainEventService = require('./services/blockchainEventService');
 
 const ModuleClass = require("../../core/module");
 const controllersPath = path.resolve(__dirname, "controllers");
+const middlewaresPath = path.resolve(__dirname, "middlewares");
 
-var module = new ModuleClass("blockchain", controllersPath);
+var module = new ModuleClass("blockchain", controllersPath, middlewaresPath);
 // const creator = require("./utils/creator");
 // creator.createMainContract();
 
