@@ -1,4 +1,4 @@
-//файл для создания консольных програм  (порядок строк важен!)
+//файл для создания консольных програм
 //через этот скрипт запускать все остальные скрипты
 //тут происходит инициаизация
 const app = require("../core/app");
@@ -22,6 +22,9 @@ class Console {
         });
     }
     
+    /**
+     * -s флаг означающий имя запускаемого скрипта без расширения (.js)
+     */
     constructor() {
         this.scriptsObj = [];
         this.arg = minimist(process.argv.slice(2));
@@ -38,5 +41,6 @@ class Console {
     }
     
 }
+
 consoleInstance = new Console();
 module.exports = consoleInstance;
