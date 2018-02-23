@@ -4,6 +4,7 @@ const Account = require("../../blockchain/utils/account");
 const Employees = models.employees;
 const Works = models.works;
 const blockchainInfo = require('../../blockchain/services/blockchainEventService');
+const socketSender = require('../../../core/socketSender');
 const logger = require('../../../utils/logger');
 
 const Web3InitError = require("../../blockchain/utils/Web3Error");
@@ -97,10 +98,7 @@ class EmployeesService {
                 where: {
                     user_id: {[Op.eq]: userId},
                 }
-            }],
-            where:{
-                opened: {[Op.eq]: true}
-            }
+            }]
         });
         return vacancies;
 

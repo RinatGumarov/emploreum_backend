@@ -5,7 +5,7 @@ const logger = require('../../../utils/logger');
 
 
 module.exports.func = (router) => {
-
+    
     router.post('/vacancy/create', async (req, res) => {
         try {
             let company = await companyService.findByUserId(req.user.id);
@@ -24,7 +24,7 @@ module.exports.func = (router) => {
                     logger.log(vacancyProfileSkill);
                 });
             });
-
+            
             return res.status(200).send({vacancy: vacancy});
         }
         catch (err) {
@@ -32,7 +32,7 @@ module.exports.func = (router) => {
             return res.status(500).send({error: err.message});
         }
     });
-
+    
     /**
      * получить все вакансии по компании
      */
@@ -46,7 +46,7 @@ module.exports.func = (router) => {
             return res.status(500).send({error: err.message});
         }
     });
-
+    
     /**
      * получить инфомарцию о вакансии
      */
@@ -63,7 +63,7 @@ module.exports.func = (router) => {
             return res.status(500).send({error: err.message});
         }
     });
-
+    
     router.get('/vacancy/:id([0-9]+)/specification', async (req, res) => {
         try {
             let skills = await vacancyService.getVacancyProfiles(req.params.id);
@@ -73,8 +73,8 @@ module.exports.func = (router) => {
             return res.status(500).send({error: err.message});
         }
     });
-
-
+    
+    
     router.get('/vacancy/:id([0-9]+)/candidates', async (req, res) => {
         try {
             let candidates = await vacancyService.getCandidatesByVacancyId(req.params.id);
@@ -84,20 +84,20 @@ module.exports.func = (router) => {
             return res.status(500).send({error: err.message});
         }
     });
-
+    
     /**
      * отклонить постучавшегося кандидата
      */
     router.post('/vacancy/:vacancyId([0-9]+)/candidate/:candidatesId([0-9]+)/reject', async (req, res) => {
         try {
-            await vacancyService.rejectCandidatesByVacancyId(req.params.vacancyId, req.params.candidatesId);
+            await vacancyService.deleteAwaitedContractByVacancyId(req.params.vacancyId, req.params.candidatesId);
             res.send({data: "success"});
         } catch (err) {
             logger.error(err.stack);
             return res.status(500).send({error: err.message});
         }
     });
-
+    
     /**
      * Только для работника. Узнать может ли он постучаться на вакансию.
      */
@@ -107,7 +107,7 @@ module.exports.func = (router) => {
         else
             res.status(405).send({error: "Not allowed"});
     });
-
+    
     return router;
-
+    
 };
