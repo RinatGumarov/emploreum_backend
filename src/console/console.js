@@ -1,4 +1,6 @@
 //файл для создания консольных програм  (порядок строк важен!)
+//через этот скрипт запускать все остальные скрипты
+//тут происходит инициаизация
 const app = require("../core/app");
 require("../modules");
 const minimist = require('minimist');
@@ -36,10 +38,5 @@ class Console {
     }
     
 }
-
-// singelton
-if (typeof consoleInstance !== Console) {
-    consoleInstance = new Console();
-}
-
+consoleInstance = new Console();
 module.exports = consoleInstance;

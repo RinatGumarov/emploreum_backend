@@ -11,8 +11,8 @@ const ip = require('ip');
 let appInstance;
 
 class Application {
-
-
+    
+    
     constructor() {
         
         this.config = config.get("server");
@@ -39,23 +39,19 @@ class Application {
             logger.log(`LAN: http://${ip.address()}:${this.port}`);
             logger.log("Press CTRL-C to stop");
         });
-
+        
     }
-
+    
     getServer() {
         return this.server;
     }
-
+    
     getRouter() {
         return this.express.Router();
     }
-
-
+    
+    
 }
 
-// singelton
-if (typeof app !== Application) {
-    appInstance = new Application();
-}
-
+appInstance = new Application();
 module.exports = appInstance;

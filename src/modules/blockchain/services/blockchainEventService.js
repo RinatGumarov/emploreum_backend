@@ -19,7 +19,7 @@ class BlockChainEventService {
         }
         return false;
     }
-
+    
     /**
      * создает новуый евент транзакции в блокчейне
      * @param userId
@@ -77,8 +77,5 @@ class BlockChainEventService {
     }
 }
 
-if (typeof instance !== BlockChainEventService) {
-    instance = new BlockChainEventService();
-}
-
+instance = new BlockChainEventService();
 module.exports = instance;

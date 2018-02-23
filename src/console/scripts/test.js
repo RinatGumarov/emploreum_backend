@@ -9,4 +9,5 @@ class Test {
 }
 
 instance = new Test();
+
 module.exports = instance;

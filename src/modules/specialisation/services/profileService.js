@@ -15,8 +15,5 @@ class ProfileService {
     
 }
 
-if (typeof instance !== ProfileService) {
-    instance = new ProfileService();
-}
-
+instance = new ProfileService();
 module.exports = instance;

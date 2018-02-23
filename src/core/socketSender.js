@@ -25,7 +25,7 @@ class SocketSender {
         let newServer = http.Server(server);
         
         io.attach(newServer);
-
+        
         let session_secret = process.env.SESSION_SECRET || configSession.secret;
         io.use(passportSocketIo.authorize({
             cookieParser: cookieParser,
@@ -56,9 +56,5 @@ class SocketSender {
     
 }
 
-// singelton
-if (typeof socketSenderInstance !== SocketSender) {
-    socketSenderInstance = new SocketSender();
-}
-
+socketSenderInstance = new SocketSender();
 module.exports = socketSenderInstance;
