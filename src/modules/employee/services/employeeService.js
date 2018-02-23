@@ -4,6 +4,7 @@ const Account = require("../../blockchain/utils/account");
 const Employees = models.employees;
 const Works = models.works;
 const blockchainInfo = require('../../blockchain/services/blockchainEventService');
+const _ = require('lodash');
 const socketSender = require('../../../core/socketSender');
 const logger = require('../../../utils/logger');
 
@@ -128,7 +129,32 @@ class EmployeesService {
     }
 
     async findAll() {
-        return await Employees.findAll();
+        let employees = await Employees.findAll({
+            include: [{
+                model: models.cvs,
+                attributes: ["id"],
+                include: [{model: models.profiles, attributes: ["name"]}, {model: models.skills, attributes: ["name"]}],
+            }],
+            attributes: ["user_id", "name", "surname", "photo_path", "city", "birthday"]
+        });
+
+        employees = await employees.map((employee) => {
+            if (employee.birthday)
+                employee.age = new Date().getFullYear() - employee.birthday.getFullYear();
+            let skills = [];
+            let specifications = [];
+            for (let i = 0; i < employee.cvs.length; ++i) {
+                for (let j = 0; j < employee.cvs[i].skills.length; ++j){
+                    skills.push(employee.cvs[i].skills[j].name)
+                }
+                specifications.push(employee.cvs[i].profile.name);
+            }
+            employee.dataValues.skills = _.uniq(skills);
+            employee.dataValues.specifications = _.uniq(specifications);
+            delete employee.dataValues.cvs;
+            return employee;
+        });
+        return employees;
     }
 
 }
