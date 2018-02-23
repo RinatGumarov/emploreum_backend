@@ -1,8 +1,8 @@
 const logger = require("../../../utils/logger");
-const blockchainRegisterService = require("../../work/utils/account");
-const work = require("../../work/utils/work");
+const blockchainRegisterService = require("../utils/account");
+const work = require("../utils/work");
 
-const web3 = require("../../work/utils/web3");
+const web3 = require("../utils/web3");
 
 module.exports.func = (router) => {
     router.get("/account", (req, res) => {
