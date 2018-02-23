@@ -14,6 +14,7 @@ class Application {
 
 
     constructor() {
+        
         this.config = config.get("server");
         this.express = express;
         this.server = this.express();
@@ -22,11 +23,11 @@ class Application {
         // добавление на все роуты фильторв для корректировки запросов
         this.middlewaresIniter.correctRequest();
         models.initModels(`${__dirname}/../models/`);
-    }
-
-    start() {
         //инициализация ассоциаций в моделях
         models.associateModels();
+    }
+    
+    start() {
         fileSystem.init();
         this.server = socketSender.init(this.server);
         this.server.listen(this.port, (err) => {

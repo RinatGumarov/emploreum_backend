@@ -1,13 +1,5 @@
-app = require("./core/app");
-
-
-//подключение тестового модуля
-require("./modules/file/module");
-require("./modules/specialisation/module");
-require("./modules/employee/module");
-require("./modules/auth/module");
-require("./modules/company/module");
-require("./modules/message/module");
-require("./modules/work/module");
+const app = require("./core/app");
+//подключение модулей
+require("./modules");
 //запуск приложения
 app.start();
