@@ -31,16 +31,7 @@ module.exports.func = (router) => {
         res.send({data: 'successful'});
     });
     
-    router.post('/:workId([0-9]+)/pay', async (req, res) => {
-        try {
-            await workService.pay(req.params.workId);
-            res.send({data: "success"});
-        } catch (err) {
-            logger.error(err.trace);
-            res.status(500).send({error: "Something wrong with weekly payment"})
-        }
-    });
-    
+  
     router.post('/:workId([0-9]+)/deposit', async (req, res) => {
         try {
             await workService.deposit(req.params.workId, req.body.amount);
