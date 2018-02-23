@@ -1,7 +1,7 @@
 "use strict";
 const path = require('path');
 const socketSender = require('../../core/socketSender');
-const blockChainEventService = require('./services/blockchainEventService');
+const blockChainEventService = require('../work/services/blockchainEventService');
 
 const ModuleClass = require("../../core/module");
 const controllersPath = path.resolve(__dirname, "controllers");

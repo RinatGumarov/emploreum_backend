@@ -1,12 +1,12 @@
 const models = require("../../../core/models");
-const Account = require("../../blockchain/utils/account");
+const Account = require("../../work/utils/account");
 
 const Employees = models.employees;
 const Works = models.works;
-const blockchainInfo = require('../../blockchain/services/blockchainEventService');
+const blockchainInfo = require('../../work/services/blockchainEventService');
 const logger = require('../../../utils/logger');
 
-const Web3InitError = require("../../blockchain/utils/Web3Error");
+const Web3InitError = require("../../work/utils/Web3Error");
 const Op = models.sequelize.Op;
 
 let instance;
