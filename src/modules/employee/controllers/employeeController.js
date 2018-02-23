@@ -84,7 +84,7 @@ module.exports.func = (router) => {
 
     router.get('/all', async (req, res) => {
         try {
-            return res.send(employeeService.findAll());
+            return res.send(await employeeService.findAll());
         } catch (err) {
             logger.error(err.trace);
             return res.status(500).send({error: 'Could not get all employees'});
