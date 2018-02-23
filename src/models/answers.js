@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     let answers = sequelize.define('answers', {
-        answer: DataTypes.STRING,
+        name: DataTypes.STRING,
         is_true: DataTypes.BOOLEAN
     }, {
         timestamps: false

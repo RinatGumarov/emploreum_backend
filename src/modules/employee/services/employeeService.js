@@ -127,6 +127,10 @@ class EmployeesService {
         return await Employees.findById(employeeId);
     }
 
+    async findAll() {
+        return await Employees.findAll();
+    }
+
 }
 
 if (typeof instance !== EmployeesService) {
