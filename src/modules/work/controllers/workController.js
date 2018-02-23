@@ -10,7 +10,6 @@ module.exports.func = (router) => {
 
     router.post('/approve', async (req, res) => {
         let vacancyId = req.body.vacancyId;
-        let vacancy = await vacancyService.findById(vacancyId);
         let employee = await employeeService.getByUserId(req.body.userId);
         let company = await companyService.findByVacancyId(vacancyId);
         // первоначальное создание контракта в блокчайн для работника если у него еше нет контракта
@@ -22,7 +21,7 @@ module.exports.func = (router) => {
         if (!company.contract) {
             await companyService.createBlockchainAccountForCompany(company.user_id, company, company.name, 10, req.user.account_address);
         }
-        await workService.createWork(company.user_id, vacancy, employee, company, vacancyId, req.user.account_address);
+        await workService.createWork(company.user_id, vacancyId, employee, company, vacancyId, req.user.account_address);
         await messageService.sendToEmployee(req.user.id, employee.id, "Доуай Работай. Тебя заапрувели");
         return res.send({data: 'success'});
     });
