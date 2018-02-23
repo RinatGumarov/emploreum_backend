@@ -26,7 +26,9 @@ module.exports = (sequelize, DataTypes) => {
             timestamps: false,
         });
 
-        vacancies.hasMany(models.tests);
+        vacancies.hasMany(models.tests, {
+            foreignKey: 'vacancy_id',
+        });
     };
 
     return vacancies;

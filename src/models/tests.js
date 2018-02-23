@@ -9,7 +9,13 @@ module.exports = (sequelize, DataTypes) => {
         tests.belongsTo(models.vacancies, {
             foreignKey: 'vacancy_id'
         });
-        tests.hasMany(models.questions);
+        tests.hasMany(models.questions, {
+            foreignKey: "test_id",
+        });
+        tests.belongsTo(models.profile_skills, {
+            through: 'test_profile_skills',
+            foreignKey: 'test_id',
+        })
     };
 
 
