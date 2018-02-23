@@ -18,8 +18,8 @@ module.exports.func = (router) => {
         }
     });
 
-    router.get('/logout', function (req, res) {
-        req.logout();
+    router.get('/logout', async (req, res) => {
+        await req.logout();
         res.send(true);
     });
 
