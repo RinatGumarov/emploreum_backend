@@ -134,6 +134,16 @@ class EmployeesService {
                 model: models.cvs,
                 attributes: ["id"],
                 include: [{model: models.profiles, attributes: ["name"]}, {model: models.skills, attributes: ["name"]}],
+            }, {
+                model: models.works,
+                attributes: ["id"],
+                include: [{
+                    model: models.companies,
+                    attributes: ["name"],
+                }, {
+                    model: models.vacancies,
+                    attributes: ["name"],
+                }]
             }],
             attributes: ["user_id", "name", "surname", "photo_path", "city", "birthday"]
         });

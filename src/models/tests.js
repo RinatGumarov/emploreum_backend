@@ -12,10 +12,11 @@ module.exports = (sequelize, DataTypes) => {
         tests.hasMany(models.questions, {
             foreignKey: "test_id",
         });
-        tests.belongsTo(models.profile_skills, {
+        tests.belongsToMany(models.profile_skills, {
             through: 'test_profile_skills',
             foreignKey: 'test_id',
-        })
+            timestamps: false,
+        });
     };
 
 
