@@ -12,6 +12,20 @@ class ProfileService {
         let profiles = await Profiles.findAll();
         return profiles;
     }
+
+
+    async findProfileSkill(profileId, skillId) {
+        return await models.profile_skills.findOne({
+            where: {
+                profile_id: {
+                    [Op.eq]: profileId,
+                },
+                skill_id: {
+                    [Op.eq]: skillId,
+                }
+            }
+        });
+    }
     
 }
 
