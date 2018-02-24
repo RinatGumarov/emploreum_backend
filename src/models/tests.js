@@ -6,8 +6,8 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: false
     });
     tests.associate = function (models) {
-        tests.belongsTo(models.vacancies, {
-            foreignKey: 'vacancy_id'
+        tests.belongsTo(models.companies, {
+            foreignKey: 'company_id'
         });
         tests.hasMany(models.questions, {
             foreignKey: "test_id",
