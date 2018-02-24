@@ -202,7 +202,7 @@ class VacanciesService {
         
         socketSender.sendSocketMessage(`${userId}:vacancy`, {
             type: "DELETE",
-            id: vacancyId
+            id: vacancyId,
         });
         
         return true;
@@ -233,6 +233,13 @@ class VacanciesService {
             }]
         });
         return result === null;
+    }
+
+    async sendInvitationToEmployee(userId, vacancy, employeeUserId) {
+        let employee = await employeeService.getByUserId(employeeUserId);
+        await messageService.sendToEmployee(userId, employee.id, "You have new invitation to vacancy");
+
+        await socketSender.sendSocketMessage(`${employee.user_id}:invitation`, vacancy);
     }
     
     

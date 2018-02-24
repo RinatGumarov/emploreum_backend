@@ -40,7 +40,10 @@ module.exports.func = (router) => {
     });
 
     router.get("/address", async (req, res) => {
-        return res.send(req.user.account_address);
+        let
+        return res.send({
+            address: req.user.account_address
+        });
     });
 
     /**
