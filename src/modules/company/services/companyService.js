@@ -1,6 +1,7 @@
 const models = require('../../../core/models');
 const Companies = models.companies;
 const CompanyProfiles = models.company_profiles;
+
 const Account = require('../../blockchain/utils/account');
 const blockchainInfo = require('../../blockchain/services/blockchainEventService');
 const logger = require('../../../utils/logger');
@@ -136,6 +137,15 @@ class CompaniesService {
             }],
         });
         return _.uniqBy(employees, 'employee.user_id');
+    }
+
+    async findAllTests(companyId) {
+        let tests = await models.tests.findAll({
+            attributes: ["id", "name"],
+            include: [{
+                model: models.profile_skills,
+            }]
+        })
     }
 }
 
