@@ -72,6 +72,17 @@ module.exports.func = (router) => {
             res.status(500).send("errore=(");
         }
     });
+
+    router.get('/tests', async (req, res) => {
+        try {
+            let company = await companyService.findByUserId(req.user.id);
+            let tests = await companyService.findAllTests(company.id);
+            res.send(tests);
+        } catch (err){
+            logger.error(err);
+            res.status(500).send({error: 'errore'});
+        }
+    });
     
     return router;
     

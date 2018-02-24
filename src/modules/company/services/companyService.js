@@ -144,8 +144,35 @@ class CompaniesService {
             attributes: ["id", "name"],
             include: [{
                 model: models.profile_skills,
-            }]
-        })
+                attributes: ["profile_id"],
+                include: [{
+                    model: models.profiles,
+                    attributes: ["id", "name"],
+                    include: [{
+                        model: models.skills,
+                        attributes: ["id", "name"],
+                        through: {
+                            attributes: [],
+                        }
+                    }]
+                }],
+            }],
+            where: {
+                company_id: {
+                    [Op.eq]: companyId,
+                }
+            }
+        });
+        tests = tests.map((test) => {
+            test.dataValues.specifications = [];
+            _.uniqBy(test.dataValues.profile_skills, "profile_id")
+                .map((specification) => {
+                    test.dataValues.specifications.push(specification.profile);
+                });
+            delete test.dataValues.profile_skills;
+            return test;
+        });
+        return tests;
     }
 }
 
