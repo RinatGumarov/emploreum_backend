@@ -152,6 +152,10 @@ class UsersService {
         });
     }
 
+    async destroySession(sessionId){
+        await models.session
+    }
+
 
 }
 

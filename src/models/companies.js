@@ -24,6 +24,9 @@ module.exports = (sequelize, DataTypes) => {
         companies.hasMany(models.vacancies, {
             foreignKey: 'company_id',
         });
+        companies.hasMany(models.tests, {
+            foreignKey: 'company_id',
+        });
     };
 
     return companies;
