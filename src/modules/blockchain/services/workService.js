@@ -61,7 +61,7 @@ class WorkService {
             duration: vacancy.duration,
             employee: employee.user.account_address,
             company: company.user.account_address,
-            weekPayment: vacancy.week_payment,
+            weekPayment: web3.utils.toWei(String(vacancy.week_payment), 'ether')
         };
         await blockchainInfo.set(company.user_id, `work${employee.user.account_address}`, `creating contract for work ${vacancy.id}`);
         let contract = await blockchainWork.createWork(blockchainWorkData).then(async (result) => {
@@ -127,22 +127,33 @@ class WorkService {
      * @param companyId
      * @returns {Promise<void>}
      */
-    async sendWeekSalaryForAllByCompany(companyId) {
-        let allWorks = await Works.findAll({
-            where: {
-                company_id: {
-                    [Op.eq]: companyId
-                }
-            },
-            include: [
-                models.vacancies
-            ]
-        });
-        for (let i = 0; i < allWorks.length; ++i) {
-            let work = allWorks[i];
-            let vacancy = work.vacancy;
-            await this.sendWeekSalary(work.id, vacancy.week_payment.toFixed(18))
+    async sendWeekSalaryForAllByCompany() {
+        
+        let companies = await companyService.getAll();
+        for (let i = 0; i < companies.length; ++i) {
+            
+            logger.log(`deposit for ${companies[i].name}`);
+            
+            let allWorks = await Works.findAll({
+                where: {
+                    company_id: {
+                        [Op.eq]: companies[i].id
+                    }
+                },
+                include: [
+                    models.vacancies
+                ]
+            });
+            
+            for (let i = 0; i < allWorks.length; ++i) {
+                let work = allWorks[i];
+                let vacancy = work.vacancy;
+                await this.sendWeekSalary(work.id, vacancy.week_payment.toFixed(18))
+            }
         }
+        
+        process.exit()
+        
     }
     
 }

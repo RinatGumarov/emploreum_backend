@@ -2,6 +2,7 @@ const messageService = require('../../message/services/messageService');
 const workService = require('../services/workService');
 const companyService = require('../../company/services/companyService');
 const employeeService = require('../../employee/services/employeeService');
+const configUtils = require('../../../utils/config');
 
 //for test
 const work = require('../utils/work');
@@ -35,8 +36,24 @@ module.exports.func = (router) => {
         res.send({data: 'successful'});
     });
     
-    router.get('/test', async (req, res) => {
-        return work.getWorkData("0x40153b5a389116594b0efdeb537fba00beca4b67").then(() => res.json(0));
+    /**
+     * запуск начисления денег в котнракты между сотрудниками
+     * и компаниями и выплата зарплаты сотрудникам
+     */
+    router.get('/run/salary/:token', async (req, res) => {
+        lt
+        config = configUtils.get("server");
+        if (req.params.workId === config.token) {
+            try {
+                await workService.sendWeekSalaryForAllByCompany();
+                res.send({data: 'successful'});
+            } catch (err) {
+                logger.error(err);
+                res.status(500).send({error: err});
+            }
+        } else {
+            res.status(500).send({error: "token not found"});
+        }
     });
     
     return router;
