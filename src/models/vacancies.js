@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'vacancy_id',
             timestamps: false,
         });
+
+        vacancies.belongsTo(models.tests, {
+            foreignKey: 'test_id',
+        })
     };
 
     return vacancies;
