@@ -1,10 +1,9 @@
-const skillService = require('../../specialisation/services/skillService');
 const cvService = require('../services/cvService');
 const employeeService = require('../services/employeeService');
 const messageService = require('../../message/services/messageService');
 const vacancyService = require('../../company/services/vacancyService');
 const companyService = require('../../company/services/companyService');
-const workService = require('../../work/services/workService');
+const workService = require('../../blockchain/services/workService');
 const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {

@@ -2,6 +2,10 @@ const logger = require('../../../utils/logger');
 const socketSender = require('../../../core/socketSender');
 let instance;
 
+/**
+ * клас отвечающий за контролем транзакций
+ * (пример пульсирующая штука в header)
+ */
 class BlockChainEventService {
     
     constructor() {
@@ -19,7 +23,7 @@ class BlockChainEventService {
         }
         return false;
     }
-
+    
     /**
      * создает новуый евент транзакции в блокчейне
      * @param userId
@@ -77,8 +81,5 @@ class BlockChainEventService {
     }
 }
 
-if (typeof instance !== BlockChainEventService) {
-    instance = new BlockChainEventService();
-}
-
+instance = new BlockChainEventService();
 module.exports = instance;

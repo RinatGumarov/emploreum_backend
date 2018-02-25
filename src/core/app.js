@@ -11,9 +11,10 @@ const ip = require('ip');
 let appInstance;
 
 class Application {
-
-
+    
+    
     constructor() {
+        
         this.config = config.get("server");
         this.express = express;
         this.server = this.express();
@@ -22,11 +23,11 @@ class Application {
         // добавление на все роуты фильторв для корректировки запросов
         this.middlewaresIniter.correctRequest();
         models.initModels(`${__dirname}/../models/`);
-    }
-
-    start() {
         //инициализация ассоциаций в моделях
         models.associateModels();
+    }
+    
+    start() {
         fileSystem.init();
         this.server = socketSender.init(this.server);
         this.server.listen(this.port, (err) => {
@@ -38,23 +39,19 @@ class Application {
             logger.log(`LAN: http://${ip.address()}:${this.port}`);
             logger.log("Press CTRL-C to stop");
         });
-
+        
     }
-
+    
     getServer() {
         return this.server;
     }
-
+    
     getRouter() {
         return this.express.Router();
     }
-
-
+    
+    
 }
 
-// singelton
-if (typeof app !== Application) {
-    appInstance = new Application();
-}
-
+appInstance = new Application();
 module.exports = appInstance;

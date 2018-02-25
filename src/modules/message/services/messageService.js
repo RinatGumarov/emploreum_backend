@@ -14,26 +14,26 @@ const logger = require('../../../utils/logger');
 let instance;
 
 class MessageService {
-
+    
     async save(companyId, employeeId, text, isEmployeeMessage, isCompanyCessage, socketChatId) {
-
+        
         let chat = await chatService.getChatBetweenEmployeeAndCompany(employeeId, companyId);
-
+        
         let message = await Messages.create({
             chat_id: chat.id,
             text: text,
             is_employee_message: isEmployeeMessage,
             is_company_message: isCompanyCessage
         });
-
+        
         if (typeof socketChatId !== "undefined") {
             logger.log("send socket message");
             socketSender.sendSocketMessage(socketChatId, message);
         }
-
+        
         return message;
     }
-
+    
     /**
      * Создание соощение
      * от лользователя компании к сотруднику
@@ -44,7 +44,7 @@ class MessageService {
         let message = await this.save(company.id, employeeId, text, false, true, user.id);
         return message;
     }
-
+    
     /**
      * Создание соощение
      * от сотрудника к компании
@@ -55,8 +55,8 @@ class MessageService {
         let message = await this.save(companyId, employee.id, text, true, false, user.id);
         return message;
     }
-
-
+    
+    
     async getAllMessageByChatId(chatId, companyId, employeeId) {
         let includedModel = {
             required: true,
@@ -78,36 +78,36 @@ class MessageService {
                 ['created_at', 'ASC']
             ]
         });
-
+        
         return messages;
     }
-
+    
     async getAllMessageByChatIdAndCompany(chatId, userId) {
         let company = companyService.findByUserId(userId);
         let messages = await this.getAllMessageByChatId(chatId, company.id, null);
         return messages;
     }
-
+    
     async getAllMessageByChatIdAndEmployee(chatId, userId) {
         let employee = await employeeService.getByUserId(userId);
         let messages = await this.getAllMessageByChatId(chatId, null, employee.id);
         return messages;
     }
-
+    
     /**
      * @param email
      * @returns {number}
      */
     sendCodeToUser(email) {
         const code = this.generateCode();
-
+        
         const mailOptions = {
             from: `${config.get('smtp')}`,
             to: `${email}`,
             subject: 'Verify email address',
             text: `Your code is ${code}`
         };
-
+        
         mailSender.sendEmail(mailOptions, (error, info) => {
             if (error) {
                 logger.log(error);
@@ -117,7 +117,7 @@ class MessageService {
         });
         return code;
     }
-
+    
     /**
      * @returns {number}
      */
@@ -127,11 +127,8 @@ class MessageService {
         return 111111;
         // return Math.floor(Math.random() * (max - min + 1)) + min
     }
-
+    
 }
 
-if (typeof instance !== MessageService) {
-    instance = new MessageService();
-}
-
+instance = new MessageService();
 module.exports = instance;

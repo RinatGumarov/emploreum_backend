@@ -7,7 +7,7 @@ const employeeService = require("./employeeService");
 let instance;
 
 class CvsService {
-
+    
     /**
      * создание резюме для определенного профиля
      * определенного работника
@@ -26,10 +26,10 @@ class CvsService {
                 employee_id: employeeId
             }
         });
-
+        
         return cvs[0];
     }
-
+    
     /**
      * метод  скилов для резюме
      * @param cv
@@ -39,7 +39,7 @@ class CvsService {
     async addSkill(cv, skill) {
         return await cv.addSkills([skill]);
     }
-
+    
     /**
      * @param id
      * @returns {Promise<Model>}
@@ -52,7 +52,7 @@ class CvsService {
         });
         return cvs;
     }
-
+    
     /**
      * поиск скилов по направлению работника
      */
@@ -74,11 +74,8 @@ class CvsService {
         });
         return skills;
     }
-
+    
 }
 
-if (typeof instance !== CvsService) {
-    instance = new CvsService();
-}
-
+instance = new CvsService();
 module.exports = instance;

@@ -19,6 +19,7 @@
         "express-session": "^1.15.6",
         "ip": "1.1.5",
         "lodash": "^4.17.5",
+        "minimist": "^1.2.0",
         "mkdirp": "^0.5.1",
         "multer": "^1.3.0",
         "nodemailer": "^4.4.2",
@@ -45,6 +46,7 @@
         "connect-pg-simple": "необходимо для хранения сессии в postgresql",
         "ip": "необходимо для определения ip адреса машины",
         "lodash": "Работа с объектами, используется для того чтобы сделать сет из списка",
+        "minimist": "Работа с консольными флагами",
         "mkdirp": "необходимо дл создания цепочки директорий",
         "nodemailer": "smtp отправка почты",
         "multer": "необходимо для загрузки файлов на сервер",
@@ -69,7 +71,8 @@
         "migrate:down": "cross-env NODE_ENV=production sequelize db:migrate:undo",
         "migrate:down:all": "cross-env NODE_ENV=production sequelize db:migrate:undo:all",
         "seeds": "cross-env NODE_ENV=production sequelize db:seed:all",
-        "db:reset": "npm run migrate:down:all && npm run migrate:up && npm run seeds"
+        "db:reset": "npm run migrate:down:all && npm run migrate:up && npm run seeds",
+        "console:script:test": "node $NODE_DEBUG_OPTION src/console/console.js -s test"
     },
     "scriptsComments": {
         "start": "стартует сервер",
@@ -78,7 +81,8 @@
         "migrate:down": "откат последних миграций",
         "migrate:down:all": "откат всех последних миграций",
         "seeds": "накатить всех сидов",
-        "db:reset": "чистка базы + сиды"
+        "db:reset": "чистка базы + сиды",
+        "console:script:test": "проверка консоли"
     },
     "author": "",
     "license": "MIT"

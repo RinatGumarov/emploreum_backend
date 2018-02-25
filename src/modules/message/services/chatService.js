@@ -9,7 +9,7 @@ const companyService = require('../../company/services/companyService');
 let instance;
 
 class ChatService {
-
+    
     /**
      * Создание чата между
      * сотрудниками и компанией
@@ -30,7 +30,7 @@ class ChatService {
         });
         return chat;
     }
-
+    
     /**
      * все чаты у компании
      * @returns {Promise<*>}
@@ -43,10 +43,10 @@ class ChatService {
                 company_id: {[Op.eq]: companyId}
             }
         });
-
+        
         return chats;
     }
-
+    
     /**
      * все чаты у работника
      * @returns {Promise<*>}
@@ -54,16 +54,16 @@ class ChatService {
     async getAllChatsFroEmployee(userId) {
         let employee = await employeeService.getByUserId(userId);
         let employeeId = employee.id;
-
+        
         let chats = await Chats.findAll({
             where: {
                 employee_id: {[Op.eq]: employeeId}
             }
         });
-
+        
         return chats;
     }
-
+    
     /**
      * метод поиска чата между сотрудником и компанией
      * @param employeeId
@@ -83,22 +83,22 @@ class ChatService {
         });
         return chat[0];
     }
-
-
+    
+    
     /**
      * @param email
      * @returns {number}
      */
     sendCodeToUser(email) {
         const code = this.generateCode();
-
+        
         const mailOptions = {
             from: `${config.get('smtp')}`,
             to: `${email}`,
             subject: 'Verify email address',
             text: `Your code is ${code}`
         };
-
+        
         mailSender.sendEmail(mailOptions, (error, info) => {
             if (error) {
                 logger.log(error);
@@ -108,7 +108,7 @@ class ChatService {
         });
         return code;
     }
-
+    
     async getAllChatWithNewMessage(companyId, employeeId) {
         let includedModel = {
             required: true,
@@ -141,12 +141,12 @@ class ChatService {
         }
         includedModel.where.is_view = false;
         options.include.push(includedModel);
-
+        
         let chats = await Chats.findAll(options);
-
+        
         return chats;
     }
-
+    
     /**
      * все чаты с непрочитаными сообщенияя для компании
      * @returns {Promise<*>}
@@ -157,8 +157,8 @@ class ChatService {
         let chats = this.getAllChatWithNewMessage(companyId, null);
         return chats;
     }
-
-
+    
+    
     /**
      * все чаты с непрочитаными сообщенияя для работника
      * @returns {Promise<*>}
@@ -169,7 +169,7 @@ class ChatService {
         let chats = this.getAllChatWithNewMessage(null, employeeId);
         return chats;
     }
-
+    
     /**
      * @returns {number}
      */
@@ -179,11 +179,8 @@ class ChatService {
         return 111111;
         // return Math.floor(Math.random() * (max - min + 1)) + min
     }
-
+    
 }
 
-if (typeof instance !== ChatService) {
-    instance = new ChatService();
-}
-
+instance = new ChatService();
 module.exports = instance;

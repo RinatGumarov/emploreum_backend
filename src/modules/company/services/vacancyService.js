@@ -245,8 +245,5 @@ class VacanciesService {
     
 }
 
-if (typeof instance !== VacanciesService) {
-    instance = new VacanciesService();
-}
-
+instance = new VacanciesService();
 module.exports = instance;

@@ -12,11 +12,11 @@ let gasPrice = web3.utils.toWei("1", "gwei");
 var initContract = function (contractInfo) {
     if (!web3)
         throw new Web3InitError();
-
-
+    
+    
     let contract = contractService(contractInfo);
     contract.setProvider(web3.currentProvider);
-
+    
     if (typeof contract.currentProvider.sendAsync !== "function") {
         contract.currentProvider.sendAsync = function () {
             return contract.currentProvider.send.apply(
@@ -24,7 +24,7 @@ var initContract = function (contractInfo) {
             );
         };
     }
-
+    
     return accountUtil.unlockMainAccount(contract);
 }
 
@@ -40,8 +40,8 @@ class ContractUtil {
             return contract.deplyed();
         })
     };
-
-
+    
+    
     /**
      * Read contract from blockchain that located at address
      *
@@ -54,7 +54,7 @@ class ContractUtil {
             return contract.at(address);
         })
     };
-
+    
     /**
      * Create contract in blockchain
      *
@@ -66,7 +66,7 @@ class ContractUtil {
     createContract(contractInfo, gas) {
         let args = Array.prototype.slice.call(arguments, 2);
         args.push({gas, gasPrice});
-
+        
         return initContract(contractInfo).then(contract => {
             return contract.new.apply(null, args).then(contract => {
                 logger.log(`Created new contract: ${contract.address}. Transaction hash: ${contract.transactionHash}`);
@@ -76,9 +76,7 @@ class ContractUtil {
     };
 }
 
-if (typeof instance !== ContractUtil)
-    instance = new ContractUtil();
-
+instance = new ContractUtil();
 module.exports = instance;
 
 
