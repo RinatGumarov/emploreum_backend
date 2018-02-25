@@ -262,7 +262,9 @@ class EmployeesService {
     }
 
     async getBalance(user) {
-        return parseFloat(await web3.eth.getBalance(user.account_address));
+        let balance = await web3.eth.getBalance(user.account_address);
+        balance = web3.utils.fromWei(balance, 'ether');
+        return parseFloat(balance);
     }
 
 }
