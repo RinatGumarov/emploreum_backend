@@ -117,7 +117,5 @@ class RegistrationUtil {
     }
 }
 
-if (typeof instance !== RegistrationUtil)
-    instance = new RegistrationUtil();
-
+instance = new RegistrationUtil();
 module.exports = instance;

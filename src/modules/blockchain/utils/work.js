@@ -154,8 +154,6 @@ class Work {
 }
 
 
-if (typeof instance !== Work)
-    instance = new Work();
-
+instance = new Work();
 module.exports = instance;
 
