@@ -262,7 +262,7 @@ class EmployeesService {
     }
 
     async getBalance(user) {
-        return await web3.eth.getBalance(user.account_address);
+        return parseFloat(await web3.eth.getBalance(user.account_address));
     }
 
 }
