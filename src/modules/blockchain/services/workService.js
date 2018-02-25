@@ -74,7 +74,7 @@ class WorkService {
             await vacancyService.deleteAwaitedContractByVacancyId(vacancy.id, employee.user_id);
             await socketSender.sendSocketMessage(`${employee.user.account_address}:vacancy`, {
                 type: "ADD",
-                vacancy: result
+                vacancy: result.address
             });
             await blockchainInfo.unset(company.user_id, `work${employee.user.account_address}`);
             
@@ -117,13 +117,14 @@ class WorkService {
         let privateKey = await Account.decryptAccount(work.company.user.encrypted_key, work.company.user.key_password).privateKey;
         
         // передаем callback функцию так как web3 принимает собственные promise
+
         let result = await blockchainWork.sendWeekSalary(work.contract, amount, privateKey, async function (data) {
             
-            await socketSender.sendSocketMessage(`${work.company.user_id}:balance`, {
-                balance: balanceService.getBalance(work.employee.user.account_address)
-            });
             await socketSender.sendSocketMessage(`${work.employee.user_id}:balance`, {
-                balance: balanceService.getBalance(work.company.user.account_address)
+                balance: await balanceService.getBalance(work.employee.user.account_address)
+            });
+            await socketSender.sendSocketMessage(`${work.company.user_id}:balance`, {
+                balance: await balanceService.getBalance(work.company.user.account_address)
             });
             
         });
@@ -140,6 +141,7 @@ class WorkService {
      */
     async sendWeekSalaryForAllCompanies() {
         let companies = await companyService.getAll();
+
         for (let i = 0; i < companies.length; ++i) {
             
             logger.log(`deposit for ${companies[i].name}`);
@@ -155,8 +157,14 @@ class WorkService {
                     models.vacancies
                 ]
             });
-            for (let i = 0; i < allWorks.length; ++i) {
-                await this.sendWeekSalary(allWorks[i]);
+            for (let j = 0; j < allWorks.length; ++j) {
+                await blockchainInfo.set(companies[i].user_id, `salary:${allWorks[j].contract}`, 'Send salary');
+                try {
+                    await this.sendWeekSalary(allWorks[j]);
+                } catch (e) {
+                    logger.error(e.message);
+                }
+                await blockchainInfo.unset(companies[i].user_id, `salary:${allWorks[j].contract}`);
             }
             
         }

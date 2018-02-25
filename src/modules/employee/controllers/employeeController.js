@@ -1,6 +1,7 @@
 const cvService = require('../services/cvService');
 const employeeService = require('../services/employeeService');
 const messageService = require('../../message/services/messageService');
+const balanceService = require('../../blockchain/services/balanceService');
 const vacancyService = require('../../company/services/vacancyService');
 const companyService = require('../../company/services/companyService');
 const workService = require('../../blockchain/services/workService');
@@ -43,9 +44,9 @@ module.exports.func = (router) => {
         if (!employee)
             return res.send({error: 'It is not you!'});
         let endedContractsCount = await employeeService.countEndedWorks(employee.id);
-        let currentContractsCount = await employeeService.countEndedWorks(employee.id);
+        let currentContractsCount = await employeeService.countCurrentWorks(employee.id);
         let income = await employeeService.getIncome(employee.id);
-        let balance = await employeeService.getBalance(req.user);
+        let balance = await balanceService.getBalance(req.user.account_address);
         return res.send({
             endedContractsCount,
             currentContractsCount,

@@ -258,15 +258,8 @@ class EmployeesService {
         for (let contract of currentContracts) {
             result += contract.vacancy.week_payment;
         }
-        return result;
+        return parseFloat(result.toFixed(10));
     }
-
-    async getBalance(user) {
-        let balance = await web3.eth.getBalance(user.account_address);
-        balance = web3.utils.fromWei(balance, 'ether');
-        return parseFloat(balance);
-    }
-
 }
 
 instance = new EmployeesService();
