@@ -39,8 +39,17 @@ module.exports.func = (router) => {
         res.json(employeeSkills);
     });
 
-    router.get("/address", async (req, res) => {
+    router.get("/indicators", async (req, res) => {
+        let employee = await employeeService.getByUserId(req.user.id);
+        let endedContractsCount = await employeeService.countEndedWorks(employee.id);
+        let currentContractsCount = await employeeService.countEndedWorks(employee.id);
+        let income = await employeeService.getIncome(employee.id);
+        let balance = await employeeService.getBalance(req.user);
         return res.send({
+            endedContractsCount,
+            currentContractsCount,
+            income,
+            balance,
             address: req.user.account_address
         });
     });

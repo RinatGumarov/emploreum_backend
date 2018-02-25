@@ -4,11 +4,13 @@ const Account = require("../../blockchain/utils/account");
 const Employees = models.employees;
 const Works = models.works;
 const blockchainInfo = require('../../blockchain/services/blockchainEventService');
+const workService = require('../../work/services/workService');
 const _ = require('lodash');
 const socketSender = require('../../../core/socketSender');
 const logger = require('../../../utils/logger');
 
 const Web3InitError = require("../../blockchain/utils/Web3Error");
+const web3 = require("../../blockchain/utils/web3");
 const Op = models.sequelize.Op;
 
 let instance;
@@ -154,7 +156,7 @@ class EmployeesService {
             let skills = [];
             let specifications = [];
             for (let i = 0; i < employee.cvs.length; ++i) {
-                for (let j = 0; j < employee.cvs[i].skills.length; ++j){
+                for (let j = 0; j < employee.cvs[i].skills.length; ++j) {
                     skills.push(employee.cvs[i].skills[j].name)
                 }
                 specifications.push(employee.cvs[i].profile.name);
@@ -165,6 +167,76 @@ class EmployeesService {
             return employee;
         });
         return employees;
+    }
+
+    async countEndedWorks(employeeId) {
+        return await models.works.count({
+            where: {
+                [Op.and]: {
+                    employeeId: {
+                        [Op.eq]: employeeId,
+                    },
+                    status: {
+                        [Op.or]: {
+                            [Op.eq]: -200,
+                            [Op.eq]: -500,
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    async countCurrentWorks(employeeId) {
+        return await models.works.count({
+            where: {
+                [Op.and]: {
+                    employeeId: {
+                        [Op.eq]: employeeId,
+                    },
+                    status: {
+                        [Op.and]: {
+                            [Op.gt]: -2,
+                            [Op.lt]: 7,
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    async findCurrentWorksWithVacancies(employeeId) {
+        return await models.works.findAll({
+            where: {
+                [Op.and]: {
+                    employeeId: {
+                        [Op.eq]: employeeId,
+                    },
+                    status: {
+                        [Op.and]: {
+                            [Op.gt]: -2,
+                            [Op.lt]: 7,
+                        }
+                    }
+                }
+            },
+            include: [{
+                model: models.vacancies,
+            }],
+        })
+    }
+
+    async getIncome(employeeId) {
+        let currentContracts = await this.findCurrentWorksWithVacancies(employeeId);
+        let result = 0;
+        for (let contract of currentContracts) {
+            result += contract.vacancy.week_payment;
+        }
+        return result;
+    }
+
+    async getBalance(user) {
+        return await web3.eth.getBalance(user.account_address);
     }
 
 }

@@ -4,6 +4,7 @@ const blockchainWork = require('../../blockchain/utils/work');
 const blockchainInfo = require('../../blockchain/services/blockchainEventService');
 const companyService = require('../../company/services/companyService');
 const vacancyService = require('../../company/services/vacancyService');
+const socketSender = require('../../../core/socketSender');
 const Web3InitError = require('../../blockchain/utils/Web3Error');
 const Account = require('../../blockchain/utils/account');
 const web3 = require('../../blockchain/utils/web3');
@@ -75,7 +76,7 @@ class WorkService {
                 employee: employee
             });
 
-            await blockchainInfo.unset(companyUserId, `work${account_address}`);
+            await blockchainInfo.unset(company.user_id, `work${account_address}`);
 
             return result;
         });
