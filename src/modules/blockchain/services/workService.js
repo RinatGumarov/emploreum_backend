@@ -106,17 +106,24 @@ class WorkService {
     /**
      * вышлет зп для employee
      * + возмет бабки на след неделю
-     * toDo
-     * @param workId
-     * @param amount
+     * с кошелька компании в контракт
+     * @param work
      * @returns {Promise<*>}
      */
-    async sendWeekSalary(workId, amount) {
-        let work = await Works.findById(workId);
-        let company = await companyService.findByIdWithUser(work.company_id);
-        let vacancy = await vacancyService.findById(work.vacancy_id);
-        let privateKey = await Account.decryptAccount(company.user.encrypted_key, company.user.key_password).privateKey;
-        let result = await blockchainWork.sendWeekSalary(work.contract, web3.utils.toWei(String(amount), "ether"), privateKey);
+    async sendWeekSalary(work) {
+        let amount = web3.utils.toWei(String(work.vacancy.week_payment.toFixed(18)), "ether");
+        let privateKey = await Account.decryptAccount(work.company.user.encrypted_key, work.company.user.key_password).privateKey;
+        let result = await blockchainWork.sendWeekSalary(
+            work.contract,
+            amount,
+            privateKey
+        );
+        await socketSender.sendSocketMessage(`${work.company.user_id}:balance`, {
+            type: "RELOAD"
+        });
+        await socketSender.sendSocketMessage(`${work.employee.user_id}:balance`, {
+            type: "RELOAD"
+        });
         return result;
     }
     
@@ -127,13 +134,10 @@ class WorkService {
      * @param companyId
      * @returns {Promise<void>}
      */
-    async sendWeekSalaryForAllByCompany() {
-        
+    async sendWeekSalaryForAllCompanies() {
         let companies = await companyService.getAll();
         for (let i = 0; i < companies.length; ++i) {
-            
             logger.log(`deposit for ${companies[i].name}`);
-            
             let allWorks = await Works.findAll({
                 where: {
                     company_id: {
@@ -141,19 +145,15 @@ class WorkService {
                     }
                 },
                 include: [
+                    {model: models.employees, include: [models.users]},
+                    {model: models.companies, include: [models.users]},
                     models.vacancies
                 ]
             });
-            
             for (let i = 0; i < allWorks.length; ++i) {
-                let work = allWorks[i];
-                let vacancy = work.vacancy;
-                await this.sendWeekSalary(work.id, vacancy.week_payment.toFixed(18))
+                await this.sendWeekSalary(allWorks[i]);
             }
         }
-        
-        process.exit()
-        
     }
     
 }

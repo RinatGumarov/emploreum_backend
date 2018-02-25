@@ -41,11 +41,10 @@ module.exports.func = (router) => {
      * и компаниями и выплата зарплаты сотрудникам
      */
     router.get('/run/salary/:token', async (req, res) => {
-        lt
-        config = configUtils.get("server");
-        if (req.params.workId === config.token) {
+        let config = configUtils.get("server");
+        if (req.params.token === config.token) {
             try {
-                await workService.sendWeekSalaryForAllByCompany();
+                await workService.sendWeekSalaryForAllCompanies();
                 res.send({data: 'successful'});
             } catch (err) {
                 logger.error(err);
