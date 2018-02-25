@@ -5,6 +5,7 @@ const socketSender = require('../../../core/socketSender');
 const blockchainInfo = require('./blockchainEventService');
 const companyService = require('../../company/services/companyService');
 const vacancyService = require('../../company/services/vacancyService');
+const balanceService = require('../services/balanceService');
 
 const Web3InitError = require('../utils/Web3Error');
 const Account = require('../utils/account');
@@ -55,6 +56,7 @@ class WorkService {
             company_id: company.id,
             status: 0,
         };
+        
         let blockchainWorkData = {
             skillCodes: [],
             skillToPosition: [],
@@ -63,20 +65,19 @@ class WorkService {
             company: company.user.account_address,
             weekPayment: web3.utils.toWei(String(vacancy.week_payment), 'ether')
         };
+        
         await blockchainInfo.set(company.user_id, `work${employee.user.account_address}`, `creating contract for work ${vacancy.id}`);
         let contract = await blockchainWork.createWork(blockchainWorkData).then(async (result) => {
             if (!result)
                 throw new Web3InitError('Could not register company in blockchain');
+            
             await vacancyService.deleteAwaitedContractByVacancyId(vacancy.id, employee.user_id);
-            await socketSender.sendSocketMessage(`${employee.user_id}:vacancy`, {
-                type: "DELETE",
-                id: vacancyId
-            });
-            await socketSender.sendSocketMessage(`${company.user_id}:employee`, {
+            await socketSender.sendSocketMessage(`${employee.user.account_address}:vacancy`, {
                 type: "ADD",
-                employee: employee
+                vacancy: result
             });
             await blockchainInfo.unset(company.user_id, `work${employee.user.account_address}`);
+            
             return result;
         });
         workData.contract = contract.address;
@@ -111,15 +112,20 @@ class WorkService {
      * @returns {Promise<*>}
      */
     async sendWeekSalary(work) {
+        
         let amount = web3.utils.toWei(String(work.vacancy.week_payment.toFixed(18)), "ether");
         let privateKey = await Account.decryptAccount(work.company.user.encrypted_key, work.company.user.key_password).privateKey;
+        
+        // передаем callback функцию так как web3 принимает собственные promise
         let result = await blockchainWork.sendWeekSalary(work.contract, amount, privateKey, async function (data) {
+            
             await socketSender.sendSocketMessage(`${work.company.user_id}:balance`, {
-                type: "RELOAD"
+                balance: balanceService.getBalance(work.employee.user.account_address)
             });
             await socketSender.sendSocketMessage(`${work.employee.user_id}:balance`, {
-                type: "RELOAD"
+                balance: balanceService.getBalance(work.company.user.account_address)
             });
+            
         });
         
         return result;
@@ -135,6 +141,7 @@ class WorkService {
     async sendWeekSalaryForAllCompanies() {
         let companies = await companyService.getAll();
         for (let i = 0; i < companies.length; ++i) {
+            
             logger.log(`deposit for ${companies[i].name}`);
             let allWorks = await Works.findAll({
                 where: {
@@ -151,6 +158,7 @@ class WorkService {
             for (let i = 0; i < allWorks.length; ++i) {
                 await this.sendWeekSalary(allWorks[i]);
             }
+            
         }
     }
     
