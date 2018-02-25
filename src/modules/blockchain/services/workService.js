@@ -72,7 +72,7 @@ class WorkService {
                 throw new Web3InitError('Could not register company in blockchain');
             
             await vacancyService.deleteAwaitedContractByVacancyId(vacancy.id, employee.user_id);
-            await socketSender.sendSocketMessage(`${employee.user.account_address}:vacancy`, {
+            await socketSender.sendSocketMessage(`${employee.user_id}:vacancy`, {
                 type: "ADD",
                 vacancy: result
             });
