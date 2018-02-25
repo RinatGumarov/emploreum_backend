@@ -41,6 +41,8 @@ module.exports.func = (router) => {
 
     router.get("/indicators", async (req, res) => {
         let employee = await employeeService.getByUserId(req.user.id);
+        if (!employee)
+            return res.send({error: 'It is not you!'});
         let endedContractsCount = await employeeService.countEndedWorks(employee.id);
         let currentContractsCount = await employeeService.countEndedWorks(employee.id);
         let income = await employeeService.getIncome(employee.id);
