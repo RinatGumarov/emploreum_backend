@@ -16,7 +16,7 @@ class Work {
      * @returns {Promise.<TResult>}
      */
     createWork(work) {
-        let gas = process.env.CREATE_CONTRACT_GAS_AMOUNT || config.create_contract_gas_amount;
+        let gas = process.env.CREATE_CONTRACT_GAS_AMOUNT || config.create_work_gas_amount;
         var contractInfo = require("./abi/Contract.json");
 
         return contractUtil.createContract(contractInfo, gas, work.skillCodes, work.skillToPosition,

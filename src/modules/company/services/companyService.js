@@ -121,6 +121,10 @@ class CompaniesService {
         })
     }
     
+    async getAll() {
+        return await Companies.findAll()
+    }
+    
     async findAllEmployees(companyId) {
         let employees = await models.works.findAll({
             attributes: [],

@@ -72,7 +72,8 @@
         "migrate:down:all": "cross-env NODE_ENV=production sequelize db:migrate:undo:all",
         "seeds": "cross-env NODE_ENV=production sequelize db:seed:all",
         "db:reset": "npm run migrate:down:all && npm run migrate:up && npm run seeds",
-        "console:script:test": "node src/console/console.js -s test"
+        "console:script:test": "node $NODE_DEBUG_OPTION src/console/console.js -s test",
+        "console:script:salary": "node $NODE_DEBUG_OPTION src/console/console.js -s salary"
     },
     "scriptsComments": {
         "start": "стартует сервер",
@@ -82,7 +83,8 @@
         "migrate:down:all": "откат всех последних миграций",
         "seeds": "накатить всех сидов",
         "db:reset": "чистка базы + сиды",
-        "console:script:test": "проверка консоли"
+        "console:script:test": "проверка консоли",
+        "console:script:salary": "начисление бабок во все контракты во всех компанияхb pfrbyeть новые абки в контракты"
     },
     "author": "",
     "license": "MIT"

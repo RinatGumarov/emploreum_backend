@@ -49,9 +49,9 @@ class SocketSender {
         return newServer;
     }
     
-    sendSocketMessage(chatId, object) {
+    async sendSocketMessage(chatId, object) {
         logger.log("поссылка " + chatId + " " + object);
-        io.emit(chatId, object);
+        await io.emit(chatId, object);
     }
     
 }

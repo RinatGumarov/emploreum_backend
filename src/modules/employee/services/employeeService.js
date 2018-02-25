@@ -12,6 +12,9 @@ const Op = models.sequelize.Op;
 
 let instance;
 
+/**
+ * класс работника
+ */
 class EmployeesService {
     
     /**
@@ -34,6 +37,7 @@ class EmployeesService {
     }
     
     /**
+     * обновить рабоника
      * @param userId
      * @param params
      * @returns {Promise<*>}
@@ -48,6 +52,7 @@ class EmployeesService {
     }
     
     /**
+     * получить работника по юзеру
      * @param userId
      * @returns {Promise<Model>}
      */
@@ -55,7 +60,8 @@ class EmployeesService {
         let employee = await Employees.findOne({
             where: {
                 user_id: {[Op.eq]: userId}
-            }
+            },
+            include: [models.users]
         });
         return employee;
     }
@@ -71,6 +77,11 @@ class EmployeesService {
         await employee.addVacancy(vacancyId);
     }
     
+    /**
+     * работает ли работник
+     * @param employeeId
+     * @returns {Promise<boolean>}
+     */
     async wasWorking(employeeId) {
         let works = await Works.find({
             where: {
@@ -104,6 +115,16 @@ class EmployeesService {
         
     }
     
+    /**
+     * создание контракта работника в блокчейна
+     * @param companyUserId
+     * @param employee
+     * @param firstName
+     * @param lastName
+     * @param email
+     * @param address
+     * @returns {Promise<Contract>}
+     */
     async createBlockchainAccountForEmployee(companyUserId, employee, firstName, lastName, email, address) {
         let blockchainEmployee = {
             firstName,
@@ -123,6 +144,11 @@ class EmployeesService {
         return contract;
     }
     
+    /**
+     * получить работника по его id
+     * @param employeeId
+     * @returns {Promise<*>}
+     */
     async getById(employeeId) {
         return await Employees.findById(employeeId);
     }
