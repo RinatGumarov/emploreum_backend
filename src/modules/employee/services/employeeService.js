@@ -15,15 +15,18 @@ const Op = models.sequelize.Op;
 
 let instance;
 
+/**
+ * класс работника
+ */
 class EmployeesService {
-
+    
     /**
      * сохранение работника и создание для него
      * резюме с определенными специализациями
      * @param userId
      */
     async save(userId) {
-
+        
         let savedEmployees = await Employees.findOrCreate({
             where: {
                 user_id: {[Op.eq]: userId}
@@ -32,11 +35,12 @@ class EmployeesService {
                 user_id: userId
             }
         });
-
+        
         return savedEmployees[0]
     }
-
+    
     /**
+     * обновить рабоника
      * @param userId
      * @param params
      * @returns {Promise<*>}
@@ -49,8 +53,9 @@ class EmployeesService {
                 }
             })
     }
-
+    
     /**
+     * получить работника по юзеру
      * @param userId
      * @returns {Promise<Model>}
      */
@@ -58,11 +63,12 @@ class EmployeesService {
         let employee = await Employees.findOne({
             where: {
                 user_id: {[Op.eq]: userId}
-            }
+            },
+            include: [models.users]
         });
         return employee;
     }
-
+    
     /**
      * Прикрепить работника к вакансии по нажатию "Откликнуться".
      * @param userId
@@ -73,7 +79,12 @@ class EmployeesService {
         let employee = await this.getByUserId(userId);
         await employee.addVacancy(vacancyId);
     }
-
+    
+    /**
+     * работает ли работник
+     * @param employeeId
+     * @returns {Promise<boolean>}
+     */
     async wasWorking(employeeId) {
         let works = await Works.find({
             where: {
@@ -84,7 +95,7 @@ class EmployeesService {
         });
         return works !== null;
     }
-
+    
     /**
      * получить все вакансии на которые откликнулся чувак
      * @param userId
@@ -104,9 +115,19 @@ class EmployeesService {
             }]
         });
         return vacancies;
-
+        
     }
-
+    
+    /**
+     * создание контракта работника в блокчейна
+     * @param companyUserId
+     * @param employee
+     * @param firstName
+     * @param lastName
+     * @param email
+     * @param address
+     * @returns {Promise<Contract>}
+     */
     async createBlockchainAccountForEmployee(companyUserId, employee, firstName, lastName, email, address) {
         let blockchainEmployee = {
             firstName,
@@ -125,10 +146,16 @@ class EmployeesService {
         employee.save();
         return contract;
     }
-
+    
+    /**
+     * получить работника по его id
+     * @param employeeId
+     * @returns {Promise<*>}
+     */
     async getById(employeeId) {
         return await Employees.findById(employeeId);
     }
+    
 
     async findAll() {
         let employees = await Employees.findAll({
@@ -241,8 +268,5 @@ class EmployeesService {
 
 }
 
-if (typeof instance !== EmployeesService) {
-    instance = new EmployeesService();
-}
-
+instance = new EmployeesService();
 module.exports = instance;

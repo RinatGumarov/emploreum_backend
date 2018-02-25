@@ -1,6 +1,6 @@
 const models = require('../../../core/models');
 const Profiles = models.profiles;
-
+let instance;
 const Op = models.sequelize.Op;
 
 class ProfileService {
@@ -29,8 +29,5 @@ class ProfileService {
     
 }
 
-if (typeof instance !== ProfileService) {
-    instance = new ProfileService();
-}
-
+instance = new ProfileService();
 module.exports = instance;

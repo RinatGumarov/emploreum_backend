@@ -7,7 +7,7 @@ const logger = require("../../../utils/logger");
 let instance;
 
 class RegistrationUtil {
-
+    
     /**
      * Create new company address in blockchain.
      *
@@ -18,22 +18,22 @@ class RegistrationUtil {
         let account = web3.eth.accounts.create();
         logger.log(`address: ${account.address} generated for company`);
         return account.encrypt(password);
-
+        
     };
-
+    
     /**
      * Create new employee address in blockchain.
      *
      * @param password: String
      * @returns {PrivateKey} encrypted private key
      */
-
+    
     generateEmployeeAccount(password) {
         let account = web3.eth.accounts.create();
         logger.log(`address: ${account.address} generated for employee`);
         return account.encrypt(password);
     }
-
+    
     /**
      * Decrypt account with password
      *
@@ -44,7 +44,7 @@ class RegistrationUtil {
     decryptAccount(key, password) {
         return web3.eth.accounts.decrypt(key, password);
     }
-
+    
     /**
      *  Send transaction to address
      *
@@ -54,13 +54,13 @@ class RegistrationUtil {
      * @param callback
      * @returns {Promise.<TResult>}
      */
-    sendTransaction(value, to, privateKey) {
-        let args = Array.prototype.slice.call(arguments, 3);
+    sendTransaction(value, to, privateKey, callback) {
+        let args = Array.prototype.slice.call(arguments, 4);
         let gas = args[0] || process.env.SEND_TRANSACTION_GAS_AMOUNT || config.send_transaction_gas_amount;
         let data = args[1];
-
+        
         let tx = {to, value, gas, data};
-
+        
         return web3.eth.accounts.signTransaction(tx, privateKey)
             .then(data => {
                 return web3.eth.sendSignedTransaction(data.rawTransaction)
@@ -70,11 +70,11 @@ class RegistrationUtil {
                     // .on("confirmation", console.log)
                     .on("error", (error) => {
                         logger.log(error)
-                    })
+                    }).once('receipt', callback)
             });
-
+        
     }
-
+    
     /**
      * Register employee in blockchain.
      *
@@ -84,9 +84,9 @@ class RegistrationUtil {
     registerEmployee(employee) {
         let gas = process.env.EMPLOYEE_CREATE_GAS_AMOUNT || config.employee_create_gas_amount;
         var contractInfo = require("./abi/Employee.json");
-
+        
         return contractUtil.createContract(contractInfo, gas, employee.firstName, employee.lastName, employee.email,
-                                           employee.address
+            employee.address
         ).then(contract => {
             logger.log(`Employee contract created: ${contract}`);
             return contract;
@@ -95,7 +95,7 @@ class RegistrationUtil {
             return false
         });
     }
-
+    
     /**
      *  Register company in blockchain.
      *
@@ -105,7 +105,7 @@ class RegistrationUtil {
     registerCompany(company) {
         let gas = process.env.EMPLOYEE_CREATE_GAS_AMOUNT || config.employee_create_gas_amount;
         var contractInfo = require("./abi/Company.json");
-
+        
         return contractUtil.createContract(contractInfo, gas, company.name, company.raiting, company.address).then(
             contract => {
                 logger.log(`Company contract created: ${contract}`);

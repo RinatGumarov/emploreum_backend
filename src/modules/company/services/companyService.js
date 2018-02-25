@@ -12,7 +12,7 @@ const Web3InitError = require("../../blockchain/utils/Web3Error");
 let instance;
 
 class CompaniesService {
-
+    
     /**
      * создание профиля для компании
      * @param companyId
@@ -24,7 +24,7 @@ class CompaniesService {
             profile_id: profileId
         });
     }
-
+    
     async save(userId) {
         return (await Companies.findOrCreate({
             where: {
@@ -37,7 +37,7 @@ class CompaniesService {
             }
         }))[0];
     }
-
+    
     async update(userId, params) {
         return await Companies.update(params, {
             where: {
@@ -45,7 +45,7 @@ class CompaniesService {
             }
         });
     }
-
+    
     async findByUserId(userId) {
         return await Companies.findOne({
             where: {
@@ -55,7 +55,7 @@ class CompaniesService {
             },
         })
     }
-
+    
     async findByIdWithUser(id) {
         return await Companies.findOne({
             include: [{
@@ -68,7 +68,7 @@ class CompaniesService {
             },
         })
     }
-
+    
     async hasContracts(companyId) {
         let works = await models.works.find({
             where: {
@@ -79,7 +79,7 @@ class CompaniesService {
         });
         return works !== null;
     }
-
+    
     async createBlockchainAccountForCompany(companyUserId, company, name, rating, address) {
         let blockchainCompany = {
             name,
@@ -95,10 +95,10 @@ class CompaniesService {
         });
         company.contract = contract.address;
         company.save();
-
+        
         return contract;
     }
-
+    
     async findByVacancyId(vacancyId) {
         return await Companies.findOne({
             include: [models.users, {
@@ -111,7 +111,7 @@ class CompaniesService {
             }]
         });
     }
-
+    
     async findById(id) {
         return await Companies.findOne({
             where: {
@@ -121,7 +121,11 @@ class CompaniesService {
             },
         })
     }
-
+    
+    async getAll() {
+        return await Companies.findAll()
+    }
+    
     async findAllEmployees(companyId) {
         let employees = await models.works.findAll({
             attributes: [],
@@ -176,8 +180,5 @@ class CompaniesService {
     }
 }
 
-if (typeof instance !== CompaniesService) {
-    instance = new CompaniesService();
-}
-
+instance = new CompaniesService();
 module.exports = instance;

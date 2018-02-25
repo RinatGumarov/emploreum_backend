@@ -4,6 +4,7 @@ const cvService = require('../../employee/services/cvService');
 const employeesService = require('../../employee/services/employeeService');
 const companiesService = require('../../company/services/companyService');
 const messageService = require('../../message/services/messageService');
+
 const logger = require('../../../utils/logger');
 const account = require('../../blockchain/utils/account');
 const web3 = require('../../blockchain/utils/web3');

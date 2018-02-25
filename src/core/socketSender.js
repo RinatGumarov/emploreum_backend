@@ -25,7 +25,7 @@ class SocketSender {
         let newServer = http.Server(server);
         
         io.attach(newServer);
-
+        
         let session_secret = process.env.SESSION_SECRET || configSession.secret;
         io.use(passportSocketIo.authorize({
             cookieParser: cookieParser,
@@ -49,16 +49,12 @@ class SocketSender {
         return newServer;
     }
     
-    sendSocketMessage(chatId, object) {
+    async sendSocketMessage(chatId, object) {
         logger.log("поссылка " + chatId + " " + object);
-        io.emit(chatId, object);
+        await io.emit(chatId, object);
     }
     
 }
 
-// singelton
-if (typeof socketSenderInstance !== SocketSender) {
-    socketSenderInstance = new SocketSender();
-}
-
+socketSenderInstance = new SocketSender();
 module.exports = socketSenderInstance;

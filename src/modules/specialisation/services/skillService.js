@@ -8,7 +8,7 @@ const employeeService = require('../../employee/services/employeeService');
 let instance;
 
 class SkillService {
-
+    
     /**
      * поиск скила по профилю
      * если likestr передан то будет искатьс вхождени в имя
@@ -23,10 +23,10 @@ class SkillService {
                 where: {id: {[Op.eq]: id}},
             }]
         });
-
+        
         return skills;
     }
-
+    
     /**
      * @param userId
      * @returns {Promise<*>}
@@ -51,11 +51,9 @@ class SkillService {
         });
         return skills;
     }
-
-
+    
+    
 }
 
-if (typeof instance !== SkillService)
-    instance = new SkillService();
-
+instance = new SkillService();
 module.exports = instance;
