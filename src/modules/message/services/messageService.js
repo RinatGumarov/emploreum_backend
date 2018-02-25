@@ -7,7 +7,7 @@ const chatService = require('../services/chatService');
 const userService = require('../../auth/services/userService');
 const employeeService = require('../../employee/services/employeeService');
 const companyService = require('../../company/services/companyService');
-const socketSender = require('../../../core/socketSender');
+const notificationService = require('../../message/services/notificationService');
 const config = require('../../../utils/config');
 const logger = require('../../../utils/logger');
 
@@ -15,7 +15,18 @@ let instance;
 
 class MessageService {
     
-    async save(companyId, employeeId, text, isEmployeeMessage, isCompanyCessage, socketChatId) {
+    /**
+     * рутовый метод для создания сообщений
+     * используется в sendToEmployee и
+     * sendToCompany
+     * @param companyId
+     * @param employeeId
+     * @param text
+     * @param isEmployeeMessage
+     * @param isCompanyCessage
+     * @returns {Promise<*>}
+     */
+    async save(companyId, employeeId, text, isEmployeeMessage, isCompanyCessage) {
         
         let chat = await chatService.getChatBetweenEmployeeAndCompany(employeeId, companyId);
         
@@ -26,22 +37,18 @@ class MessageService {
             is_company_message: isCompanyCessage
         });
         
-        if (typeof socketChatId !== "undefined") {
-            logger.log("send socket message");
-            socketSender.sendSocketMessage(socketChatId, message);
-        }
-        
         return message;
     }
     
     /**
      * Создание соощение
-     * от лользователя компании к сотруднику
+     * от пользователя компании к сотруднику
      */
     async sendToEmployee(userId, employeeId, text) {
         let company = await companyService.findByUserId(userId);
         let user = await userService.getUserByEmployeeId(employeeId);
-        let message = await this.save(company.id, employeeId, text, false, true, user.id);
+        notificationService.sendNotification(user.id, "компания отправила вам сообщение");
+        let message = await this.save(company.id, employeeId, text, false, true);
         return message;
     }
     
@@ -52,7 +59,8 @@ class MessageService {
     async sendToCompany(userId, companyId, text) {
         let employee = await employeeService.getByUserId(userId);
         let user = await userService.getUserByCompanyId(companyId);
-        let message = await this.save(companyId, employee.id, text, true, false, user.id);
+        notificationService.sendNotification(user.id, "работник отправил вам сообщение");
+        let message = await this.save(companyId, employee.id, text, true, false);
         return message;
     }
     

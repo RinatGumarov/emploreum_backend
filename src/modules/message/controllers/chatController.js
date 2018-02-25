@@ -14,19 +14,7 @@ module.exports.func = (router) => {
         res.json(chats)
 
     });
-
-    router.get('/new', async (req, res) => {
-
-        let newMessage;
-
-        if (req.user.role === "EMPLOYEE") {
-            newMessage = await chatService.getAllChatsWithNewMessageForEmployee(req.user.id);
-        } else {
-            newMessage = await chatService.getAllChatsWithNewMessageForCompany(req.user.id);
-        }
-        res.json(newMessage)
-
-    });
+    
 
     return router;
 
