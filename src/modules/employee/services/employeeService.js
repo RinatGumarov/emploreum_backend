@@ -4,7 +4,6 @@ const Account = require("../../blockchain/utils/account");
 const Employees = models.employees;
 const Works = models.works;
 const blockchainInfo = require('../../blockchain/services/blockchainEventService');
-const workService = require('../../work/services/workService');
 const _ = require('lodash');
 const socketSender = require('../../../core/socketSender');
 const logger = require('../../../utils/logger');
