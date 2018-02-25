@@ -173,7 +173,7 @@ class EmployeesService {
         return await models.works.count({
             where: {
                 [Op.and]: {
-                    employeeId: {
+                    employee_id: {
                         [Op.eq]: employeeId,
                     },
                     status: {
@@ -191,7 +191,7 @@ class EmployeesService {
         return await models.works.count({
             where: {
                 [Op.and]: {
-                    employeeId: {
+                    employee_id: {
                         [Op.eq]: employeeId,
                     },
                     status: {
@@ -209,7 +209,7 @@ class EmployeesService {
         return await models.works.findAll({
             where: {
                 [Op.and]: {
-                    employeeId: {
+                    employee_id: {
                         [Op.eq]: employeeId,
                     },
                     status: {
