@@ -40,11 +40,13 @@ module.exports.func = (router) => {
         let employeeCount = await companyService.countEmployees(activeContracts);
         let balance = await companyService.getBalance(req.user);
         let address = req.user.account_address;
+        let canBePaid = parseInt(balance / spending, 10) || 0;
         return res.send({
            address,
            spending,
            employeeCount,
            balance,
+           canBePaid,
         });
     });
 
