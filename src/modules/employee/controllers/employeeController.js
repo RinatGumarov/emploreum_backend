@@ -1,4 +1,3 @@
-const skillService = require('../../specialisation/services/skillService');
 const cvService = require('../services/cvService');
 const employeeService = require('../services/employeeService');
 const messageService = require('../../message/services/messageService');

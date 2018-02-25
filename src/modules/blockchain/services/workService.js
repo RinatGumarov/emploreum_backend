@@ -113,17 +113,15 @@ class WorkService {
     async sendWeekSalary(work) {
         let amount = web3.utils.toWei(String(work.vacancy.week_payment.toFixed(18)), "ether");
         let privateKey = await Account.decryptAccount(work.company.user.encrypted_key, work.company.user.key_password).privateKey;
-        let result = await blockchainWork.sendWeekSalary(
-            work.contract,
-            amount,
-            privateKey
-        );
-        await socketSender.sendSocketMessage(`${work.company.user_id}:balance`, {
-            type: "RELOAD"
+        let result = await blockchainWork.sendWeekSalary(work.contract, amount, privateKey, async function (data) {
+            await socketSender.sendSocketMessage(`${work.company.user_id}:balance`, {
+                type: "RELOAD"
+            });
+            await socketSender.sendSocketMessage(`${work.employee.user_id}:balance`, {
+                type: "RELOAD"
+            });
         });
-        await socketSender.sendSocketMessage(`${work.employee.user_id}:balance`, {
-            type: "RELOAD"
-        });
+        
         return result;
     }
     
