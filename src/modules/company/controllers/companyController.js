@@ -2,7 +2,7 @@ const companyService = require('../services/companyService');
 const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
-    
+
     /**
      *  получить компанию, зная сессию.
      */
@@ -20,7 +20,7 @@ module.exports.func = (router) => {
             res.status(500).send({error: err});
         }
     });
-    
+
     router.post('/update', async (req, res) => {
         try {
             let company = await companyService.update(req.user.id, req.body);
@@ -31,8 +31,21 @@ module.exports.func = (router) => {
         }
     });
 
-    router.get('/address', async (req, res) => {
-       return res.send(req.user.address);
+    router.get('/indicators', async (req, res) => {
+        let company = companyService.findByUserId(req.user.id);
+        if (!company)
+            return res.send({error: 'It is not you!'});
+        let activeContracts = companyService.findAllActiveContracts(company);
+        let spending = companyService.countSpending(activeContracts);
+        let employeeCount = companyService.countEmployees(activeContracts);
+        let balance = companyService.getBalance(req.user);
+        let address = req.user.account_address;
+       return res.send({
+           address,
+           spending,
+           employeeCount,
+           balance,
+        });
     });
 
 
@@ -48,7 +61,7 @@ module.exports.func = (router) => {
             res.status(500).send({error: err});
         }
     });
-    
+
     /**
      * получить инфу о компании по вокансии
      */
@@ -83,7 +96,7 @@ module.exports.func = (router) => {
             res.status(500).send({error: 'errore'});
         }
     });
-    
+
     return router;
-    
+
 };

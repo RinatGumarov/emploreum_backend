@@ -9,6 +9,7 @@ const _ = require('lodash');
 
 const Op = models.sequelize.Op;
 const Web3InitError = require("../../blockchain/utils/Web3Error");
+const web3 = require("../../blockchain/utils/web3");
 let instance;
 
 class CompaniesService {
@@ -173,6 +174,41 @@ class CompaniesService {
             return test;
         });
         return tests;
+    }
+
+    async findAllActiveContracts(company) {
+        let contracts = await models.works.findAll({
+            where: {
+                [Op.and]: {
+                    company_id: {
+                        [Op.eq]: company.id,
+                    },
+                    status: {
+                        [Op.and]: {
+                            [Op.gt]: -2,
+                            [Op.lt]: 7,
+                        }
+                    }
+                }
+            },
+        });
+        return contracts;
+    }
+
+    async getBalance(user){
+        return parseFloat(await web3.eth.getBalance(user.account_address));
+    }
+
+    async countSpending(contracts) {
+        let result = 0;
+        for (let contract of contracts) {
+            result += contract.vacancy.week_payment;
+        }
+        return result;
+    }
+
+    async countEmployees(contracts) {
+        return await _.uniqBy(contracts, "employeeId").length;
     }
 }
 
