@@ -1,4 +1,5 @@
 const companyService = require('../services/companyService');
+const balanceService = require('../../blockchain/services/balanceService');
 const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
@@ -38,7 +39,7 @@ module.exports.func = (router) => {
         let activeContracts = await companyService.findAllActiveContracts(company);
         let spending = await companyService.countSpending(activeContracts);
         let employeeCount = await companyService.countEmployees(activeContracts);
-        let balance = await companyService.getBalance(req.user);
+        let balance = await balanceService.getBalance(req.user.account_address);
         let address = req.user.account_address;
         let canBePaid = parseInt(balance / spending, 10) || 0;
         return res.send({

@@ -13,7 +13,7 @@ const web3 = require("../../blockchain/utils/web3");
 let instance;
 
 class CompaniesService {
-
+    
     /**
      * создание профиля для компании
      * @param companyId
@@ -25,7 +25,7 @@ class CompaniesService {
             profile_id: profileId
         });
     }
-
+    
     async save(userId) {
         return (await Companies.findOrCreate({
             where: {
@@ -38,7 +38,7 @@ class CompaniesService {
             }
         }))[0];
     }
-
+    
     async update(userId, params) {
         return await Companies.update(params, {
             where: {
@@ -46,7 +46,7 @@ class CompaniesService {
             }
         });
     }
-
+    
     async findByUserId(userId) {
         return await Companies.findOne({
             where: {
@@ -56,7 +56,7 @@ class CompaniesService {
             },
         })
     }
-
+    
     async findByIdWithUser(id) {
         return await Companies.findOne({
             include: [{
@@ -69,7 +69,7 @@ class CompaniesService {
             },
         })
     }
-
+    
     async hasContracts(companyId) {
         let works = await models.works.find({
             where: {
@@ -80,7 +80,7 @@ class CompaniesService {
         });
         return works !== null;
     }
-
+    
     async createBlockchainAccountForCompany(companyUserId, company, name, rating, address) {
         let blockchainCompany = {
             name,
@@ -96,10 +96,10 @@ class CompaniesService {
         });
         company.contract = contract.address;
         company.save();
-
+        
         return contract;
     }
-
+    
     async findByVacancyId(vacancyId) {
         return await Companies.findOne({
             include: [models.users, {
@@ -112,7 +112,7 @@ class CompaniesService {
             }]
         });
     }
-
+    
     async findById(id) {
         return await Companies.findOne({
             where: {
@@ -122,7 +122,11 @@ class CompaniesService {
             },
         })
     }
-
+    
+    async getAll() {
+        return await Companies.findAll()
+    }
+    
     async findAllEmployees(companyId) {
         let employees = await models.works.findAll({
             attributes: [],
@@ -191,14 +195,12 @@ class CompaniesService {
                     }
                 }
             },
+            include: {
+                model: models.vacancies,
+                attributes: ["week_payment"],
+            }
         });
         return contracts;
-    }
-
-    async getBalance(user){
-        let balance = await web3.eth.getBalance(user.account_address);
-        balance = web3.utils.fromWei(balance, 'ether');
-        return parseFloat(balance);
     }
 
     async countSpending(contracts) {
@@ -206,7 +208,7 @@ class CompaniesService {
         for (let contract of contracts) {
             result += contract.vacancy.week_payment;
         }
-        return result;
+        return parseFloat(result.toFixed(10));
     }
 
     async countEmployees(contracts) {
@@ -214,8 +216,5 @@ class CompaniesService {
     }
 }
 
-if (typeof instance !== CompaniesService) {
-    instance = new CompaniesService();
-}
-
+instance = new CompaniesService();
 module.exports = instance;

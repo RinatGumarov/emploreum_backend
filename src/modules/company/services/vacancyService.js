@@ -14,6 +14,7 @@ const companyService = require('./companyService');
 const skillService = require('../../specialisation/services/skillService');
 const socketSender = require('../../../core/socketSender');
 
+
 const Op = models.sequelize.Op;
 
 let instance;
@@ -245,8 +246,5 @@ class VacanciesService {
     
 }
 
-if (typeof instance !== VacanciesService) {
-    instance = new VacanciesService();
-}
-
+instance = new VacanciesService();
 module.exports = instance;
