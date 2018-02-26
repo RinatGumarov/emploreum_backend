@@ -134,7 +134,7 @@ module.exports.func = (router) => {
         return res.send({data: 'success'});
     });
 
-    rou
+    // rou
 
 
     return router;
