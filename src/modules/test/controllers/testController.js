@@ -44,35 +44,35 @@ module.exports.func = (router) => {
         res.send({data: 'success'});
     });
 
-    // router.get('/vacancy/:id([0-9]+)/', async (req, res) => {
-    //     let vacancy = await vacancyService.findById(req.params.id);
-    //     let company = await companyService.findByUserId(req.user.id);
-    //     let test = await testService.findById(vacancy.test_id);
-    //     if (company && test && test.company_id === company.id) {
-    //         res.send(test);
-    //     } else {
-    //         if (test.questions) {
-    //             let passedQuestions = await testService.findPassedQuestions(test.id);
-    //             let passedQuestionsIds;
-    //             if (passedQuestions)
-    //                 passedQuestionsIds = await passedQuestions.map((pq) => {
-    //                     return pq.question_id;
-    //                 });
-    //             test.questions = await test.questions.map((q) => {
-    //                 if (!passedQuestions)
-    //                     q.dataValues.viewed = passedQuestionsIds.indexOf(q.id) > -1;
-    //                 else
-    //                     q.dataValues.viewed = false;
-    //                 return q;
-    //             });
-    //             await test.questions.forEach((question) => {
-    //                 delete question.answers;
-    //                 delete question.name;
-    //             });
-    //         }
-    //         res.send(test);
-    //     }
-    // });
+    router.get('/:id([0-9]+)/', async (req, res) => {
+        let vacancy = await vacancyService.findById(req.params.id);
+        let company = await companyService.findByUserId(req.user.id);
+        let test = await testService.findById(vacancy.test_id);
+        if (company && test && test.company_id === company.id) {
+            res.send(test);
+        } else {
+            if (test.questions) {
+                let passedQuestions = await testService.findPassedQuestions(test.id);
+                let passedQuestionsIds;
+                if (passedQuestions)
+                    passedQuestionsIds = await passedQuestions.map((pq) => {
+                        return pq.question_id;
+                    });
+                test.questions = await test.questions.map((q) => {
+                    if (!passedQuestions)
+                        q.dataValues.viewed = passedQuestionsIds.indexOf(q.id) > -1;
+                    else
+                        q.dataValues.viewed = false;
+                    return q;
+                });
+                await test.questions.forEach((question) => {
+                    delete question.answers;
+                    delete question.name;
+                });
+            }
+            res.send(test);
+        }
+    });
 
     router.get('/vacancy/:id([0-9]+)/', async (req, res) => {
         let vacancy = await vacancyService.findById(req.params.id);
