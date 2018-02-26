@@ -8,7 +8,8 @@ let instance;
 class BalanceService {
     
     async getBalance(address) {
-        return web3.utils.fromWei(await web3.eth.getBalance(address), "ether");
+        let balance = await web3.utils.fromWei(await web3.eth.getBalance(address), "ether");
+        return parseFloat(balance);
     };
     
 }
