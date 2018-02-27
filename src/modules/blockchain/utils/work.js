@@ -37,7 +37,7 @@ class Work {
         let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
         let data = contract.methods.start().encodeABI();
         
-        return account.sendTransaction(value, workAddress, privateKey, gas, data).then(data => {
+        return account.sendTransaction(value, workAddress, privateKey, logger.log, gas, data).then(data => {
             logger.log(`Contract ${workAddress} starting work now!`);
             logger.log(`'Transaction hash: ', ${data.transactionHash}`);
             return data;
@@ -55,7 +55,7 @@ class Work {
         let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
         let data = contract.methods.deposit().encodeABI();
         
-        return account.sendTransaction(value, workAddress, privateKey, gas, data).then(data => {
+        return account.sendTransaction(value, workAddress, privateKey, logger.log, gas, data).then(data => {
             logger.log(`Send deposite to ${workAddress} contract!`);
             logger.log(data);
             logger.log(`'transaction hash: ', ${data.transactionHash}`);
@@ -90,7 +90,7 @@ class Work {
         let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
         let data = contract.methods.solveFrizzing().encodeABI();
         
-        return account.sendTransaction(value, workAddress, privateKey, gas, data).then(data => {
+        return account.sendTransaction(value, workAddress, privateKey, logger.log, gas, data).then(data => {
             logger.log(`Contract ${workAddress} start working!`);
             logger.log(data);
             logger.log(`'transaction hash: ', ${data.transactionHash}`);

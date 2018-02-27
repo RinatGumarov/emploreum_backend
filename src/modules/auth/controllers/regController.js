@@ -33,7 +33,6 @@ module.exports.func = (router) => {
         return res.json({
             registrationStep: user.status,
             userId: user.id,
-            registrationStep: user.status,
         });
     };
 
