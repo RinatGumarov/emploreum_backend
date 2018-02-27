@@ -3,11 +3,10 @@ const Cvs = models.cvs;
 const Profiles = models.profiles;
 const Op = models.sequelize.Op;
 
-const employeeService = require("./employeeService");
 let instance;
 
 class CvsService {
-
+    
     /**
      * создание резюме для определенного профиля
      * определенного работника
@@ -15,21 +14,21 @@ class CvsService {
      * @param employeeId
      * @returns {Promise<Model>}
      */
-    async save(profileId, employeeId) {
+    async save(profileId, employee) {
         let cvs = await Cvs.findOrCreate({
             where: {
                 profile_id: {[Op.eq]: profileId},
-                employee_id: {[Op.eq]: employeeId}
+                employee_id: {[Op.eq]: employee.id}
             },
             defaults: {
                 profile_id: profileId,
-                employee_id: employeeId
+                employee_id: employee.id
             }
         });
-
+        
         return cvs[0];
     }
-
+    
     /**
      * метод  скилов для резюме
      * @param cv
@@ -39,8 +38,9 @@ class CvsService {
     async addSkill(cv, skill) {
         return await cv.addSkills([skill]);
     }
-
+    
     /**
+     * получить профиль работника по id
      * @param id
      * @returns {Promise<Model>}
      */
@@ -52,14 +52,13 @@ class CvsService {
         });
         return cvs;
     }
-
+    
     /**
-     * поиск скилов по направлению работника
-     */
-    async getEmployeeSkillsWithProfiles(userId) {
-        let employee = await employeeService.getByUserId(userId);
-        let employeeId = employee.id;
-        let skills = await Cvs.findAll({
+     * поиск профилей рабоника
+     * со скилами
+     * */
+    async getEmployeeSpecification(employeeUserId) {
+        let cvs = await Cvs.findAll({
             include: [
                 models.skills,
                 models.profiles,
@@ -68,17 +67,14 @@ class CvsService {
                     required: true,
                     model: models.employees,
                     where: {
-                        id: {[Op.eq]: employeeId}
+                        id: {[Op.eq]: employeeUserId}
                     }
                 }]
         });
-        return skills;
+        return cvs;
     }
-
+    
 }
 
-if (typeof instance !== CvsService) {
-    instance = new CvsService();
-}
-
+instance = new CvsService();
 module.exports = instance;

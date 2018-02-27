@@ -5,17 +5,15 @@ const Languages = models.languages;
 let instance;
 
 class LanguagesService {
-
-    async findAll(){
+    
+    async findAll() {
         let languages = await Languages.findAll({
             attributes: ["name"],
         });
         return languages;
     }
-
+    
 }
 
-if (typeof instance !== LanguagesService)
-    instance = new LanguagesService();
-
+instance = new LanguagesService();
 module.exports = instance;

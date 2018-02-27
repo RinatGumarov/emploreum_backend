@@ -8,7 +8,7 @@ const rolesService = require('./roleService');
 let instance;
 
 class UsersService {
-
+    
     async getUserByCompanyId(companyId) {
         let user = await Users.findOne({
             include: [{
@@ -22,10 +22,10 @@ class UsersService {
                 }
             }]
         });
-
+        
         return user;
     }
-
+    
     async getUserByEmployeeId(employeeId) {
         let user = await Users.findOne({
             include: [{
@@ -39,11 +39,11 @@ class UsersService {
                 }
             }]
         });
-
+        
         return user;
     }
-
-
+    
+    
     /**
      * @param email
      * @returns {Promise<boolean>}
@@ -58,7 +58,7 @@ class UsersService {
         });
         return user === null;
     }
-
+    
     /**
      * @param id
      * @returns {Promise<Model>}
@@ -74,19 +74,21 @@ class UsersService {
                 }
             }
         });
-
+        
         return this.changeUserRole(user);
     }
-
+    
     /**
      * @param email
      * @returns {Promise<Model>}
      */
     async getUserByEmail(email) {
         let user = await Users.findOne({
-            include: [{
-                model: Roles
-            }],
+            include: [
+                models.roles,
+                models.employees,
+                models.companies
+            ],
             where: {
                 email: {
                     [Op.eq]: email
@@ -95,7 +97,7 @@ class UsersService {
         });
         return this.changeUserRole(user);
     }
-
+    
     /**
      * Трансформирует роль в нормальный вид
      * @param user
@@ -107,7 +109,7 @@ class UsersService {
         }
         return user;
     }
-
+    
     /**
      * @param user
      * @returns {Promise<*>}
@@ -115,7 +117,7 @@ class UsersService {
     async incrementStep(user) {
         return await user.increment('status', {by: 1});
     }
-
+    
     /**
      * @param email
      * @param password
@@ -136,8 +138,8 @@ class UsersService {
         });
         return user;
     }
-
-
+    
+    
     /**
      * @param user
      * @returns {Promise<T>}
@@ -151,8 +153,8 @@ class UsersService {
             }
         });
     }
-
-
+    
+    
 }
 
 if (typeof instance !== UsersService)

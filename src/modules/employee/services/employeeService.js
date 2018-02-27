@@ -13,14 +13,14 @@ const Op = models.sequelize.Op;
 let instance;
 
 class EmployeesService {
-
+    
     /**
      * сохранение работника и создание для него
      * резюме с определенными специализациями
      * @param userId
      */
     async save(userId) {
-
+        
         let savedEmployees = await Employees.findOrCreate({
             where: {
                 user_id: {[Op.eq]: userId}
@@ -29,25 +29,21 @@ class EmployeesService {
                 user_id: userId
             }
         });
-
+        
         return savedEmployees[0]
     }
-
+    
     /**
      * @param userId
      * @param params
      * @returns {Promise<*>}
      */
-    async update(userId, params) {
-        return await
-            Employees.update(params, {
-                where: {
-                    user_id: {[Op.eq]: userId}
-                }
-            })
+    async update(employee, params) {
+        return await employee.update(params)
     }
-
+    
     /**
+     * получить инфо о работнике по его id
      * @param userId
      * @returns {Promise<Model>}
      */
@@ -59,78 +55,67 @@ class EmployeesService {
         });
         return employee;
     }
-
+    
     /**
      * Прикрепить работника к вакансии по нажатию "Откликнуться".
      * @param userId
      * @param vacancyId
      * @returns {Promise<void>}
      */
-    async attachVacancy(userId, vacancyId) {
-        let employee = await this.getByUserId(userId);
+    async attachVacancy(employee, vacancyId) {
         await employee.addVacancy(vacancyId);
     }
-
-    async wasWorking(employeeId) {
-        let works = await Works.find({
-            where: {
-                employee_id: {
-                    [Op.eq]: employeeId,
-                },
-            },
-        });
+    
+    /**
+     * работает или нет в данный момнет
+     * @param employee
+     * @returns {Promise<boolean>}
+     */
+    async wasWorking(employee) {
+        let works = employee.works();
         return works !== null;
     }
-
+    
     /**
      * получить все вакансии на которые откликнулся чувак
      * @param userId
      * @returns {Promise<void>}
      */
-    async getAwaitedContracts(userId) {
-        let vacancies = await models.vacancies.findAll({
-            include: [{
-                model: models.companies
-            }, {
-                attributes: [],
-                required: true,
-                model: models.employees,
-                where: {
-                    user_id: {[Op.eq]: userId},
-                }
-            }]
-        });
+    async getAwaitedContracts(employee) {
+        let vacancies = await employee.vacancies();
         return vacancies;
-
+        
     }
-
-    async createBlockchainAccountForEmployee(companyUserId, employee, firstName, lastName, email, address) {
+    
+    /**
+     * создает контракт для работника в блокчейн
+     * @param employee
+     * @param purseAddress
+     * @returns {Promise<Contract>}
+     */
+    async createBlockchainAccountForEmployee(employee, purseAddress, socketAddress) {
         let blockchainEmployee = {
-            firstName,
-            lastName,
-            email,
-            address,
+            firstName: employee.name,
+            lastName: employee.surname,
+            email: employee.email,
+            address: purseAddress,
         };
-        await blockchainInfo.set(companyUserId, `employee${address}`, `creating contract for employee ${firstName}`);
-        let contract = await Account.registerEmployee(blockchainEmployee).then(async (result) => {
-            if (!result)
-                throw new Web3InitError("Could not register employee in blockchain");
-            await blockchainInfo.unset(companyUserId, `employee${address}`);
-            return result;
-        });
+        await blockchainInfo.set(socketAddress, `employee${purseAddress}`, `creating contract for employee ${employee.name}`);
+        let contract = await Account.registerEmployee(blockchainEmployee);
+        if (!contract) {
+            throw new Web3InitError("Could not register employee in blockchain");
+        }
+        await blockchainInfo.unset(socketAddress, `employee${purseAddress}`);
         employee.contract = contract.address;
         employee.save();
         return contract;
     }
-
+    
     async getById(employeeId) {
         return await Employees.findById(employeeId);
     }
-
+    
 }
 
-if (typeof instance !== EmployeesService) {
-    instance = new EmployeesService();
-}
-
+instance = new EmployeesService();
 module.exports = instance;

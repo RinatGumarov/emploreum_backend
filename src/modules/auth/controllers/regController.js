@@ -153,7 +153,7 @@ module.exports.func = (router) => {
         try {
             switch (req.user.role) {
                 case 'EMPLOYEE':
-                    await employeesService.update(req.user.id, req.body);
+                    await employeesService.update(req.user.employee, req.body);
                     break;
                 case 'COMPANY':
                     await companiesService.update(req.user.id, req.body);
@@ -176,11 +176,6 @@ module.exports.func = (router) => {
         } else {
             return res.status(500).send('server error');
         }
-    });
-
-
-    router.get('/languages', async (req, res) => {
-        res.send(await languageService.findAll());
     });
 
     return router;
