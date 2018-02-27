@@ -7,7 +7,7 @@ const config = utilConfig.get("web3");
 let instance;
 
 class Util {
-
+    
     /**
      * Try to unlock account by defaultAccount position
      *
@@ -22,9 +22,9 @@ class Util {
             let account_password = process.env.ACCOUNT_PASSWORD || config.account_password;
             let unlock_time = process.env.UNLOCK_TIME || config.unlock_time;
             contract.defaults({from: accounts[defaultAccount]});
-
+            
             return web3.eth.personal.unlockAccount(accounts[defaultAccount], account_password,
-                                                   web3.utils.toHex(unlock_time));
+                web3.utils.toHex(unlock_time));
         }).then(status => {
             logger.log(`try to unlock account, status: ${status}`);
             return status ? contract : null;
@@ -32,9 +32,7 @@ class Util {
     }
 }
 
-if (typeof instance !== Util)
-    instance = new Util();
-
+instance = new Util();
 module.exports = instance;
 
 

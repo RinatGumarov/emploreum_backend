@@ -9,11 +9,11 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.BIGINT
             },
-            vacancy_id: {
+            company_id: {
                 type: Sequelize.BIGINT,
                 allowNull: true,
                 references: {
-                    model: 'vacancies',
+                    model: 'companies',
                     key: 'id',
                 },
             },

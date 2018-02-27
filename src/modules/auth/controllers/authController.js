@@ -1,4 +1,5 @@
 const passport = require('passport');
+const userService = require('../services/userService');
 
 module.exports.func = (router) => {
 
@@ -18,9 +19,9 @@ module.exports.func = (router) => {
         }
     });
 
-    router.get('/logout', function (req, res) {
-        req.logout();
-        res.send(true);
+    router.get('/logout', async (req, res) => {
+        req.session.destroy();
+        res.send();
     });
 
 

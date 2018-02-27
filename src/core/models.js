@@ -9,7 +9,7 @@ const path = require('path');
 let modelsInstance;
 
 class Models {
-
+    
     associateModels() {
         Object.keys(this).forEach((modelName) => {
             if (this[modelName].associate) {
@@ -17,15 +17,15 @@ class Models {
             }
         });
     }
-
+    
     addModel(pathToModel) {
-
+        
         logger.log(`Initialization ${pathToModel} model`);
         const model = this.sequelize.import(pathToModel);
         this[model.name] = model;
     }
-
-
+    
+    
     initModels(pathToModels) {
         let me = this;
         fs.readdirSync(pathToModels).filter(function (filename) {
@@ -35,7 +35,7 @@ class Models {
             me.addModel(path.join(pathToModels, filename));
         });
     }
-
+    
     constructor() {
         let dbConfig = config.get('database');
         let databaseConfig = {};
@@ -53,13 +53,9 @@ class Models {
                 databaseConfig
             );
         }
-
+        
     }
 }
 
-// singelton
-if (typeof modelsInstance !== Models) {
-    modelsInstance = new Models();
-}
-
+modelsInstance = new Models();
 module.exports = modelsInstance;

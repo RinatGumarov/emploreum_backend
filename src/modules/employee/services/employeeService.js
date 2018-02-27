@@ -84,7 +84,7 @@ class EmployeesService {
     async getAwaitedContracts(employee) {
         let vacancies = await employee.vacancies();
         return vacancies;
-        
+
     }
     
     /**
@@ -113,6 +113,117 @@ class EmployeesService {
     
     async getById(employeeId) {
         return await Employees.findById(employeeId);
+    }
+    
+    async findAll() {
+        let employees = await Employees.findAll({
+            include: [{
+                model: models.cvs,
+                attributes: ["id"],
+                include: [{model: models.profiles, attributes: ["name"]}, {model: models.skills, attributes: ["name"]}],
+            }, {
+                model: models.works,
+                attributes: ["id"],
+                include: [{
+                    model: models.companies,
+                    attributes: ["name"],
+                }, {
+                    model: models.vacancies,
+                    attributes: ["name"],
+                }]
+            }],
+            attributes: ["user_id", "name", "surname", "photo_path", "city", "birthday"]
+        });
+        
+        employees = await employees.map((employee) => {
+            if (employee.birthday)
+                employee.age = new Date().getFullYear() - employee.birthday.getFullYear();
+            let skills = [];
+            let specifications = [];
+            for (let i = 0; i < employee.cvs.length; ++i) {
+                for (let j = 0; j < employee.cvs[i].skills.length; ++j) {
+                    skills.push(employee.cvs[i].skills[j].name)
+                }
+                specifications.push(employee.cvs[i].profile.name);
+            }
+            employee.dataValues.skills = _.uniq(skills);
+            employee.dataValues.specifications = _.uniq(specifications);
+            delete employee.dataValues.cvs;
+            return employee;
+        });
+        return employees;
+    }
+    
+    async countEndedWorks(employeeId) {
+        return await models.works.count({
+            where: {
+                [Op.and]: {
+                    employee_id: {
+                        [Op.eq]: employeeId,
+                    },
+                    status: {
+                        [Op.or]: {
+                            [Op.eq]: -200,
+                            [Op.eq]: -500,
+                        }
+                    }
+                }
+            }
+        })
+    }
+    
+    async countCurrentWorks(employeeId) {
+        return await models.works.count({
+            where: {
+                [Op.and]: {
+                    employee_id: {
+                        [Op.eq]: employeeId,
+                    },
+                    status: {
+                        [Op.and]: {
+                            [Op.gt]: -2,
+                            [Op.lt]: 7,
+                        }
+                    }
+                }
+            }
+        })
+    }
+    
+    async findCurrentWorksWithVacancies(employeeId) {
+        return await models.works.findAll({
+            where: {
+                [Op.and]: {
+                    employee_id: {
+                        [Op.eq]: employeeId,
+                    },
+                    status: {
+                        [Op.and]: {
+                            [Op.gt]: -2,
+                            [Op.lt]: 7,
+                        }
+                    }
+                }
+            },
+            include: [{
+                model: models.vacancies,
+            }],
+        })
+    }
+    
+    async getIncome(employeeId) {
+        let currentContracts = await this.findCurrentWorksWithVacancies(employeeId);
+        let result = 0;
+        for (let contract of currentContracts) {
+            result += contract.vacancy.week_payment;
+        }
+        return result;
+    }
+    
+    async getBalance(user) {
+        let balance = await web3.eth.getBalance(user.account_address);
+        balance = web3.utils.fromWei(balance, 'ether');
+        return parseFloat(balance);
     }
     
 }

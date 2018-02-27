@@ -19,6 +19,11 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'profile_skill_id',
             through: 'vacancy_profile_skills'
         });
+        profile_skills.belongsToMany(models.tests, {
+            foreignKey: 'profile_skill_id',
+            through: 'test_profile_skills',
+            timestamps: false
+        });
     };
 
 

@@ -4,11 +4,11 @@ const chalk = require('chalk');
 let loggerInstance;
 
 class Logger {
-
+    
     constructor() {
         console.log("Logger init " + chalk.green('✓'));
     }
-
+    
     /**
      * @param err
      * метод для логирования ошибок
@@ -16,7 +16,7 @@ class Logger {
     error(err) {
         console.error(chalk.red(err));
     }
-
+    
     /**
      * @param msg
      * метод для записи логов не связанных с ошибками
@@ -26,9 +26,6 @@ class Logger {
     }
 }
 
-// singelton
-if (typeof loggerInstance !== Logger) {
-    loggerInstance = new Logger();
-}
+loggerInstance = new Logger();
 module.exports = loggerInstance;
 

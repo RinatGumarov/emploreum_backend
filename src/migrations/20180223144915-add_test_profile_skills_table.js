@@ -3,7 +3,7 @@
 module.exports = {
     up: (queryInterface, Sequelize) => {
         return queryInterface.createTable('test_profile_skills', {
-            vacancy_id: {
+            test_id: {
                 type: Sequelize.BIGINT,
                 allowNull: false,
                 references: {

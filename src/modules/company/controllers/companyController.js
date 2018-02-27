@@ -2,7 +2,7 @@ const companyService = require('../services/companyService');
 const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
-    
+
     /**
      *  получить компанию, зная сессию.
      */
@@ -20,7 +20,7 @@ module.exports.func = (router) => {
             res.status(500).send({error: err});
         }
     });
-    
+
     router.post('/update', async (req, res) => {
         try {
             let company = await companyService.update(req.user.id, req.body);
@@ -31,8 +31,23 @@ module.exports.func = (router) => {
         }
     });
 
-    router.get('/address', async (req, res) => {
-       return res.send(req.user.address);
+    router.get('/indicators', async (req, res) => {
+        let company = await companyService.findByUserId(req.user.id);
+        if (!company)
+            return res.send({error: 'It is not you!'});
+        let activeContracts = await companyService.findAllActiveContracts(company);
+        let spending = await companyService.countSpending(activeContracts);
+        let employeeCount = await companyService.countEmployees(activeContracts);
+        let balance = await companyService.getBalance(req.user);
+        let address = req.user.account_address;
+        let canBePaid = parseInt(balance / spending, 10) || 0;
+        return res.send({
+           address,
+           spending,
+           employeeCount,
+           balance,
+           canBePaid,
+        });
     });
 
 
@@ -48,7 +63,7 @@ module.exports.func = (router) => {
             res.status(500).send({error: err});
         }
     });
-    
+
     /**
      * получить инфу о компании по вокансии
      */
@@ -72,7 +87,18 @@ module.exports.func = (router) => {
             res.status(500).send("errore=(");
         }
     });
-    
+
+    router.get('/tests', async (req, res) => {
+        try {
+            let company = await companyService.findByUserId(req.user.id);
+            let tests = await companyService.findAllTests(company.id);
+            res.send(tests);
+        } catch (err){
+            logger.error(err);
+            res.status(500).send({error: 'errore'});
+        }
+    });
+
     return router;
-    
+
 };

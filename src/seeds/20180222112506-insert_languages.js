@@ -4,13 +4,13 @@ module.exports = {
     up: (queryInterface, Sequelize) => {
         return queryInterface.bulkInsert('languages', [
             {
-                language: "russian",
+                name: "russian",
             },
             {
-                language: "english",
+                name: "english",
             },
             {
-                language: "french",
+                name: "french",
             },
         ], {});
     },

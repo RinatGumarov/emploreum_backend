@@ -43,7 +43,6 @@ class UsersService {
         return user;
     }
     
-    
     /**
      * @param email
      * @returns {Promise<boolean>}
@@ -84,11 +83,9 @@ class UsersService {
      */
     async getUserByEmail(email) {
         let user = await Users.findOne({
-            include: [
-                models.roles,
-                models.employees,
-                models.companies
-            ],
+            include: [{
+                model: Roles
+            }],
             where: {
                 email: {
                     [Op.eq]: email
@@ -154,10 +151,11 @@ class UsersService {
         });
     }
     
-    
+    async destroySession(sessionId){
+        await models.session
+    }
+
 }
 
-if (typeof instance !== UsersService)
-    instance = new UsersService();
-
+instance = new UsersService();
 module.exports = instance;

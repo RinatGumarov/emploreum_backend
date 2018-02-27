@@ -14,6 +14,7 @@ const companyService = require('./companyService');
 const skillService = require('../../specialisation/services/skillService');
 const socketSender = require('../../../core/socketSender');
 
+
 const Op = models.sequelize.Op;
 
 let instance;
@@ -202,7 +203,7 @@ class VacanciesService {
         
         socketSender.sendSocketMessage(`${userId}:vacancy`, {
             type: "DELETE",
-            id: vacancyId
+            id: vacancyId,
         });
         
         return true;
@@ -234,12 +235,16 @@ class VacanciesService {
         });
         return result === null;
     }
+
+    async sendInvitationToEmployee(userId, vacancy, employeeUserId) {
+        let employee = await employeeService.getByUserId(employeeUserId);
+        await messageService.sendToEmployee(userId, employee.id, "You have new invitation to vacancy");
+
+        await socketSender.sendSocketMessage(`${employee.user_id}:invitation`, vacancy);
+    }
     
     
 }
 
-if (typeof instance !== VacanciesService) {
-    instance = new VacanciesService();
-}
-
+instance = new VacanciesService();
 module.exports = instance;

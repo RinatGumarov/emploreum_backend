@@ -7,8 +7,8 @@ const configUtil = require('../utils/config');
 let instance;
 
 class sessionStoreIniter {
-
-
+    
+    
     constructor() {
         let configDb;
         let dbUser;
@@ -29,17 +29,13 @@ class sessionStoreIniter {
             conString: urlPath
         });
     }
-
+    
     getStore() {
         return this.store;
     }
-
-
+    
+    
 }
 
-// singelton
-if (typeof instance !== sessionStoreIniter) {
-    instance = new sessionStoreIniter();
-}
-
+instance = new sessionStoreIniter();
 module.exports = instance;
