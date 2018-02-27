@@ -6,7 +6,7 @@ const blockchainInfo = require('./blockchainEventService');
 const companyService = require('../../company/services/companyService');
 const vacancyService = require('../../company/services/vacancyService');
 const balanceService = require('../services/balanceService');
-
+const messageService = require('../../message/services/messageService');
 const Web3InitError = require('../utils/Web3Error');
 const Account = require('../utils/account');
 const web3 = require('../utils/web3');
@@ -126,10 +126,30 @@ class WorkService {
             await socketSender.sendSocketMessage(`${work.company.user_id}:balance`, {
                 balance: await balanceService.getBalance(work.company.user.account_address)
             });
-            
+
+            return data;
         });
-        
+
+        let transaction = {
+            currency: 'eth',
+            amount: parseFloat(work.vacancy.week_payment.toFixed(18)),
+            transaction_hash: result.transactionHash,
+            work_id: work.id,
+
+        };
+
+        let savedTransaction = await this.createContractTransaction(transaction);
+
+        await messageService.sendToCompany(work.employee.user.id, work.company.id, "New transaction for employee");
+        await socketSender.sendSocketMessage(`${work.company.user_id}:transactions`, {
+            transaction: savedTransaction,
+        });
+
         return result;
+    }
+
+    async createContractTransaction(transaction) {
+        return await models.work_transactions.create(transaction);
     }
     
     /**
