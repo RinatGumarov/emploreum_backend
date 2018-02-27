@@ -131,7 +131,16 @@ class EmployeesService {
             include: [{
                 model: models.cvs,
                 attributes: ["id"],
-                include: [{model: models.profiles, attributes: ["name"]}, {model: models.skills, attributes: ["name"]}],
+                include: [
+                    {
+                        model: models.profiles,
+                        attributes: ["name"]
+                    },
+                    {
+                        model: models.skills,
+                        attributes: ["name"]
+                    }
+                ],
             }, {
                 model: models.works,
                 attributes: ["id"],
@@ -164,13 +173,13 @@ class EmployeesService {
         });
         return employees;
     }
-
-    async countEndedWorks(employeeId) {
-        return await models.works.count({
+    
+    async countEndedWorks(employee) {
+        return await Works.count({
             where: {
                 [Op.and]: {
                     employee_id: {
-                        [Op.eq]: employeeId,
+                        [Op.eq]: employee.id,
                     },
                     status: {
                         [Op.or]: {
@@ -182,13 +191,13 @@ class EmployeesService {
             }
         })
     }
-
-    async countCurrentWorks(employeeId) {
-        return await models.works.count({
+    
+    async countCurrentWorks(employee) {
+        return await Works.count({
             where: {
                 [Op.and]: {
                     employee_id: {
-                        [Op.eq]: employeeId,
+                        [Op.eq]: employee.id,
                     },
                     status: {
                         [Op.and]: {
@@ -200,13 +209,13 @@ class EmployeesService {
             }
         })
     }
-
-    async findCurrentWorksWithVacancies(employeeId) {
-        return await models.works.findAll({
+    
+    async findCurrentWorksWithVacancies(employee) {
+        return await Works.findAll({
             where: {
                 [Op.and]: {
                     employee_id: {
-                        [Op.eq]: employeeId,
+                        [Op.eq]: employee.id,
                     },
                     status: {
                         [Op.and]: {
@@ -221,22 +230,15 @@ class EmployeesService {
             }],
         })
     }
-
-    async getIncome(employeeId) {
-        let currentContracts = await this.findCurrentWorksWithVacancies(employeeId);
+    
+    async getIncome(employee) {
+        let currentContracts = await this.findCurrentWorksWithVacancies(employee);
         let result = 0;
         for (let contract of currentContracts) {
             result += contract.vacancy.week_payment;
         }
         return parseFloat(result.toFixed(10));
     }
-    
-    async getBalance(user) {
-        let balance = await web3.eth.getBalance(user.account_address);
-        balance = web3.utils.fromWei(balance, 'ether');
-        return parseFloat(balance);
-    }
-    
 }
 
 instance = new EmployeesService();
