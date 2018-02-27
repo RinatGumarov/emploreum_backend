@@ -17,6 +17,9 @@ module.exports = (sequelize, DataTypes) => {
         questions.hasMany(models.answers, {
             foreignKey: 'question_id',
         });
+        questions.hasMany(models.passed_questions, {
+            foreignKey: 'question_id',
+        })
     };
 
 

@@ -195,14 +195,12 @@ class CompaniesService {
                     }
                 }
             },
+            include: {
+                model: models.vacancies,
+                attributes: ["week_payment"],
+            }
         });
         return contracts;
-    }
-
-    async getBalance(user){
-        let balance = await web3.eth.getBalance(user.account_address);
-        balance = web3.utils.fromWei(balance, 'ether');
-        return parseFloat(balance);
     }
 
     async countSpending(contracts) {
@@ -210,11 +208,34 @@ class CompaniesService {
         for (let contract of contracts) {
             result += contract.vacancy.week_payment;
         }
-        return result;
+        return parseFloat(result.toFixed(10));
     }
 
     async countEmployees(contracts) {
         return await _.uniqBy(contracts, "employeeId").length;
+    }
+
+    async getAllTransactions(company) {
+        let transactions = await models.work_transactions.findAll({
+            include: {
+                model: models.works,
+                where: {
+                    company_id: {
+                        [Op.eq]: company.id,
+                    }
+                },
+                include: {
+                    model: models.employees,
+                    attributes: ["name"],
+                }
+            },
+            where: {
+                transaction_hash: {
+                    [Op.ne]: null,
+                }
+            }
+        });
+        return transactions;
     }
 }
 

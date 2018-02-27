@@ -7,7 +7,7 @@ const Web3InitError = require("./Web3Error");
 const accountUtil = require("./accountUtil");
 
 let instance;
-let gasPrice = web3.utils.toWei("1", "gwei");
+let gasPrice = web3.utils.toWei("100", "gwei");
 
 var initContract = function (contractInfo) {
     if (!web3)

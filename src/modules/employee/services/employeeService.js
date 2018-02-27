@@ -4,14 +4,19 @@ const Account = require("../../blockchain/utils/account");
 const Employees = models.employees;
 const Works = models.works;
 const blockchainInfo = require('../../blockchain/services/blockchainEventService');
+const _ = require('lodash');
 const socketSender = require('../../../core/socketSender');
 const logger = require('../../../utils/logger');
 
 const Web3InitError = require("../../blockchain/utils/Web3Error");
+const web3 = require("../../blockchain/utils/web3");
 const Op = models.sequelize.Op;
 
 let instance;
 
+/**
+ * класс работника
+ */
 class EmployeesService {
     
     /**
@@ -34,6 +39,7 @@ class EmployeesService {
     }
     
     /**
+     * обновить рабоника
      * @param userId
      * @param params
      * @returns {Promise<*>}
@@ -43,7 +49,7 @@ class EmployeesService {
     }
     
     /**
-     * получить инфо о работнике по его id
+     * получить работника по юзеру
      * @param userId
      * @returns {Promise<Model>}
      */
@@ -51,7 +57,8 @@ class EmployeesService {
         let employee = await Employees.findOne({
             where: {
                 user_id: {[Op.eq]: userId}
-            }
+            },
+            include: [models.users]
         });
         return employee;
     }
@@ -84,7 +91,6 @@ class EmployeesService {
     async getAwaitedContracts(employee) {
         let vacancies = await employee.vacancies();
         return vacancies;
-
     }
     
     /**
@@ -111,6 +117,11 @@ class EmployeesService {
         return contract;
     }
     
+    /**
+     * получить работника по его id
+     * @param employeeId
+     * @returns {Promise<*>}
+     */
     async getById(employeeId) {
         return await Employees.findById(employeeId);
     }
@@ -153,7 +164,7 @@ class EmployeesService {
         });
         return employees;
     }
-    
+
     async countEndedWorks(employeeId) {
         return await models.works.count({
             where: {
@@ -171,7 +182,7 @@ class EmployeesService {
             }
         })
     }
-    
+
     async countCurrentWorks(employeeId) {
         return await models.works.count({
             where: {
@@ -189,7 +200,7 @@ class EmployeesService {
             }
         })
     }
-    
+
     async findCurrentWorksWithVacancies(employeeId) {
         return await models.works.findAll({
             where: {
@@ -210,14 +221,14 @@ class EmployeesService {
             }],
         })
     }
-    
+
     async getIncome(employeeId) {
         let currentContracts = await this.findCurrentWorksWithVacancies(employeeId);
         let result = 0;
         for (let contract of currentContracts) {
             result += contract.vacancy.week_payment;
         }
-        return result;
+        return parseFloat(result.toFixed(10));
     }
     
     async getBalance(user) {
