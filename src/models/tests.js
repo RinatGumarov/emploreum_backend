@@ -17,6 +17,13 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'test_id',
             timestamps: false,
         });
+        tests.hasMany(models.passed_questions, {
+            foreignKey: 'test_id'
+        });
+
+        tests.hasOne(models.vacancies, {
+            foreignKey: "test_id",
+        })
     };
 
 

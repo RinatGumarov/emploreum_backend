@@ -52,6 +52,10 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'employee_id',
         });
 
+        employees.hasMany(models.passed_questions, {
+            foreignKey: 'employee_id',
+        })
+
     };
 
     return employees;

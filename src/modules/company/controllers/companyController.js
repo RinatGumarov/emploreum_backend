@@ -100,6 +100,12 @@ module.exports.func = (router) => {
         }
     });
 
+    router.get('/transactions', async (req, res) => {
+        let company = await companyService.findByUserId(req.user.id);
+        let transactions = await companyService.getAllTransactions(company);
+        return res.send(transactions)
+    });
+
     return router;
 
 };
