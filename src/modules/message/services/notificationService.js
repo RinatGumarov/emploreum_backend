@@ -8,6 +8,7 @@ let instance;
 
 /**
  * сервис для отправки уведомлений
+ * по сокету
  */
 class NotificationService {
     
@@ -34,6 +35,10 @@ class NotificationService {
      */
     async getAllNotifications(userId) {
         let notifications = await Notifications.findAll({
+            where: {
+                is_view: {[Op.eq]: true},
+                user_id: {[Op.eq]: userId}
+            },
             order: [
                 ['is_view', 'DESC'],
             ]
@@ -41,7 +46,10 @@ class NotificationService {
         Notifications.update({
             is_view: true
         }, {
-            where: {is_view: {[Op.eq]: false}}
+            where: {
+                is_view: {[Op.eq]: false},
+                user_id: {[Op.eq]: userId}
+            }
         });
         return notifications;
     }
@@ -56,15 +64,11 @@ class NotificationService {
         let notifications = await Notifications.findAll({
             attributes: ["id"],
             where: {
-                is_view: {[Op.eq]: false}
+                is_view: {[Op.eq]: true},
+                user_id: {[Op.eq]: userId}
             },
         });
-        Notifications.update({
-            is_view: true
-        }, {
-            where: {is_view: {[Op.eq]: false}}
-        });
-        // если придет null
+       
         return (notifications.length) ? notifications.length : 0;
     }
 }
