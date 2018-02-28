@@ -34,7 +34,7 @@ class NotificationService {
     async getAllNotifications(user) {
         let notifications = await Notifications.findAll({
             where: {
-                is_view: {[Op.eq]: true},
+                is_view: {[Op.eq]: false},
                 user_id: {[Op.eq]: user.id}
             },
             order: [
