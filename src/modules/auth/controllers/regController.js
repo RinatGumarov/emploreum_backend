@@ -1,13 +1,13 @@
-const usersService = require('../services/userService');
-const languageService = require('../services/languageService');
-const cvService = require('../../employee/services/cvService');
-const employeesService = require('../../employee/services/employeeService');
-const companiesService = require('../../company/services/companyService');
-const messageService = require('../../message/services/messageService');
+const usersService = require("../services/userService");
+const languageService = require("../services/languageService");
+const cvService = require("../../employee/services/cvService");
+const employeesService = require("../../employee/services/employeeService");
+const companiesService = require("../../company/services/companyService");
+const messageService = require("../../message/services/messageService");
 
-const logger = require('../../../utils/logger');
-const account = require('../../blockchain/utils/account');
-const web3 = require('../../blockchain/utils/web3');
+const logger = require("../../../utils/logger");
+const account = require("../../blockchain/utils/account");
+const web3 = require("../../blockchain/utils/web3");
 
 const FIRST_STATE = 1;
 const SECOND_STATE = 2;
@@ -33,16 +33,16 @@ module.exports.func = (router) => {
         return res.json({
             registrationStep: user.status,
             userId: user.id,
-            registrationStep: user.status,
+            registrationStep: user.status
         });
     };
 
     /**
      * шаг регистрации с высыланием проверочного кода на почту
      */
-    router.post('/signup/email', async (req, res) => {
+    router.post("/signup/email", async (req, res) => {
         if (!(await usersService.isEmailFree(req.body.email))) {
-            return res.status(400).send('email is already in use');
+            return res.status(400).send("email is already in use");
         } else {
 
             if (String(req.body.password) !== String(req.body.passwordConfirmation)) {
@@ -53,7 +53,7 @@ module.exports.func = (router) => {
             req.session.password = req.body.password;
             req.session.role = req.body.role;
             req.session.verifyCode = messageService.sendCodeToUser(req.body.email);
-            res.json({data: "success"});
+            res.json({ data: "success" });
 
             logger.log(req.session.verifyCode);
         }
@@ -64,18 +64,12 @@ module.exports.func = (router) => {
      * если пароль верный то регистрируем и аунтифицируем
      * пользователя
      */
-    router.post('/signup/verification', async (req, res) => {
+    router.post("/signup/verification", async (req, res) => {
         try {
             if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
-                let encryptedKey = '';
                 let keyPassword = web3.utils.randomHex(32);
-                switch (req.session.role) {
-                    case 'EMPLOYEE':
-                        encryptedKey = JSON.stringify(account.generateEmployeeAccount(keyPassword));
-                        break;
-                    case 'COMPANY':
-                        encryptedKey = JSON.stringify(account.generateCompanyAccount(keyPassword));
-                }
+                let encryptedKey = JSON.stringify(account.generateAccount(keyPassword));
+
                 let account_address = account.decryptAccount(JSON.parse(encryptedKey), keyPassword).address;
                 let user = await usersService.saveUser(
                     req.session.email,
@@ -88,25 +82,23 @@ module.exports.func = (router) => {
                 );
                 req.login(user, (err) => {
                     if (err) {
-                        return res.status(401).send({
-                            error: 'Unauthorized'
-                        });
+                        return res.status(401).send({ error: "Unauthorized" });
                     } else {
                         return res.send({
                             registrationStep: user.status,
                             role: req.session.role,
-                            userId: req.user.id,
+                            userId: req.user.id
                         });
                     }
                 });
             } else {
-                return res.status(400).send('code mismatch')
+                return res.status(400).send("code mismatch");
             }
         } catch (err) {
             logger.error(err.stack);
             return res.status(500).json({
                 error: err.message
-            })
+            });
         }
     });
 
@@ -114,12 +106,12 @@ module.exports.func = (router) => {
      * Шаг заполнения скилов и профилей компании
      * или работника
      */
-    router.post('/signup/specification', async (req, res) => {
+    router.post("/signup/specification", async (req, res) => {
         try {
             // profiles - объекты класса профиль, содержащие скиллы.
             let profiles = req.body.specifications;
             switch (req.user.role) {
-                case 'EMPLOYEE':
+                case "EMPLOYEE":
                     let employee = await employeesService.save(req.user.id);
                     for (let i = 0; i < profiles.length; i++) {
                         let profile = profiles[i];
@@ -127,11 +119,11 @@ module.exports.func = (router) => {
                         let skills = profile.skills;
                         // сохраняем скилы
                         for (let j = 0; j < skills.length; j++) {
-                            cvService.addSkill(cv, skills[j].id)
+                            cvService.addSkill(cv, skills[j].id);
                         }
                     }
                     break;
-                case 'COMPANY':
+                case "COMPANY":
                     let company = await companiesService.save(req.user.id);
                     for (let i = 0; i < profiles.length; ++i) {
                         await companiesService.addProfileToCompany(company.id, profiles[i].id);
@@ -150,13 +142,13 @@ module.exports.func = (router) => {
     /**
      * шаг заполнения лично информации
      */
-    router.post('/signup/info', async (req, res) => {
+    router.post("/signup/info", async (req, res) => {
         try {
             switch (req.user.role) {
-                case 'EMPLOYEE':
+                case "EMPLOYEE":
                     await employeesService.update(req.user.id, req.body);
                     break;
-                case 'COMPANY':
+                case "COMPANY":
                     await companiesService.update(req.user.id, req.body);
                     break;
             }
@@ -164,23 +156,23 @@ module.exports.func = (router) => {
         } catch (err) {
             res.status(500).json({
                 error: err.message
-            })
+            });
         }
     });
 
     /**
      * метод удаления пользователя из системы
      */
-    router.delete('/unreg', async (req, res) => {
+    router.delete("/unreg", async (req, res) => {
         if (await usersService.deleteUser(req.user.id)) {
-            return res.json({data: "success"});
+            return res.json({ data: "success" });
         } else {
-            return res.status(500).send('server error');
+            return res.status(500).send("server error");
         }
     });
 
 
-    router.get('/languages', async (req, res) => {
+    router.get("/languages", async (req, res) => {
         res.send(await languageService.findAll());
     });
 

@@ -1,0 +1,10 @@
+{
+  "create_contract_gas_amount": "1400000",
+  "employee_create_gas_amount": "1553091",
+  "company_create_gas_amount": "1555091",
+  "create_work_gas_amount": "2555091",
+  "send_transaction_gas_amount": "21000",
+  "send_week_salary_gas_amount": "40236",
+  "work_start_transaction_gas_amount": "80745",
+  "gas_price": "100000000000"
+}

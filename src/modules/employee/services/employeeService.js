@@ -1,15 +1,14 @@
-const models = require("../../../core/models");
-const Account = require("../../blockchain/utils/account");
+const models = require('../../../core/models');
+const Account = require('../../blockchain/utils/account');
 
 const Employees = models.employees;
 const Works = models.works;
-const blockchainInfo = require('../../blockchain/services/blockchainEventService');
 const _ = require('lodash');
 const socketSender = require('../../../core/socketSender');
 const logger = require('../../../utils/logger');
 
-const Web3InitError = require("../../blockchain/utils/Web3Error");
-const web3 = require("../../blockchain/utils/web3");
+const Web3InitError = require('../../blockchain/utils/Web3Error');
+const web3 = require('../../blockchain/utils/web3');
 const Op = models.sequelize.Op;
 
 let instance;
@@ -18,26 +17,26 @@ let instance;
  * класс работника
  */
 class EmployeesService {
-    
+
     /**
      * сохранение работника и создание для него
      * резюме с определенными специализациями
      * @param userId
      */
     async save(userId) {
-        
+
         let savedEmployees = await Employees.findOrCreate({
             where: {
-                user_id: {[Op.eq]: userId}
+                user_id: { [Op.eq]: userId }
             },
             defaults: {
                 user_id: userId
             }
         });
-        
-        return savedEmployees[0]
+
+        return savedEmployees[0];
     }
-    
+
     /**
      * обновить рабоника
      * @param userId
@@ -48,11 +47,11 @@ class EmployeesService {
         return await
             Employees.update(params, {
                 where: {
-                    user_id: {[Op.eq]: userId}
+                    user_id: { [Op.eq]: userId }
                 }
-            })
+            });
     }
-    
+
     /**
      * получить работника по юзеру
      * @param userId
@@ -61,13 +60,13 @@ class EmployeesService {
     async getByUserId(userId) {
         let employee = await Employees.findOne({
             where: {
-                user_id: {[Op.eq]: userId}
+                user_id: { [Op.eq]: userId }
             },
             include: [models.users]
         });
         return employee;
     }
-    
+
     /**
      * Прикрепить работника к вакансии по нажатию "Откликнуться".
      * @param userId
@@ -78,7 +77,7 @@ class EmployeesService {
         let employee = await this.getByUserId(userId);
         await employee.addVacancy(vacancyId);
     }
-    
+
     /**
      * работает ли работник
      * @param employeeId
@@ -88,13 +87,13 @@ class EmployeesService {
         let works = await Works.find({
             where: {
                 employee_id: {
-                    [Op.eq]: employeeId,
-                },
-            },
+                    [Op.eq]: employeeId
+                }
+            }
         });
         return works !== null;
     }
-    
+
     /**
      * получить все вакансии на которые откликнулся чувак
      * @param userId
@@ -109,14 +108,14 @@ class EmployeesService {
                 required: true,
                 model: models.employees,
                 where: {
-                    user_id: {[Op.eq]: userId},
+                    user_id: { [Op.eq]: userId }
                 }
             }]
         });
         return vacancies;
-        
+
     }
-    
+
     /**
      * создание контракта работника в блокчейна
      * @param companyUserId
@@ -127,25 +126,24 @@ class EmployeesService {
      * @param address
      * @returns {Promise<Contract>}
      */
-    async createBlockchainAccountForEmployee(companyUserId, employee, firstName, lastName, email, address) {
+    createBlockchainAccountForEmployee(employee) {
         let blockchainEmployee = {
-            firstName,
-            lastName,
-            email,
-            address,
+            firstName: employee.name,
+            lastName: employee.name,
+            email: employee.user.email,
+            address: employee.user.account_address
         };
-        await blockchainInfo.set(companyUserId, `employee${address}`, `creating contract for employee ${firstName}`);
-        let contract = await Account.registerEmployee(blockchainEmployee).then(async (result) => {
-            if (!result)
-                throw new Web3InitError("Could not register employee in blockchain");
-            await blockchainInfo.unset(companyUserId, `employee${address}`);
-            return result;
+
+        return Account.registerEmployee(blockchainEmployee).then(contract => {
+            if (!contract)
+                throw new Web3InitError('Could not register employee in blockchain');
+
+            employee.contract = contract.address;
+            employee.save();
+            return contract;
         });
-        employee.contract = contract.address;
-        employee.save();
-        return contract;
     }
-    
+
     /**
      * получить работника по его id
      * @param employeeId
@@ -154,26 +152,29 @@ class EmployeesService {
     async getById(employeeId) {
         return await Employees.findById(employeeId);
     }
-    
+
 
     async findAll() {
         let employees = await Employees.findAll({
             include: [{
                 model: models.cvs,
-                attributes: ["id"],
-                include: [{model: models.profiles, attributes: ["name"]}, {model: models.skills, attributes: ["name"]}],
+                attributes: ['id'],
+                include: [{ model: models.profiles, attributes: ['name'] }, {
+                    model: models.skills,
+                    attributes: ['name']
+                }]
             }, {
                 model: models.works,
-                attributes: ["id"],
+                attributes: ['id'],
                 include: [{
                     model: models.companies,
-                    attributes: ["name"],
+                    attributes: ['name']
                 }, {
                     model: models.vacancies,
-                    attributes: ["name"],
+                    attributes: ['name']
                 }]
             }],
-            attributes: ["user_id", "name", "surname", "photo_path", "city", "birthday"]
+            attributes: ['user_id', 'name', 'surname', 'photo_path', 'city', 'birthday']
         });
 
         employees = await employees.map((employee) => {
@@ -183,7 +184,7 @@ class EmployeesService {
             let specifications = [];
             for (let i = 0; i < employee.cvs.length; ++i) {
                 for (let j = 0; j < employee.cvs[i].skills.length; ++j) {
-                    skills.push(employee.cvs[i].skills[j].name)
+                    skills.push(employee.cvs[i].skills[j].name);
                 }
                 specifications.push(employee.cvs[i].profile.name);
             }
@@ -200,17 +201,17 @@ class EmployeesService {
             where: {
                 [Op.and]: {
                     employee_id: {
-                        [Op.eq]: employeeId,
+                        [Op.eq]: employeeId
                     },
                     status: {
                         [Op.or]: {
                             [Op.eq]: -200,
-                            [Op.eq]: -500,
+                            [Op.eq]: -500
                         }
                     }
                 }
             }
-        })
+        });
     }
 
     async countCurrentWorks(employeeId) {
@@ -218,17 +219,17 @@ class EmployeesService {
             where: {
                 [Op.and]: {
                     employee_id: {
-                        [Op.eq]: employeeId,
+                        [Op.eq]: employeeId
                     },
                     status: {
                         [Op.and]: {
                             [Op.gt]: -2,
-                            [Op.lt]: 7,
+                            [Op.lt]: 7
                         }
                     }
                 }
             }
-        })
+        });
     }
 
     async findCurrentWorksWithVacancies(employeeId) {
@@ -236,20 +237,20 @@ class EmployeesService {
             where: {
                 [Op.and]: {
                     employee_id: {
-                        [Op.eq]: employeeId,
+                        [Op.eq]: employeeId
                     },
                     status: {
                         [Op.and]: {
                             [Op.gt]: -2,
-                            [Op.lt]: 7,
+                            [Op.lt]: 7
                         }
                     }
                 }
             },
             include: [{
-                model: models.vacancies,
-            }],
-        })
+                model: models.vacancies
+            }]
+        });
     }
 
     async getIncome(employeeId) {
