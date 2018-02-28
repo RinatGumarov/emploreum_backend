@@ -95,11 +95,6 @@ module.exports.func = (router) => {
         }
     });
 
-    router.get('/test', async (req, res) => {
-        await workService.startWork(12);
-        res.send({ data: 'successful' });
-    });
-
     return router;
 
 };
