@@ -78,7 +78,17 @@ module.exports.func = (router) => {
             return res.status(500).send({error: "Could not get current works for the employee"});
         }
     });
-    
-    
+
+
+    router.get('/all', async (req, res) => {
+        try {
+            let employees = await employeeService.findAll();
+            return res.send(employees);
+        } catch (err) {
+            logger.error(err.trace);
+            return res.status(500).send({error: 'Could not get all employees'});
+        }
+    });
+
     return router;
 };

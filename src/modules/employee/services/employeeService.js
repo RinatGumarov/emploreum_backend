@@ -89,7 +89,7 @@ class EmployeesService {
      * @returns {Promise<void>}
      */
     async getAwaitedContracts(employee) {
-        let vacancies = await employee.vacancies();
+        let vacancies = await employee.getVacancies();
         return vacancies;
     }
     
