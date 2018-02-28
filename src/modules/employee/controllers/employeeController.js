@@ -81,19 +81,6 @@ module.exports.func = (router) => {
         }
     });
 
-    /**
-     * вакансии на котороые откликнулся чувак
-     */
-    router.get('/contracts/awaited', async (req, res) => {
-        try {
-            let contracts = await employeeService.getAwaitedContracts(req.user.id);
-            return res.send(contracts);
-        }
-        catch (err) {
-            logger.error(err.trace);
-            return res.status(500).send({error: 'Could not get awaited contracts for the employee'});
-        }
-    });
 
     router.get('/all', async (req, res) => {
         try {
