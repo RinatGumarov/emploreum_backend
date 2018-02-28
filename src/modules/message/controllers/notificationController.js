@@ -11,9 +11,7 @@ module.exports.func = (router) => {
     
     router.get('/notifications', async (req, res) => {
         let notifications = await notificationService.getAllNotifications(req.user);
-        res.json({
-            notifications: notifications
-        })
+        res.json(notifications)
     });
     
     
