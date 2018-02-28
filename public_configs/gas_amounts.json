@@ -6,5 +6,5 @@
   "send_transaction_gas_amount": "21000",
   "send_week_salary_gas_amount": "40236",
   "work_start_transaction_gas_amount": "80745",
-  "gas_price": "100000000000"
+  "gas_price": "1000000000"
 }

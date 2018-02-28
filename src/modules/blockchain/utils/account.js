@@ -46,10 +46,9 @@ class RegistrationUtil {
 
         let gas = lastArgument.gas || config.send_transaction_gas_amount;
         let data = lastArgument.data;
-        let nonce = lastArgument.nonce || web3.utils.randomHex(32);
         let gasPrice = lastArgument.gasPrice || process.env.GAS_PRICE || config.gas_price;
 
-        let tx = { to, value, gas, data, gasPrice, nonce };
+        let tx = { to, value, gas, data, gasPrice };
 
         return web3.eth.accounts.signTransaction(tx, privateKey)
             .then(data => {
