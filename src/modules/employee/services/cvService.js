@@ -10,18 +10,18 @@ class CvsService {
     /**
      * создание резюме для определенного профиля
      * определенного работника
-     * @param profileId
-     * @param employeeId
+     * @param profile
+     * @param employee
      * @returns {Promise<Model>}
      */
-    async save(profileId, employee) {
+    async save(profile, employee) {
         let cvs = await Cvs.findOrCreate({
             where: {
-                profile_id: {[Op.eq]: profileId},
+                profile_id: {[Op.eq]: profile.id},
                 employee_id: {[Op.eq]: employee.id}
             },
             defaults: {
-                profile_id: profileId,
+                profile_id: profile.id,
                 employee_id: employee.id
             }
         });
@@ -33,10 +33,11 @@ class CvsService {
      * метод  скилов для резюме
      * @param cv
      * @param skill
-     * @returns {*}
+     * @returns {Promise<*>}
      */
     async addSkill(cv, skill) {
-        return await cv.addSkills([skill]);
+        let result = await cv.addSkills([skill.id]);
+        return result[0];
     }
     
     /**

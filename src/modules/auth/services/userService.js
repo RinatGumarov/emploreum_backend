@@ -64,7 +64,16 @@ class UsersService {
      */
     async getUserById(id) {
         let user = await Users.findOne({
-            include: [models.roles, models.employee, models.company],
+            include: [
+                models.roles,
+                {
+                    required: false,
+                    model: models.employees,
+                },
+                {
+                    required: false,
+                    model: models.companies,
+                }],
             where: {
                 id: {
                     [Op.eq]: id
@@ -81,7 +90,16 @@ class UsersService {
      */
     async getUserByEmail(email) {
         let user = await Users.findOne({
-            include: [models.roles, models.employee, models.company],
+            include: [
+                models.roles,
+                {
+                    required: false,
+                    model: models.employees,
+                },
+                {
+                    required: false,
+                    model: models.companies,
+                }],
             where: {
                 email: {
                     [Op.eq]: email

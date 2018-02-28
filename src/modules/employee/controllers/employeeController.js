@@ -4,7 +4,7 @@ const messageService = require('../../message/services/messageService');
 const balanceService = require('../../blockchain/services/balanceService');
 const vacancyService = require('../../company/services/vacancyService');
 const companyService = require('../../company/services/companyService');
-const workService = require('../../work/services/workService');
+const workService = require('../../blockchain/services/workService');
 const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
@@ -19,7 +19,7 @@ module.exports.func = (router) => {
             return res.send({data: "success"});
         }
         catch (err) {
-            logger.error(err.message);
+            logger.error(err);
             return res.status(500).send({error: "Could not attach vacancy"});
         }
     });
@@ -64,7 +64,7 @@ module.exports.func = (router) => {
             return res.send(contracts);
         }
         catch (err) {
-            logger.error(err.trace);
+            logger.error(err);
             return res.status(500).send({error: "Could not get awaited contracts for the employee"});
         }
     });
