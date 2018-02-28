@@ -199,13 +199,11 @@ class VacanciesService {
             }
         });
         let company = await companyService.findByVacancyId(vacancyId);
-        await messageService.sendToEmployee(company.user_id, employee.id, "вам отклонили в вакансии");
-        
+        await messageService.sendToEmployee(company, employee.id, "вам отклонили в вакансии");
         socketSender.sendSocketMessage(`${userId}:vacancy`, {
             type: "DELETE",
             id: vacancyId,
         });
-        
         return true;
     }
     
@@ -235,11 +233,13 @@ class VacanciesService {
         });
         return result === null;
     }
-
-    async sendInvitationToEmployee(userId, vacancy, employeeUserId) {
+    
+    async sendInvitationToEmployee(company, vacancy, employeeUserId) {
         let employee = await employeeService.getByUserId(employeeUserId);
-        await messageService.sendToEmployee(userId, employee.id, "You have new invitation to vacancy");
-
+        if (vacancy.company_id !== company) {
+            return res.status(405).send({error: 'You are not provided to invite employee to another\'s vacancy'});
+        }
+        await messageService.sendToEmployee(company, employee.id, "You have new invitation to vacancy");
         await socketSender.sendSocketMessage(`${employee.user_id}:invitation`, vacancy);
     }
     
