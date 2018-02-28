@@ -214,6 +214,29 @@ class CompaniesService {
     async countEmployees(contracts) {
         return await _.uniqBy(contracts, "employeeId").length;
     }
+
+    async getAllTransactions(company) {
+        let transactions = await models.work_transactions.findAll({
+            include: {
+                model: models.works,
+                where: {
+                    company_id: {
+                        [Op.eq]: company.id,
+                    }
+                },
+                include: {
+                    model: models.employees,
+                    attributes: ["name"],
+                }
+            },
+            where: {
+                transaction_hash: {
+                    [Op.ne]: null,
+                }
+            }
+        });
+        return transactions;
+    }
 }
 
 instance = new CompaniesService();

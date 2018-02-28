@@ -1,5 +1,4 @@
 const usersService = require('../services/userService');
-const languageService = require('../services/languageService');
 const cvService = require('../../employee/services/cvService');
 const employeesService = require('../../employee/services/employeeService');
 const companiesService = require('../../company/services/companyService');
@@ -13,8 +12,8 @@ const FIRST_STATE = 1;
 const SECOND_STATE = 2;
 
 module.exports.func = (router) => {
-
-
+    
+    
     /**
      * уввеличивать статус пользователя пока все не заполнит
      * является функцией вызова promise
@@ -33,10 +32,9 @@ module.exports.func = (router) => {
         return res.json({
             registrationStep: user.status,
             userId: user.id,
-            registrationStep: user.status,
         });
     };
-
+    
     /**
      * шаг регистрации с высыланием проверочного кода на почту
      */
@@ -44,21 +42,21 @@ module.exports.func = (router) => {
         if (!(await usersService.isEmailFree(req.body.email))) {
             return res.status(400).send('email is already in use');
         } else {
-
+            
             if (String(req.body.password) !== String(req.body.passwordConfirmation)) {
                 return res.status(400).send("passwords not equal");
             }
-
+            
             req.session.email = req.body.email;
             req.session.password = req.body.password;
             req.session.role = req.body.role;
             req.session.verifyCode = messageService.sendCodeToUser(req.body.email);
             res.json({data: "success"});
-
+            
             logger.log(req.session.verifyCode);
         }
     });
-
+    
     /**
      * шаг проверки высланного кода на почту
      * если пароль верный то регистрируем и аунтифицируем
@@ -68,6 +66,7 @@ module.exports.func = (router) => {
         try {
             if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
                 let encryptedKey = '';
+                //toDo переделать
                 let keyPassword = web3.utils.randomHex(32);
                 switch (req.session.role) {
                     case 'EMPLOYEE':
@@ -103,13 +102,13 @@ module.exports.func = (router) => {
                 return res.status(400).send('code mismatch')
             }
         } catch (err) {
-            logger.error(err.stack);
+            logger.error(err);
             return res.status(500).json({
                 error: err.message
             })
         }
     });
-
+    
     /**
      * Шаг заполнения скилов и профилей компании
      * или работника
@@ -123,11 +122,11 @@ module.exports.func = (router) => {
                     let employee = await employeesService.save(req.user.id);
                     for (let i = 0; i < profiles.length; i++) {
                         let profile = profiles[i];
-                        let cv = await cvService.save(profile.id, employee.id);
+                        let cv = await cvService.save(profile, employee);
                         let skills = profile.skills;
                         // сохраняем скилы
                         for (let j = 0; j < skills.length; j++) {
-                            cvService.addSkill(cv, skills[j].id)
+                            cvService.addSkill(cv, skills[j])
                         }
                     }
                     break;
@@ -146,7 +145,7 @@ module.exports.func = (router) => {
             });
         }
     });
-
+    
     /**
      * шаг заполнения лично информации
      */
@@ -154,7 +153,7 @@ module.exports.func = (router) => {
         try {
             switch (req.user.role) {
                 case 'EMPLOYEE':
-                    await employeesService.update(req.user.id, req.body);
+                    await employeesService.update(req.user.employee, req.body);
                     break;
                 case 'COMPANY':
                     await companiesService.update(req.user.id, req.body);
@@ -162,12 +161,13 @@ module.exports.func = (router) => {
             }
             await incrementStatusAndReturnResponse(req, res, SECOND_STATE);
         } catch (err) {
+            logger.error(err);
             res.status(500).json({
                 error: err.message
             })
         }
     });
-
+    
     /**
      * метод удаления пользователя из системы
      */
@@ -178,12 +178,7 @@ module.exports.func = (router) => {
             return res.status(500).send('server error');
         }
     });
-
-
-    router.get('/languages', async (req, res) => {
-        res.send(await languageService.findAll());
-    });
-
+    
     return router;
-
+    
 };

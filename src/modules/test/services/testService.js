@@ -40,6 +40,8 @@ class TestService {
             }]
         });
 
+        if (!test)
+            return test;
         test.dataValues.specifications = [];
         _.uniqBy(test.dataValues.profile_skills, "profile_id")
             .map((specification) => {
@@ -49,7 +51,17 @@ class TestService {
         return test;
     }
 
-    async findAllQuestionsByTestId(testId){
+    async findByIdForEmployee(id) {
+        let test = await Tests.findById(id, {
+            include: [{
+                attributes: ["id"],
+                model: models.questions,
+            }]
+        });
+        return test;
+    }
+
+    async findAllQuestionsByTestId(testId) {
         let questions = await models.questions.findAll({
             where: {
                 test_id: {
@@ -64,12 +76,55 @@ class TestService {
         return questions;
     }
 
-    async saveQuestion(question){
+    async findQuestionById(id) {
+        return await models.questions.findOne({
+            include: {
+                model: models.answers,
+                attributes: ["id", "name"],
+            },
+            where: {
+                id: {
+                    [Op.eq]: id,
+                }
+            }
+        });
+    }
+
+    async findPassedQuestions(testId) {
+        return await models.passed_questions.findAll({
+            where: {
+                test_id: {
+                    [Op.eq]: testId,
+                }
+            },
+        })
+    }
+
+    async saveQuestion(question) {
         return await models.questions.create(question)
     }
 
-    async saveAnswer(answer){
+    async saveAnswer(answer) {
         return await models.answers.create(answer);
+    }
+
+    async savePassedQuestion(passedQuestion) {
+        return await models.passed_tests.create();
+    }
+
+    async getCorrectAnswers(questionId) {
+        return await models.answers.findAll({
+            where: {
+                [Op.and]: {
+                    question_id: {
+                        [Op.eq]: questionId,
+                    },
+                    is_true: {
+                        [Op.eq]: true,
+                    },
+                }
+            }
+        })
     }
 }
 

@@ -6,28 +6,15 @@ module.exports.func = (router) => {
 
         let chats;
         if (req.user.role === "EMPLOYEE") {
-            chats = await chatService.getAllChatsFroEmployee(req.user.id);
+            chats = await chatService.getAllChatsFroEmployee(req.user.employee);
         } else {
-            chats = await chatService.getAllChatsFroCompany(req.user.id);
+            chats = await chatService.getAllChatsFroCompany(req.user.company);
         }
 
         res.json(chats)
 
     });
-
-    router.get('/new', async (req, res) => {
-
-        let newMessage;
-
-        if (req.user.role === "EMPLOYEE") {
-            newMessage = await chatService.getAllChatsWithNewMessageForEmployee(req.user.id);
-        } else {
-            newMessage = await chatService.getAllChatsWithNewMessageForCompany(req.user.id);
-        }
-        res.json(newMessage)
-
-    });
-
+    
     return router;
 
 };
