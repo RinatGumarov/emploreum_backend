@@ -66,6 +66,7 @@ module.exports.func = (router) => {
         try {
             if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
                 let encryptedKey = '';
+                //toDo переделать
                 let keyPassword = web3.utils.randomHex(32);
                 switch (req.session.role) {
                     case 'EMPLOYEE':

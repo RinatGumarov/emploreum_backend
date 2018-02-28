@@ -39,10 +39,20 @@ class Models {
     constructor() {
         let dbConfig = config.get('database');
         let databaseConfig = {};
-        if (dbConfig)
-            databaseConfig = dbConfig.production;
+        if (dbConfig) {
+            // для определия тестовая бд или нет
+            if (process.env.NODE_ENV) {
+                if (dbConfig[process.env.NODE_ENV]) {
+                    databaseConfig = dbConfig[process.env.NODE_ENV]
+                } else {
+                    throw new Error("test database config not exist");
+                }
+            } else {
+                databaseConfig = dbConfig.production;
+            }
+        }
+        
         let url = process.env.DATABASE_URL || databaseConfig.url;
-        this.dbModel = {};
         if (url) {
             this.sequelize = new Sequelize(url);
         } else {
@@ -50,8 +60,7 @@ class Models {
                 databaseConfig.database,
                 databaseConfig.username,
                 databaseConfig.password,
-                databaseConfig
-            );
+                databaseConfig);
         }
         
     }
