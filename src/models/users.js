@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: false
     });
-
+    
     users.beforeCreate((user) => {
         user.password = bcrypt.hashSync(user.password, bcrypt.genSaltSync(10));
     });
-
+    
     users.beforeUpdate((params, options) => {
         if (params.status) {
             delete params.status;
@@ -24,11 +24,11 @@ module.exports = (sequelize, DataTypes) => {
             delete params.role_id;
         }
     });
-
+    
     users.prototype.validPassword = (password, validPass) => {
         return bcrypt.compareSync(password, validPass);
     };
-
+    
     users.associate = function (models) {
         users.hasOne(models.employees, {
             foreignKey: 'user_id'
@@ -39,7 +39,10 @@ module.exports = (sequelize, DataTypes) => {
         users.belongsTo(models.roles, {
             foreignKey: 'role_id'
         });
+        users.hasMany(models.notifications, {
+            foreignKey: 'user_id'
+        });
     };
-
+    
     return users;
 };

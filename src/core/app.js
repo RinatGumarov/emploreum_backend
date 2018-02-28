@@ -27,8 +27,14 @@ class Application {
         models.associateModels();
     }
     
-    start() {
-        fileSystem.init();
+    /**
+     * аргумент withFileSystemInit нужен для тестов
+     * @param withFileSystemInit
+     */
+    start(withFileSystemInit = true) {
+        if (withFileSystemInit) {
+            fileSystem.init();
+        }
         this.server = socketSender.init(this.server);
         this.server.listen(this.port, (err) => {
             if (err) {

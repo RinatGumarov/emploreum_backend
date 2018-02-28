@@ -5,9 +5,7 @@ const Op = models.sequelize.Op;
 const mailSender = require('../utils/mailSender');
 const chatService = require('../services/chatService');
 const userService = require('../../auth/services/userService');
-const employeeService = require('../../employee/services/employeeService');
-const companyService = require('../../company/services/companyService');
-const socketSender = require('../../../core/socketSender');
+const notificationService = require('../../message/services/notificationService');
 const config = require('../../../utils/config');
 const logger = require('../../../utils/logger');
 
@@ -15,7 +13,18 @@ let instance;
 
 class MessageService {
     
-    async save(companyId, employeeId, text, isEmployeeMessage, isCompanyCessage, socketChatId) {
+    /**
+     * рутовый метод для создания сообщений
+     * используется в sendToEmployee и
+     * sendToCompany
+     * @param companyId
+     * @param employeeId
+     * @param text
+     * @param isEmployeeMessage
+     * @param isCompanyCessage
+     * @returns {Promise<*>}
+     */
+    async save(companyId, employeeId, text, isEmployeeMessage, isCompanyCessage) {
         
         let chat = await chatService.getChatBetweenEmployeeAndCompany(employeeId, companyId);
         
@@ -26,22 +35,17 @@ class MessageService {
             is_company_message: isCompanyCessage
         });
         
-        if (typeof socketChatId !== "undefined") {
-            logger.log("send socket message");
-            socketSender.sendSocketMessage(socketChatId, message);
-        }
-        
         return message;
     }
     
     /**
      * Создание соощение
-     * от лользователя компании к сотруднику
+     * от пользователя компании к сотруднику
      */
-    async sendToEmployee(userId, employeeId, text) {
-        let company = await companyService.findByUserId(userId);
+    async sendToEmployee(company, employeeId, text) {
         let user = await userService.getUserByEmployeeId(employeeId);
-        let message = await this.save(company.id, employeeId, text, false, true, user.id);
+        notificationService.sendNotification(user.id, "компания отправила вам сообщение");
+        let message = await this.save(company.id, employeeId, text, false, true);
         return message;
     }
     
@@ -49,15 +53,15 @@ class MessageService {
      * Создание соощение
      * от сотрудника к компании
      */
-    async sendToCompany(userId, companyId, text) {
-        let employee = await employeeService.getByUserId(userId);
+    async sendToCompany(employee, companyId, text) {
         let user = await userService.getUserByCompanyId(companyId);
-        let message = await this.save(companyId, employee.id, text, true, false, user.id);
+        notificationService.sendNotification(user.id, "работник отправил вам сообщение");
+        let message = await this.save(companyId, employee.id, text, true, false);
         return message;
     }
     
     
-    async getAllMessageByChatId(chatId, companyId, employeeId) {
+    async getAllMessageByChatId(chatId, company, employee) {
         let includedModel = {
             required: true,
             attributes: [],
@@ -66,11 +70,11 @@ class MessageService {
             },
             model: models.chats
         };
-        if (companyId) {
-            includedModel.where.company_id = {[Op.eq]: companyId};
+        if (company) {
+            includedModel.where.company_id = {[Op.eq]: company.id};
         }
-        if (employeeId) {
-            includedModel.where.company_id = {[Op.eq]: companyId};
+        if (employee) {
+            includedModel.where.company_id = {[Op.eq]: employee.id};
         }
         let messages = await Messages.findAll({
             include: [includedModel],
@@ -82,15 +86,13 @@ class MessageService {
         return messages;
     }
     
-    async getAllMessageByChatIdAndCompany(chatId, userId) {
-        let company = companyService.findByUserId(userId);
-        let messages = await this.getAllMessageByChatId(chatId, company.id, null);
+    async getAllMessageByChatIdAndCompany(chatId, company) {
+        let messages = await this.getAllMessageByChatId(chatId, company, null);
         return messages;
     }
     
-    async getAllMessageByChatIdAndEmployee(chatId, userId) {
-        let employee = await employeeService.getByUserId(userId);
-        let messages = await this.getAllMessageByChatId(chatId, null, employee.id);
+    async getAllMessageByChatIdAndEmployee(chatId, employee) {
+        let messages = await this.getAllMessageByChatId(chatId, null, employee);
         return messages;
     }
     

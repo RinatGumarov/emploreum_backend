@@ -43,7 +43,6 @@ class UsersService {
         return user;
     }
     
-    
     /**
      * @param email
      * @returns {Promise<boolean>}
@@ -65,9 +64,16 @@ class UsersService {
      */
     async getUserById(id) {
         let user = await Users.findOne({
-            include: [{
-                model: Roles
-            }],
+            include: [
+                models.roles,
+                {
+                    required: false,
+                    model: models.employees,
+                },
+                {
+                    required: false,
+                    model: models.companies,
+                }],
             where: {
                 id: {
                     [Op.eq]: id
@@ -84,9 +90,16 @@ class UsersService {
      */
     async getUserByEmail(email) {
         let user = await Users.findOne({
-            include: [{
-                model: Roles
-            }],
+            include: [
+                models.roles,
+                {
+                    required: false,
+                    model: models.employees,
+                },
+                {
+                    required: false,
+                    model: models.companies,
+                }],
             where: {
                 email: {
                     [Op.eq]: email
@@ -152,13 +165,10 @@ class UsersService {
         });
     }
     
-    
-
-    async destroySession(sessionId){
+    async destroySession(sessionId) {
         await models.session
     }
-
-
+    
 }
 
 instance = new UsersService();

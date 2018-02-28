@@ -34,7 +34,10 @@
         "sequelize-cli": "^3.2.0",
         "socket.io": "^2.0.4",
         "truffle-contract": "^3.0.3",
-        "web3": "^1.0.0-beta.29"
+        "web3": "^1.0.0-beta.29",
+        "chai": "^3.5.0",
+        "chai-http": "^2.0.1",
+        "mocha": "^2.4.5"
     },
     "dependenciesComments": {
         "bcrypt-nodejs": "либа для хеширования пароля",
@@ -56,33 +59,46 @@
         "passport.socketio": "вешь для доступа к аунтифицированному пользователю в сокете",
         "sequelize": "orm для работы с реляционными бд",
         "sequelize-cli": "консольная утилита для генерации миграций модейлей и.т.д.",
+        "socket.io": "работа с сокетами",
         "cross-env": "для установки env переменных при запуске скриптов",
+        "ethereumjs-tx": "for sending transactions",
         "pg": "обертка для postgres, предоставляет javascript api",
         "pg-hstore": "для json представляения данных postgres",
         "web3": "для отправки транзакций в blockchain",
         "truffle-contract": "работы с контрактами в eth",
-        "ethereumjs-tx": "for sending transactions",
-        "socket.io": "работа с сокетами"
+        "chai": "библиотека поддерживает разнообразные функции для проверок. Есть разные «стили» проверки ",
+        "chai-http": "функции http проверки",
+        "mocha": "фремворк для тестов"
     },
     "scripts": {
         "start": "node src/index.js",
         "debug": "node $NODE_DEBUG_OPTION src/index.js",
+        "test:migrate:up": "cross-env NODE_ENV=test sequelize db:migrate",
+        "test:migrate:down:all": "cross-env NODE_ENV=test sequelize db:migrate:undo:all",
+        "test:seeds": "cross-env NODE_ENV=test sequelize db:seed:all",
+        "test:db:reset": "npm run test:migrate:down:all && npm run test:migrate:up && npm run test:seeds",
         "migrate:up": "cross-env NODE_ENV=production sequelize db:migrate",
         "migrate:down": "cross-env NODE_ENV=production sequelize db:migrate:undo",
         "migrate:down:all": "cross-env NODE_ENV=production sequelize db:migrate:undo:all",
         "seeds": "cross-env NODE_ENV=production sequelize db:seed:all",
         "db:reset": "npm run migrate:down:all && npm run migrate:up && npm run seeds",
-        "console:script:test": "node $NODE_DEBUG_OPTION src/console/console.js -s test"
+        "console:script:test": "node $NODE_DEBUG_OPTION src/console/console.js -s test",
+        "test:run": "npm run test:db:reset && cross-env NODE_ENV=test node_modules/.bin/mocha src/test.js"
     },
     "scriptsComments": {
         "start": "стартует сервер",
         "debug": "старт сервера в режиме отладки",
+        "test:migrate:up": "накатывание миграций для тестовой бд",
+        "test:migrate:down:all": "откат всех миграций для тестовой бд",
+        "test:seeds": "чистка базы + сиды для тестовой бд",
+        "test:db:reset": "накатить всех сидов для тестовой бд",
         "migrate:up": "накатывание миграций",
         "migrate:down": "откат последних миграций",
         "migrate:down:all": "откат всех последних миграций",
         "seeds": "накатить всех сидов",
         "db:reset": "чистка базы + сиды",
-        "console:script:test": "проверка консоли"
+        "console:script:test": "проверка консоли",
+        "test:run": "запуск всех тестов для всех модулей"
     },
     "author": "",
     "license": "MIT"
