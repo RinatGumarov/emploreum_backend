@@ -1,32 +1,30 @@
-const contractService = require("truffle-contract");
-const web3 = require("./web3");
-const utilConfig = require("../../../utils/config");
-const config = utilConfig.get("web3");
-const logger = require("../../../utils/logger");
-const Web3InitError = require("./Web3Error");
-const accountUtil = require("./accountUtil");
+const contractService = require('truffle-contract');
+const web3 = require('./web3');
+const config = require('../../../../public_configs/gas_amounts');
+const logger = require('../../../utils/logger');
+const Web3InitError = require('./Web3Error');
+const accountUtil = require('./accountUtil');
 
 let instance;
-let gasPrice = web3.utils.toWei("100", "gwei");
 
-var initContract = function (contractInfo) {
+const initContract = function (contractInfo) {
     if (!web3)
         throw new Web3InitError();
-    
-    
+
     let contract = contractService(contractInfo);
     contract.setProvider(web3.currentProvider);
-    
-    if (typeof contract.currentProvider.sendAsync !== "function") {
+
+    // truffle node module bug
+    if (typeof contract.currentProvider.sendAsync !== 'function') {
         contract.currentProvider.sendAsync = function () {
             return contract.currentProvider.send.apply(
                 contract.currentProvider, arguments
             );
         };
     }
-    
+
     return accountUtil.unlockMainAccount(contract);
-}
+};
 
 class ContractUtil {
     /**
@@ -37,11 +35,11 @@ class ContractUtil {
      */
     readContract(contractInfo) {
         return initContract(contractInfo).then(contract => {
-            return contract.deplyed();
-        })
+            return contract.deployed();
+        });
     };
-    
-    
+
+
     /**
      * Read contract from blockchain that located at address
      *
@@ -52,9 +50,9 @@ class ContractUtil {
     readContractFromAddress(contractInfo, address) {
         return initContract(contractInfo).then(contract => {
             return contract.at(address);
-        })
+        });
     };
-    
+
     /**
      * Create contract in blockchain
      *
@@ -65,18 +63,17 @@ class ContractUtil {
      */
     createContract(contractInfo, gas) {
         let args = Array.prototype.slice.call(arguments, 2);
-        args.push({gas, gasPrice});
-        
+        let gasPrice = config.gas_price;
+        args.push({ gas, gasPrice });
+
         return initContract(contractInfo).then(contract => {
             return contract.new.apply(null, args).then(contract => {
                 logger.log(`Created new contract: ${contract.address}. Transaction hash: ${contract.transactionHash}`);
                 return contract;
-            })
-        })
+            });
+        });
     };
 }
 
 instance = new ContractUtil();
 module.exports = instance;
-
-

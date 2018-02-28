@@ -1,0 +1,7 @@
+{
+  "defaultAccount": -1,
+  "account_password": "password",
+  "unlock_time": -1,
+  "host": "http://localhost",
+  "port": "-1"
+}
