@@ -22,7 +22,9 @@ class Logger {
      * метод для записи логов не связанных с ошибками
      */
     log(msg) {
-        console.log(msg)
+        if (process.env.NODE_ENV !== "test") {
+            console.log(msg)
+        }
     }
 }
 

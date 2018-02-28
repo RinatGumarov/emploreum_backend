@@ -3,7 +3,6 @@ const Cvs = models.cvs;
 const Profiles = models.profiles;
 const Op = models.sequelize.Op;
 
-const employeeService = require("./employeeService");
 let instance;
 
 class CvsService {
@@ -11,19 +10,19 @@ class CvsService {
     /**
      * создание резюме для определенного профиля
      * определенного работника
-     * @param profileId
-     * @param employeeId
+     * @param profile
+     * @param employee
      * @returns {Promise<Model>}
      */
-    async save(profileId, employeeId) {
+    async save(profile, employee) {
         let cvs = await Cvs.findOrCreate({
             where: {
-                profile_id: {[Op.eq]: profileId},
-                employee_id: {[Op.eq]: employeeId}
+                profile_id: {[Op.eq]: profile.id},
+                employee_id: {[Op.eq]: employee.id}
             },
             defaults: {
-                profile_id: profileId,
-                employee_id: employeeId
+                profile_id: profile.id,
+                employee_id: employee.id
             }
         });
         
@@ -34,13 +33,15 @@ class CvsService {
      * метод  скилов для резюме
      * @param cv
      * @param skill
-     * @returns {*}
+     * @returns {Promise<*>}
      */
     async addSkill(cv, skill) {
-        return await cv.addSkills([skill]);
+        let result = await cv.addSkills([skill.id]);
+        return result[0];
     }
     
     /**
+     * получить профиль работника по id
      * @param id
      * @returns {Promise<Model>}
      */
@@ -54,12 +55,11 @@ class CvsService {
     }
     
     /**
-     * поиск скилов по направлению работника
-     */
-    async getEmployeeSkillsWithProfiles(userId) {
-        let employee = await employeeService.getByUserId(userId);
-        let employeeId = employee.id;
-        let skills = await Cvs.findAll({
+     * поиск профилей рабоника
+     * со скилами
+     * */
+    async getEmployeeSpecification(employeeUserId) {
+        let cvs = await Cvs.findAll({
             include: [
                 models.skills,
                 models.profiles,
@@ -68,11 +68,11 @@ class CvsService {
                     required: true,
                     model: models.employees,
                     where: {
-                        id: {[Op.eq]: employeeId}
+                        id: {[Op.eq]: employeeUserId}
                     }
                 }]
         });
-        return skills;
+        return cvs;
     }
     
 }

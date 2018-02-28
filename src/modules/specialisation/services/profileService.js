@@ -15,7 +15,7 @@ class ProfileService {
 
 
     async findProfileSkill(profileId, skillId) {
-        return await models.profile_skills.findOne({
+        return await Profiles.findOne({
             where: {
                 profile_id: {
                     [Op.eq]: profileId,
