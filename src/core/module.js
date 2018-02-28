@@ -10,8 +10,8 @@ const queryScanner = require('./queryScanner');
  * @type {Module}
  */
 module.exports = class Module {
-
-
+    
+    
     /**
      * считывает папку
      * и подключает js файлы
@@ -22,14 +22,15 @@ module.exports = class Module {
             let filePath = path.resolve(pathToFiles, filename);
             return path.parse(filePath).ext === '.js';
         }).forEach((filename) => {
-
+            
             let initFunc = require(path.resolve(pathToFiles, filename)).func;
+            
             if (typeof initFunc === "function") {
                 app.getServer().use(`/${this.moduleName}`, initFunc(this.router));
             }
         });
     }
-
+    
     constructor(moduleName, pathToControllers, pathToMiddlewares, queriesPath) {
         if (!moduleName) {
             throw new Error('не передано название модуля');
@@ -39,18 +40,18 @@ module.exports = class Module {
         this.pathToMiddlewares = pathToMiddlewares;
         this.queriesPath = queriesPath;
     }
-
+    
     init() {
         this.router = app.getRouter();
-
+        
         if (this.pathToMiddlewares) {
             this.initFiles(this.pathToMiddlewares);
         }
-
+        
         if (this.pathToControllers) {
             this.initFiles(this.pathToControllers);
         }
-
+        
         if (this.queriesPath) {
             queryScanner.scanQueries(this.moduleName, this.queriesPath);
         }

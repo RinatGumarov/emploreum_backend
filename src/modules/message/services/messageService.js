@@ -5,7 +5,6 @@ const Op = models.sequelize.Op;
 const mailSender = require('../utils/mailSender');
 const chatService = require('../services/chatService');
 const userService = require('../../auth/services/userService');
-const socketSender = require('../../../core/socketSender');
 const notificationService = require('../../message/services/notificationService');
 const config = require('../../../utils/config');
 const logger = require('../../../utils/logger');
@@ -60,8 +59,8 @@ class MessageService {
         let message = await this.save(companyId, employee.id, text, true, false);
         return message;
     }
-
-
+    
+    
     async getAllMessageByChatId(chatId, company, employee) {
         let includedModel = {
             required: true,
@@ -83,15 +82,15 @@ class MessageService {
                 ['created_at', 'ASC']
             ]
         });
-
+        
         return messages;
     }
-
+    
     async getAllMessageByChatIdAndCompany(chatId, company) {
         let messages = await this.getAllMessageByChatId(chatId, company, null);
         return messages;
     }
-
+    
     async getAllMessageByChatIdAndEmployee(chatId, employee) {
         let messages = await this.getAllMessageByChatId(chatId, null, employee);
         return messages;
