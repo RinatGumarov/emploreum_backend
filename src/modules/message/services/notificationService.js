@@ -30,47 +30,32 @@ class NotificationService {
     /**
      * показать новые уведомления
      * и сделать их прчоитанными
-     * @param userId
-     * @returns {Promise<*>}
      */
-    async getAllNotifications(userId) {
+    async getAllNotifications(user) {
         let notifications = await Notifications.findAll({
             where: {
                 is_view: {[Op.eq]: true},
-                user_id: {[Op.eq]: userId}
+                user_id: {[Op.eq]: user.id}
             },
             order: [
                 ['is_view', 'DESC'],
             ]
         });
+        
+        return notifications;
+    }
+    
+    async readNotifications(user) {
         Notifications.update({
             is_view: true
         }, {
             where: {
                 is_view: {[Op.eq]: false},
-                user_id: {[Op.eq]: userId}
+                user_id: {[Op.eq]: user.id}
             }
         });
-        return notifications;
     }
     
-    /**
-     * количество новых уведомлений
-     * @param userId
-     * @returns {Promise<number>}
-     */
-    async getNewNotificationsCount(userId) {
-        
-        let notifications = await Notifications.findAll({
-            attributes: ["id"],
-            where: {
-                is_view: {[Op.eq]: true},
-                user_id: {[Op.eq]: userId}
-            },
-        });
-       
-        return (notifications.length) ? notifications.length : 0;
-    }
 }
 
 instance = new NotificationService();
