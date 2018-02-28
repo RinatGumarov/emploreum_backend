@@ -1,18 +1,13 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const app = require('./app');
-require("../modules");
-app.start(false);
+let app = require('./app');
 
 let testIniterInstance;
 
 class TestIniter {
     
     constructor() {
-        this.companyCredentials = {
-            email: "a@a.ru",
-            password: "1"
-        };
+        this.tests = [];
         this.should = chai.should();
         chai.use(chaiHttp);
     }
@@ -21,6 +16,16 @@ class TestIniter {
         return chai.request(app.getServer());
     }
     
+    addTestFile(pathToTestFile) {
+        this.tests.push(pathToTestFile);
+    }
+    
+    startTests() {
+        app.start(false);
+        for (let i = 0; i < this.tests.length; ++i) {
+            require(this.tests[i]);
+        }
+    }
     
 }
 

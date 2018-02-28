@@ -1,1 +1,3 @@
-require("./modules/auth/test/api/regControllerTest");
+const testIniter = require("./core/testIniter");
+require("./modules");
+testIniter.startTests();

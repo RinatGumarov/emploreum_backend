@@ -7,5 +7,5 @@ const controllersPath = path.resolve(__dirname, "controllers");
 const middlewaresPath = path.resolve(__dirname, 'middlewares');
 const queriesPath = path.resolve(__dirname, "queries");
 
-var module = new ModuleClass("company", controllersPath, middlewaresPath, queriesPath);
+var module = new ModuleClass("company", controllersPath, middlewaresPath, null, queriesPath);
 module.init();
