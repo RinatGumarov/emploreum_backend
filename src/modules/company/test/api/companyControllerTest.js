@@ -22,10 +22,22 @@ describe('companyController', () => {
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
-                res.should.have.status(400);
+                res.should.have.status(403);
                 done();
             });
     });
+    
+    it('update company property for employee', (done) => {
+        testIniter.getChaiRequest()
+            .post("/company/update")
+            .set("Content-Type", "application/json")
+            .set('Cookie', testIniter.getCookie())
+            .end(function (err, res) {
+                res.should.have.status(403);
+                done();
+            });
+    });
+    
     
     testHelpers.logout();
     

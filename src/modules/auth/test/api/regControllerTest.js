@@ -2,12 +2,10 @@ let testIniter = require('../../../../core/tests/testIniter');
 var cookies;
 
 describe('regController', () => {
-    
     /**
      * test regitration company flow
      */
-    describe('company', () => {
-        
+    describe('company flow', () => {
         it('send exist email', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/email")
@@ -24,7 +22,6 @@ describe('regController', () => {
                 });
             
         });
-        
         it('send not equal password', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/email")
@@ -42,9 +39,7 @@ describe('regController', () => {
                     res.body.should.be.a('string');
                     done();
                 });
-            
         });
-        
         it('send normal email', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/email")
@@ -61,11 +56,8 @@ describe('regController', () => {
                     res.should.have.status(200);
                     done();
                 });
-            
         });
-        
         describe('verification', () => {
-            
             it('send not valid code', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/verification")
@@ -77,7 +69,6 @@ describe('regController', () => {
                         done()
                     });
             });
-            
             it('verification user and save', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/verification")
@@ -96,9 +87,7 @@ describe('regController', () => {
                     });
             });
         });
-        
         describe('specification', () => {
-            
             it('info step frobidden', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/info")
@@ -110,7 +99,6 @@ describe('regController', () => {
                         done()
                     });
             });
-            
             it('send request for not auth user', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/specification")
@@ -120,7 +108,6 @@ describe('regController', () => {
                         done()
                     });
             });
-            
             it('send not valid json', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/specification")
@@ -132,7 +119,6 @@ describe('regController', () => {
                         done()
                     });
             });
-            
             it('send not exist profile', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/specification")
@@ -148,7 +134,6 @@ describe('regController', () => {
                         done()
                     });
             });
-            
             it('send normal specifications', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/specification")
@@ -176,8 +161,6 @@ describe('regController', () => {
         });
         
         describe('info', () => {
-            
-            
             it('send for not auth user', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/info")
@@ -186,8 +169,6 @@ describe('regController', () => {
                         done()
                     });
             });
-            
-            
             it('send normal info', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/info")
@@ -211,7 +192,7 @@ describe('regController', () => {
     /**
      * test regitration employee flow
      */
-    describe('employee', () => {
+    describe('employee flow', () => {
         
         it('send normal email', (done) => {
             testIniter.getChaiRequest()
@@ -251,9 +232,7 @@ describe('regController', () => {
                     });
             });
         });
-
         describe('specification', () => {
-            
             it('send not exist profile', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/specification")
@@ -269,7 +248,6 @@ describe('regController', () => {
                         done()
                     });
             });
-    
             it('send not valid json', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/specification")
@@ -287,7 +265,6 @@ describe('regController', () => {
                         done()
                     });
             });
-            
             it('send not exist skill', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/specification")
@@ -309,7 +286,6 @@ describe('regController', () => {
                         done()
                     });
             });
-            
             it('send normal specifications', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/specification")
@@ -338,13 +314,8 @@ describe('regController', () => {
                         done()
                     });
             });
-            
-            
         });
-        
         describe('info', () => {
-            
-            
             it('send for not auth user', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/info")
@@ -353,8 +324,6 @@ describe('regController', () => {
                         done()
                     });
             });
-            
-            
             it('send normal info', (done) => {
                 testIniter.getChaiRequest()
                     .post("/auth/signup/info")

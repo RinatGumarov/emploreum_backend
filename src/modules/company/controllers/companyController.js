@@ -9,13 +9,7 @@ module.exports.func = (router) => {
      */
     router.get('/', async (req, res) => {
         try {
-            let company = req.user.company;
-            if (company) {
-                logger.log(`Successful get for company ${company.name}`);
-                res.status(200).send(company);
-            } else {
-                res.status(400).send({error: `There is no company for user ${req.user.email}`});
-            }
+            res.status(200).send(req.user.company);
         } catch (err) {
             logger.error(err.stack);
             res.status(500).send({error: err});
