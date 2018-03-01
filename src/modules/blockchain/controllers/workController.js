@@ -1,21 +1,18 @@
-const messageService = require('../../message/services/messageService');
 const workService = require('../services/workService');
 const companyService = require('../../company/services/companyService');
 const employeeService = require('../../employee/services/employeeService');
-const configUtils = require('../../../utils/config');
 const blockchainInfo = require('../../blockchain/services/blockchainEventService');
-
+const configUtils = require('../../../utils/config');
 const logger = require('../../../utils/logger');
 
 
 module.exports.func = (router) => {
 
-    //toDo
     router.post('/approve', async (req, res) => {
         let vacancyId = req.body.vacancyId;
         let address = req.user.account_address;
         let employee = await employeeService.getByUserId(req.body.userId);
-        let company = await companyService.findByUserId(req.user.id);
+        let company = req.user.company;
 
         let promises = [];
 
@@ -30,7 +27,7 @@ module.exports.func = (router) => {
             }
 
             if (!company.contract) {
-                let promise = companyService.createBlockchainAccountForCompany(company, 10);
+                let promise = companyService.createBlockchainAccountForCompany(req.user, 10);
 
                 promises.push(promise);
 
@@ -47,7 +44,7 @@ module.exports.func = (router) => {
 
                 await Promise.all(promises);
 
-                blockchainInfo.unset(company.user_id, `contract creation ${address}`);
+                await blockchainInfo.unset(company.user_id, `contract creation ${address}`);
             }
 
             message = `employee ${employee.name} and company ${company.name}.`;
@@ -55,25 +52,25 @@ module.exports.func = (router) => {
             await blockchainInfo.set(company.user_id, `work creation ${address}`,
                 `Creating contract in blockchain between ${message}`);
 
-            await workService.createWork(vacancyId, employee, company);
+            await workService.createWork(vacancyId, employee, req.user);
 
-            blockchainInfo.unset(company.user_id, `work creation ${address}`);
+            await blockchainInfo.unset(company.user_id, `work creation ${address}`);
+
+            return res.json({ data: 'success' });
         } catch (e) {
-            logger.log(e);
+            logger.error(e.stack);
             logger.log('Waiting promises, count: ' + promises.length);
 
             await Promise.all(promises);
 
-            blockchainInfo.unset(company.user_id, `employee${address}`);
-            return res.send({ data: 'fail' });
+            await blockchainInfo.unset(company.user_id, `work creation ${address}`);
+            return res.status(500).json({ data: 'fail' });
         }
-
-        return res.send({ data: 'success' });
     });
 
     router.post('/:workId([0-9]+)/start', async (req, res) => {
         await workService.startWork(req.params.workId);
-        res.send({ data: 'successful' });
+        res.json({ data: 'successful' });
     });
 
     /**
@@ -87,7 +84,7 @@ module.exports.func = (router) => {
                 await workService.sendWeekSalaryForAllCompanies();
                 res.send({ data: 'successful' });
             } catch (err) {
-                logger.error(err);
+                logger.error(err.stack);
                 res.status(500).send({ error: err });
             }
         } else {

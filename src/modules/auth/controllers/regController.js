@@ -130,7 +130,7 @@ module.exports.func = (router) => {
             }
             await incrementStatusAndReturnResponse(req, res, FIRST_STATE);
         } catch (err) {
-            logger.error(err);
+            logger.error(err.stack);
             res.status(500).json({
                 error: err.message
             });
@@ -152,7 +152,7 @@ module.exports.func = (router) => {
             }
             await incrementStatusAndReturnResponse(req, res, SECOND_STATE);
         } catch (err) {
-            logger.error(err);
+            logger.error(err.stack);
             res.status(500).json({
                 error: err.message
             });
@@ -163,7 +163,7 @@ module.exports.func = (router) => {
      * метод удаления пользователя из системы
      */
     router.delete('/unreg', async (req, res) => {
-        if (await usersService.deleteUser(req.user.id)) {
+        if (await usersService.deleteUser(req.user)) {
             return res.json({data: "success"});
         } else {
             return res.status(500).send('server error');

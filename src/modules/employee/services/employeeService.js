@@ -72,17 +72,6 @@ class EmployeesService {
     async attachVacancy(employee, vacancyId) {
         await employee.addVacancy(vacancyId);
     }
-    
-    /**
-     * работает ли работник
-     * @param employeeId
-     * @returns {Promise<boolean>}
-     */
-    async wasWorking(employee) {
-        let works = employee.works();
-        return works !== null;
-    }
-
 
     /**
      * получить все вакансии на которые откликнулся чувак
@@ -97,12 +86,7 @@ class EmployeesService {
 
     /**
      * создание контракта работника в блокчейна
-     * @param companyUserId
      * @param employee
-     * @param firstName
-     * @param lastName
-     * @param email
-     * @param address
      * @returns {Promise<Contract>}
      */
     createBlockchainAccountForEmployee(employee) {
@@ -122,18 +106,9 @@ class EmployeesService {
             return contract;
         });
     }
-    
-    /**
-     * получить работника по его id
-     * @param employeeId
-     * @returns {Promise<*>}
-     */
-    async getById(employeeId) {
-        return await Employees.findById(employeeId);
-    }
 
 
-    async findAll() {
+    async findAllEmployees() {
         let employees = await Employees.findAll({
             include: [{
                 model: models.cvs,

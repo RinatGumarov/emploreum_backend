@@ -3,12 +3,10 @@ const Companies = models.companies;
 const CompanyProfiles = models.company_profiles;
 
 const Account = require('../../blockchain/utils/account');
-const logger = require('../../../utils/logger');
 const _ = require('lodash');
 
 const Op = models.sequelize.Op;
 const Web3InitError = require('../../blockchain/utils/Web3Error');
-const web3 = require('../../blockchain/utils/web3');
 let instance;
 
 class CompaniesService {
@@ -70,43 +68,32 @@ class CompaniesService {
         });
     }
 
-    async hasContracts(companyId) {
-        let works = await models.works.find({
-            where: {
-                company_id: {
-                    [Op.eq]: companyId
-                }
-            }
-        });
-        return works !== null;
-    }
-
-    createBlockchainAccountForCompany(company, rating) {
+    createBlockchainAccountForCompany(companyUser, rating) {
         let blockchainCompany = {
-            name: company.name,
+            name: companyUser.company.name,
             rating,
-            address: company.user.account_address
+            address: companyUser.account_address
         };
         return Account.registerCompany(blockchainCompany).then(async (contract) => {
             if (!contract)
                 throw new Web3InitError('Could not register company in blockchain');
 
-            company.contract = contract.address;
-            company.save();
+            companyUser.company.contract = contract.address;
+            companyUser.company.save();
             return contract;
         });
     }
 
     async findByVacancyId(vacancyId) {
         return await Companies.findOne({
-            include: [models.users, {
+            include: [{
                 attributes: [],
                 required: true,
                 model: models.vacancies,
                 where: {
-                    id: { [Op.eq]: vacancyId }
-                }
-            }]
+                    id: { [Op.eq]: vacancyId, },
+                },
+            }],
         });
     }
 
@@ -114,8 +101,8 @@ class CompaniesService {
         return await Companies.findOne({
             where: {
                 id: {
-                    [Op.eq]: id
-                }
+                    [Op.eq]: id,
+                },
             }
         });
     }
@@ -127,16 +114,15 @@ class CompaniesService {
     async findAllEmployees(companyId) {
         let employees = await models.works.findAll({
             attributes: [],
-            distinct: 'company_id',
             where: {
                 company_id: {
-                    [Op.eq]: companyId
-                }
+                    [Op.eq]: companyId,
+                },
             },
             include: [{
                 attributes: ['photo_path', 'name', 'user_id'],
-                model: models.employees
-            }]
+                model: models.employees,
+            }],
         });
         return _.uniqBy(employees, 'employee.user_id');
     }
@@ -154,16 +140,16 @@ class CompaniesService {
                         model: models.skills,
                         attributes: ['id', 'name'],
                         through: {
-                            attributes: []
-                        }
-                    }]
-                }]
+                            attributes: [],
+                        },
+                    }],
+                }],
             }],
             where: {
                 company_id: {
-                    [Op.eq]: companyId
-                }
-            }
+                    [Op.eq]: companyId,
+                },
+            },
         });
         tests = tests.map((test) => {
             test.dataValues.specifications = [];
@@ -182,20 +168,20 @@ class CompaniesService {
             where: {
                 [Op.and]: {
                     company_id: {
-                        [Op.eq]: company.id
+                        [Op.eq]: company.id,
                     },
                     status: {
                         [Op.and]: {
                             [Op.gt]: -2,
-                            [Op.lt]: 7
-                        }
-                    }
-                }
+                            [Op.lt]: 7,
+                        },
+                    },
+                },
             },
             include: {
                 model: models.vacancies,
-                attributes: ['week_payment']
-            }
+                attributes: ['week_payment'],
+            },
         });
         return contracts;
     }
@@ -219,7 +205,7 @@ class CompaniesService {
                 where: {
                     company_id: {
                         [Op.eq]: company.id,
-                    }
+                    },
                 },
                 include: {
                     model: models.employees,

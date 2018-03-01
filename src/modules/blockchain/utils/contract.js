@@ -58,7 +58,6 @@ class ContractUtil {
      *
      * @param contractInfo
      * @param gas
-     * @param [arg1, arg2, ...] contract constructor args
      * @returns {Promise.<TResult>} with contract instance
      */
     createContract(contractInfo, gas) {
