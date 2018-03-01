@@ -19,6 +19,7 @@ class Application {
         this.express = express;
         this.server = this.express();
         this.port = process.env.PORT || this.config.port;
+        this.host = process.env.HOST || this.config.host;
         this.middlewaresIniter = new MiddlewaresIniter(this.server, this.express);
         // добавление на все роуты фильторв для корректировки запросов
         this.middlewaresIniter.correctRequest();
