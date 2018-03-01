@@ -1,7 +1,7 @@
-let testIniter = require('../../../../core/testIniter');
+let testIniter = require('../../../../core/tests/testIniter');
 var cookies;
 
-describe('authentification', () => {
+describe('authController', () => {
     
     it('send not exist email', (done) => {
         testIniter.getChaiRequest()

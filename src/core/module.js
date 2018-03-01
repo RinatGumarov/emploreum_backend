@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const app = require('./app');
 const queryScanner = require('./queryScanner');
-const testIniter = require('../core/testIniter');
+const testIniter = require('./tests/testIniter');
 
 /**
  * клас модулей

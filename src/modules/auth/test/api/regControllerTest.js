@@ -1,7 +1,7 @@
-let testIniter = require('../../../../core/testIniter');
+let testIniter = require('../../../../core/tests/testIniter');
 var cookies;
 
-describe('registration', () => {
+describe('regController', () => {
     
     /**
      * test regitration company flow
