@@ -2,7 +2,7 @@
 
 module.exports = {
     up: (queryInterface, Sequelize) => {
-        return queryInterface.createTable('test_starts', {
+        return queryInterface.createTable('test_ends', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -29,14 +29,14 @@ module.exports = {
                 cascade: true,
                 onDelete: 'CASCADE',
             },
-            started_at: {
+            ends: {
                 type: Sequelize.DATE,
-                defaultValue: new Date(),
+                allowNull: true,
             }
         });
     },
 
     down: (queryInterface) => {
-        queryInterface.dropTable('test_starts', {});
+        queryInterface.dropTable('test_ends', {});
     }
 };

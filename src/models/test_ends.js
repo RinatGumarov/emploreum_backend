@@ -1,9 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
 
     let test_starts = sequelize.define('tests_starts', {
-        started_at: DataTypes.DATE,
+        ends: DataTypes.DATE,
     }, {
-        timestamps: false
+        timestamps: false,
     });
     test_starts.associate = function (models) {
         test_starts.belongsTo(models.employees, {
