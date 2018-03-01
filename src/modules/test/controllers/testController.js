@@ -9,7 +9,7 @@ module.exports.func = (router) => {
 
     router.post('/company/create', async (req, res) => {
         try {
-            let company = await companyService.findByUserId(req.user.id);
+            let company = req.user.company;
             let options = req.body;
             options.company_id = company.id;
             let test = await testService.save(options);
@@ -46,7 +46,7 @@ module.exports.func = (router) => {
 
     router.get('/:id([0-9]+)/', async (req, res) => {
         let vacancy = await vacancyService.findById(req.params.id);
-        let company = await companyService.findByUserId(req.user.id);
+        let company = req.user.company;
         let test = await testService.findById(vacancy.test_id);
         if (company && test && test.company_id === company.id) {
             res.send(test);
@@ -93,7 +93,6 @@ module.exports.func = (router) => {
     });
 
     router.get('/:id([0-9]+)/questions', async (req, res) => {
-        let company = await companyService.findByUserId(req.user.id);
         let questions = await testService.findAllQuestionsByTestId(req.params.id);
         return res.send(questions);
     });
@@ -112,7 +111,7 @@ module.exports.func = (router) => {
      */
     router.post('/question/:questionId([0-9]+)/answer', async (req, res) => {
         let answers = req.body.answers;
-        let employee = employeeService.getByUserId(req.user.id);
+        let employee = req.user.employee;
         let correctAnswers = await testService.getCorrectAnswers(req.params.questionId);
         let question = await testService.findQuestionById(req.params.questionId);
         let result;
@@ -134,11 +133,6 @@ module.exports.func = (router) => {
         return res.send({data: 'success'});
     });
 
-    // rou
-
-
     return router;
 
-}
-;
-
+};

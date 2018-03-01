@@ -19,14 +19,14 @@ module.exports.func = (router) => {
             return res.send({data: "success"});
         }
         catch (err) {
-            logger.error(err);
+            logger.error(err.stack);
             return res.status(500).send({error: "Could not attach vacancy"});
         }
     });
     
     
     router.get('/vacancy/recommended', async (req, res) => {
-        let recommendedVacancies = await vacancyService.getRecommended(req.user.id);
+        let recommendedVacancies = await vacancyService.getRecommendedVacancies(req.user.employee);
         res.json(recommendedVacancies);
     });
     
@@ -64,7 +64,7 @@ module.exports.func = (router) => {
             return res.send(contracts);
         }
         catch (err) {
-            logger.error(err);
+            logger.error(err.stack);
             return res.status(500).send({error: "Could not get awaited contracts for the employee"});
         }
     });
@@ -74,7 +74,7 @@ module.exports.func = (router) => {
             return res.send(await workService.findAllByEmployeeId(req.user.employee.id));
         }
         catch (err) {
-            logger.error(err);
+            logger.error(err.stack);
             return res.status(500).send({error: "Could not get current works for the employee"});
         }
     });
@@ -82,10 +82,10 @@ module.exports.func = (router) => {
 
     router.get('/all', async (req, res) => {
         try {
-            let employees = await employeeService.findAll();
+            let employees = await employeeService.findAllEmployees();
             return res.send(employees);
         } catch (err) {
-            logger.error(err.trace);
+            logger.error(err.stack);
             return res.status(500).send({error: 'Could not get all employees'});
         }
     });

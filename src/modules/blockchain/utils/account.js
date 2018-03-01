@@ -1,39 +1,25 @@
-const contractUtil = require("./contract");
-const web3 = require("./web3");
-const utilConfig = require("../../../utils/config");
-const config = utilConfig.get("web3");
-const logger = require("../../../utils/logger");
+const contractUtil = require('./contract');
+const web3 = require('./web3');
+const config = require('../../../../public_configs/gas_amounts');
+const logger = require('../../../utils/logger');
 
 let instance;
 
 class RegistrationUtil {
-    
+
     /**
-     * Create new company address in blockchain.
+     * Create new address in blockchain.
      *
      * @param password: String
      * @returns {PrivateKey} encrypted private key
      */
-    generateCompanyAccount(password) {
+
+    generateAccount(password) {
         let account = web3.eth.accounts.create();
-        logger.log(`address: ${account.address} generated for company`);
-        return account.encrypt(password);
-        
-    };
-    
-    /**
-     * Create new employee address in blockchain.
-     *
-     * @param password: String
-     * @returns {PrivateKey} encrypted private key
-     */
-    
-    generateEmployeeAccount(password) {
-        let account = web3.eth.accounts.create();
-        logger.log(`address: ${account.address} generated for employee`);
+        logger.log(`address: ${account.address} generated for user`);
         return account.encrypt(password);
     }
-    
+
     /**
      * Decrypt account with password
      *
@@ -44,7 +30,7 @@ class RegistrationUtil {
     decryptAccount(key, password) {
         return web3.eth.accounts.decrypt(key, password);
     }
-    
+
     /**
      *  Send transaction to address
      *
@@ -54,27 +40,30 @@ class RegistrationUtil {
      * @param callback
      * @returns {Promise.<TResult>}
      */
+
     sendTransaction(value, to, privateKey, callback) {
-        let args = Array.prototype.slice.call(arguments, 4);
-        let gas = args[0] || process.env.SEND_TRANSACTION_GAS_AMOUNT || config.send_transaction_gas_amount;
-        let data = args[1];
-        
-        let tx = {to, value, gas, data};
-        
+        let lastArgument = arguments[4];
+
+        let gas = lastArgument.gas || config.send_transaction_gas_amount;
+        let data = lastArgument.data;
+        let gasPrice = lastArgument.gasPrice || process.env.GAS_PRICE || config.gas_price;
+
+        let tx = { to, value, gas, data, gasPrice };
+
         return web3.eth.accounts.signTransaction(tx, privateKey)
             .then(data => {
                 return web3.eth.sendSignedTransaction(data.rawTransaction)
-                    .once("transactionHash", function (hash) {
+                    .once('transactionHash', function (hash) {
                         logger.log(hash);
                     })
                     // .on("confirmation", console.log)
-                    .on("error", (error) => {
-                        logger.log(error)
-                    }).once('receipt', callback)
+                    .on('error', (error) => {
+                        logger.log(error);
+                    }).once('receipt', callback);
             });
-        
+
     }
-    
+
     /**
      * Register employee in blockchain.
      *
@@ -82,37 +71,38 @@ class RegistrationUtil {
      * @returns {Promise.<Contract instance || false>}
      */
     registerEmployee(employee) {
-        let gas = process.env.EMPLOYEE_CREATE_GAS_AMOUNT || config.employee_create_gas_amount;
-        var contractInfo = require("./abi/Employee.json");
-        
-        return contractUtil.createContract(contractInfo, gas, employee.firstName, employee.lastName, employee.email,
-            employee.address
+        let gas = config.employee_create_gas_amount;
+        var contractInfo = require('./abi/Employee.json');
+
+        return contractUtil.createContract(contractInfo, gas, employee.firstName, employee.lastName,
+            employee.email, employee.address
         ).then(contract => {
             logger.log(`Employee contract created: ${contract}`);
             return contract;
         }).catch(err => {
             logger.error(err);
-            return false
+            return false;
         });
     }
-    
+
     /**
-     *  Register company in blockchain.
+     * Register company in blockchain.
      *
      * @param company
      * @returns {Promise.<Contract instance || false>}
      */
     registerCompany(company) {
-        let gas = process.env.EMPLOYEE_CREATE_GAS_AMOUNT || config.employee_create_gas_amount;
-        var contractInfo = require("./abi/Company.json");
-        
-        return contractUtil.createContract(contractInfo, gas, company.name, company.raiting, company.address).then(
-            contract => {
-                logger.log(`Company contract created: ${contract}`);
-                return contract;
-            }).catch(err => {
+        let gas = config.company_create_gas_amount;
+        var contractInfo = require('./abi/Company.json');
+
+        return contractUtil.createContract(contractInfo, gas, company.name, company.raiting,
+            company.address
+        ).then(contract => {
+            logger.log(`Company contract created: ${contract}`);
+            return contract;
+        }).catch(err => {
             logger.error(err);
-            return false
+            return false;
         });
     }
 }

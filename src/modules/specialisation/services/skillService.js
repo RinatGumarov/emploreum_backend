@@ -26,13 +26,12 @@ class SkillService {
         
         return skills;
     }
-    
+
     /**
-     * @param userId
      * @returns {Promise<*>}
+     * @param employee
      */
-    async getEmployeeSkills(userId) {
-        let employee = await employeeService.getByUserId(userId);
+    async getEmployeeSkills(employee) {
         let employeeId = employee.id;
         let skills = await Skills.findAll({
             include: [{

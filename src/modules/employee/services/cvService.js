@@ -68,7 +68,7 @@ class CvsService {
                     required: true,
                     model: models.employees,
                     where: {
-                        id: {[Op.eq]: employeeUserId}
+                        user_id: {[Op.eq]: employeeUserId}
                     }
                 }]
         });
