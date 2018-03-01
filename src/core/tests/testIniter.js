@@ -1,6 +1,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-let app = require('./app');
+let app = require('../app');
 
 let testIniterInstance;
 
@@ -27,6 +27,13 @@ class TestIniter {
         }
     }
     
+    setCookie(cookie) {
+        this.cookie = cookie;
+    }
+    
+    getCookie() {
+        return this.cookie;
+    }
 }
 
 testIniterInstance = new TestIniter();

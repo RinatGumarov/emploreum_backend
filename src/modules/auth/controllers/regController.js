@@ -12,8 +12,8 @@ const FIRST_STATE = 1;
 const SECOND_STATE = 2;
 
 module.exports.func = (router) => {
-
-
+    
+    
     /**
      * уввеличивать статус пользователя пока все не заполнит
      * является функцией вызова promise
@@ -29,34 +29,34 @@ module.exports.func = (router) => {
         if (user.status === stateNumber) {
             user = await usersService.incrementStep(req.user);
         }
-        return res.json({
+        res.json({
             registrationStep: user.status,
             userId: user.id,
         });
     };
-
+    
     /**
      * шаг регистрации с высыланием проверочного кода на почту
      */
     router.post('/signup/email', async (req, res) => {
         if (!(await usersService.isEmailFree(req.body.email))) {
-            return res.status(400).send('email is already in use');
+            res.status(400).json('email is already in use');
         } else {
-
+            
             if (String(req.body.password) !== String(req.body.passwordConfirmation)) {
-                return res.status(400).send("passwords not equal");
+                return res.status(400).json("passwords not equal");
             }
-
+            
             req.session.email = req.body.email;
             req.session.password = req.body.password;
             req.session.role = req.body.role;
             req.session.verifyCode = messageService.sendCodeToUser(req.body.email);
             res.json({data: 'success'});
-
+            
             logger.log(req.session.verifyCode);
         }
     });
-
+    
     /**
      * шаг проверки высланного кода на почту
      * если пароль верный то регистрируем и аунтифицируем
@@ -67,7 +67,7 @@ module.exports.func = (router) => {
             if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
                 let keyPassword = web3.utils.randomHex(32);
                 let encryptedKey = JSON.stringify(account.generateAccount(keyPassword));
-
+                
                 let account_address = account.decryptAccount(JSON.parse(encryptedKey), keyPassword).address;
                 let user = await usersService.saveUser(
                     req.session.email,
@@ -80,9 +80,9 @@ module.exports.func = (router) => {
                 );
                 req.login(user, (err) => {
                     if (err) {
-                        return res.status(401).send({ error: "Unauthorized" });
+                        res.status(401).json({error: "Unauthorized"});
                     } else {
-                        return res.send({
+                        res.json({
                             registrationStep: user.status,
                             role: req.session.role,
                             userId: req.user.id,
@@ -90,16 +90,16 @@ module.exports.func = (router) => {
                     }
                 });
             } else {
-                return res.status(400).send('code mismatch')
+                res.status(400).json('code mismatch')
             }
         } catch (err) {
             logger.error(err.stack);
-            return res.status(500).json({
+            res.status(500).json({
                 error: err.message
             });
         }
     });
-
+    
     /**
      * Шаг заполнения скилов и профилей компании
      * или работника
@@ -117,7 +117,7 @@ module.exports.func = (router) => {
                         let skills = profile.skills;
                         // сохраняем скилы
                         for (let j = 0; j < skills.length; j++) {
-                            cvService.addSkill(cv, skills[j])
+                            await cvService.addSkill(cv, skills[j])
                         }
                     }
                     break;
@@ -136,7 +136,7 @@ module.exports.func = (router) => {
             });
         }
     });
-
+    
     /**
      * шаг заполнения лично информации
      */
@@ -158,18 +158,18 @@ module.exports.func = (router) => {
             });
         }
     });
-
+    
     /**
      * метод удаления пользователя из системы
      */
     router.delete('/unreg', async (req, res) => {
         if (await usersService.deleteUser(req.user)) {
-            return res.json({data: "success"});
+            res.json({data: "success"});
         } else {
-            return res.status(500).send('server error');
+            res.status(500).json('server error');
         }
     });
-
+    
     return router;
-
+    
 };
