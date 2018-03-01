@@ -1,6 +1,5 @@
 const models = require('../../../core/models');
 const Vacancies = models.vacancies;
-const Companies = models.companies;
 const Employees = models.employees;
 const VacancyEmployees = models.vacancy_employees;
 const ProfileSkills = models.profile_skills;
@@ -25,45 +24,19 @@ class VacanciesService {
         return await Vacancies.create(params);
     }
     
-    async findProfileSkill(profileId, skillId) {
-        return await ProfileSkills.findOne({
-            where: {
-                profile_id: {
-                    [Op.eq]: profileId,
-                },
-                skill_id: {
-                    [Op.eq]: skillId,
-                }
-            }
-        });
-    }
-    
-    
     async addProfileSkillToVacancy(options) {
         return await VacancyProfileSkills.create(
             options
         )
     }
     
-    async findById(id) {
-        let vacancy = await Vacancies.findOne({
-            where: {
-                id: {
-                    [Op.eq]: id,
-                }
-            }
-        });
-        
-        return vacancy;
-    }
-    
-    async findAll(companyId) {
+    async findAllVacanciesByCompany(company) {
         
         let option = {where: {}};
         
-        if (companyId) {
+        if (company) {
             option.where.company_id = {
-                [Op.eq]: companyId,
+                [Op.eq]: company.id,
             }
         }
         
@@ -82,24 +55,24 @@ class VacanciesService {
         return vacancies;
         
     }
-    
+
     /**
      * //toDo
      * метод получения рекомендуемых вакансий по профилю работника
      * Добавить обработку в скрипте array_positions
      * для выявления сходства направления скила работника и направления
      * скила вакансии
-     * @param userId
      * @returns {Promise<*>}
+     * @param employee
      */
-    async getRecommended(userId) {
-        let skills = await skillService.getEmployeeSkills(userId);
+    async getRecommendedVacancies(employee) {
+        let skills = await skillService.getEmployeeSkills(employee);
         let skillsIds = skills.map((skill) => {
             return skill.id
         });
         
         let queryStr = queryScanner.company.recommended_vacancies;
-        let vacancies = await models.sequelize.query(queryStr,
+        return await models.sequelize.query(queryStr,
             {
                 replacements: {
                     skillsString: skillsIds.join(",")
@@ -108,8 +81,6 @@ class VacanciesService {
                 model: Vacancies,
                 include: [models.companies]
             });
-        
-        return vacancies;
     }
     
     async findById(id) {

@@ -6,9 +6,9 @@ module.exports.func = (router) => {
 
         let chats;
         if (req.user.role === "EMPLOYEE") {
-            chats = await chatService.getAllChatsFroEmployee(req.user.employee);
+            chats = await chatService.getAllChatsForEmployee(req.user.employee);
         } else {
-            chats = await chatService.getAllChatsFroCompany(req.user.company);
+            chats = await chatService.getAllChatsForCompany(req.user.company);
         }
 
         res.json(chats)

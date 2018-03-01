@@ -1,5 +1,6 @@
 const companyService = require('../services/companyService');
 const vacancyService = require('../services/vacancyService');
+const profileSkillService = require('../../specialisation/services/profileSkillService');
 const employeeService = require('../../employee/services/employeeService');
 const logger = require('../../../utils/logger');
 
@@ -8,7 +9,7 @@ module.exports.func = (router) => {
     
     router.post('/vacancy/create', async (req, res) => {
         try {
-            let company = await companyService.findByUserId(req.user.id);
+            let company = req.user.company;
             let options = req.body;
             options.week_payment = options.weekPayment;
             options.company_id = company.id;
@@ -16,7 +17,7 @@ module.exports.func = (router) => {
             let profiles = options.specifications;
             await profiles.forEach(async (profile) => {
                 await profile.skills.forEach(async (skill) => {
-                    let profileSkill = await vacancyService.findProfileSkill(profile.id, skill.id);
+                    let profileSkill = await profileSkillService.findProfileSkill(profile.id, skill.id);
                     let vacancyProfileSkill = await vacancyService.addProfileSkillToVacancy({
                         vacancy_id: vacancy.id,
                         profile_skill_id: profileSkill.id
@@ -38,8 +39,8 @@ module.exports.func = (router) => {
      */
     router.get('/vacancy', async (req, res) => {
         try {
-            let company = await companyService.findByUserId(req.user.id);
-            let vacancies = await vacancyService.findAll(company.id);
+            let company = req.user.company;
+            let vacancies = await vacancyService.findAllVacanciesByCompany(company);
             res.send(vacancies);
         } catch (err) {
             logger.error(err.stack);

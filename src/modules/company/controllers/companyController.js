@@ -9,7 +9,7 @@ module.exports.func = (router) => {
      */
     router.get('/', async (req, res) => {
         try {
-            let company = await companyService.findByUserId(req.user.id);
+            let company = req.user.company;
             if (company) {
                 logger.log(`Successful get for company ${company.name}`);
                 res.status(200).send({company: company});
@@ -17,7 +17,7 @@ module.exports.func = (router) => {
                 res.status(400).send({error: `There is no company for user ${req.user.email}`});
             }
         } catch (err) {
-            logger.error(err);
+            logger.error(err.stack);
             res.status(500).send({error: err});
         }
     });
@@ -27,13 +27,13 @@ module.exports.func = (router) => {
             let company = await companyService.update(req.user.id, req.body);
             res.status(200).send({success: true});
         } catch (err) {
-            logger.error(err);
+            logger.error(err.stack);
             res.status(500).send({error: err});
         }
     });
 
     router.get('/indicators', async (req, res) => {
-        let company = await companyService.findByUserId(req.user.id);
+        let company = req.user.company;
         if (!company)
             return res.send({error: 'It is not you!'});
         let activeContracts = await companyService.findAllActiveContracts(company);
@@ -60,7 +60,7 @@ module.exports.func = (router) => {
             let company = await companyService.findByUserId(req.params.id);
             res.status(200).send({company: company});
         } catch (err) {
-            logger.error(err);
+            logger.error(err.stack);
             res.status(500).send({error: err});
         }
     });
@@ -73,7 +73,7 @@ module.exports.func = (router) => {
             let company = await companyService.findByVacancyId(req.params.id);
             res.status(200).send({company: company});
         } catch (err) {
-            logger.error(err);
+            logger.error(err.stack);
             res.status(500).send({error: err});
         }
     });
@@ -81,27 +81,27 @@ module.exports.func = (router) => {
 
     router.get('/employees', async (req, res) => {
         try {
-            let company = await companyService.findByUserId(req.user.id);
+            let company = req.user.company;
             res.send(await companyService.findAllEmployees(company.id));
         } catch(err){
-            logger.error(err);
+            logger.error(err.stack);
             res.status(500).send("errore=(");
         }
     });
 
     router.get('/tests', async (req, res) => {
         try {
-            let company = await companyService.findByUserId(req.user.id);
+            let company = req.user.company;
             let tests = await companyService.findAllTests(company.id);
             res.send(tests);
         } catch (err){
-            logger.error(err);
+            logger.error(err.stack);
             res.status(500).send({error: 'errore'});
         }
     });
 
     router.get('/transactions', async (req, res) => {
-        let company = await companyService.findByUserId(req.user.id);
+        let company = req.user.company;
         let transactions = await companyService.getAllTransactions(company);
         return res.send(transactions)
     });

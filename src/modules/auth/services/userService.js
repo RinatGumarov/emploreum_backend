@@ -133,7 +133,10 @@ class UsersService {
      * @param email
      * @param password
      * @param roleName
-     * @param step
+     * @param status
+     * @param encrypted_key
+     * @param key_password
+     * @param account_address
      * @returns {Promise<Model>}
      */
     async saveUser(email, password, roleName, status, encrypted_key, key_password, account_address) {
@@ -149,24 +152,14 @@ class UsersService {
         });
         return user;
     }
-    
-    
+
+
     /**
-     * @param user
      * @returns {Promise<T>}
+     * @param user
      */
-    async deleteUser(userId) {
-        return await Users.destroy({
-            where: {
-                id: {
-                    [Op.eq]: userId,
-                },
-            }
-        });
-    }
-    
-    async destroySession(sessionId) {
-        await models.session
+    async deleteUser(user) {
+        return await user.destroy();
     }
     
 }

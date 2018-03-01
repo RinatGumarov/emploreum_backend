@@ -1,5 +1,5 @@
-const models = require("../../../core/models");
-const Account = require("../../blockchain/utils/account");
+const models = require('../../../core/models');
+const Account = require('../../blockchain/utils/account');
 
 const Employees = models.employees;
 const Works = models.works;
@@ -8,8 +8,8 @@ const _ = require('lodash');
 const socketSender = require('../../../core/socketSender');
 const logger = require('../../../utils/logger');
 
-const Web3InitError = require("../../blockchain/utils/Web3Error");
-const web3 = require("../../blockchain/utils/web3");
+const Web3InitError = require('../../blockchain/utils/Web3Error');
+const web3 = require('../../blockchain/utils/web3');
 const Op = models.sequelize.Op;
 
 let instance;
@@ -34,10 +34,10 @@ class EmployeesService {
                 user_id: userId
             }
         });
-        
-        return savedEmployees[0]
+
+        return savedEmployees[0];
     }
-    
+
     /**
      * обновить рабоника
      * @param userId
@@ -72,17 +72,7 @@ class EmployeesService {
     async attachVacancy(employee, vacancyId) {
         await employee.addVacancy(vacancyId);
     }
-    
-    /**
-     * работает или нет в данный момнет
-     * @param employee
-     * @returns {Promise<boolean>}
-     */
-    async wasWorking(employee) {
-        let works = employee.works();
-        return works !== null;
-    }
-    
+
     /**
      * получить все вакансии на которые откликнулся чувак
      * @param userId
@@ -91,42 +81,34 @@ class EmployeesService {
     async getAwaitedContracts(employee) {
         let vacancies = await employee.getVacancies();
         return vacancies;
+
     }
-    
+
     /**
-     * создает контракт для работника в блокчейн
+     * создание контракта работника в блокчейна
      * @param employee
-     * @param purseAddress
      * @returns {Promise<Contract>}
      */
-    async createBlockchainAccountForEmployee(employee, purseAddress, socketAddress) {
+    createBlockchainAccountForEmployee(employee) {
         let blockchainEmployee = {
             firstName: employee.name,
-            lastName: employee.surname,
-            email: employee.email,
-            address: purseAddress,
+            lastName: employee.name,
+            email: employee.user.email,
+            address: employee.user.account_address
         };
-        await blockchainInfo.set(socketAddress, `employee${purseAddress}`, `creating contract for employee ${employee.name}`);
-        let contract = await Account.registerEmployee(blockchainEmployee);
-        if (!contract) {
-            throw new Web3InitError("Could not register employee in blockchain");
-        }
-        await blockchainInfo.unset(socketAddress, `employee${purseAddress}`);
-        employee.contract = contract.address;
-        employee.save();
-        return contract;
+
+        return Account.registerEmployee(blockchainEmployee).then(contract => {
+            if (!contract)
+                throw new Web3InitError('Could not register employee in blockchain');
+
+            employee.contract = contract.address;
+            employee.save();
+            return contract;
+        });
     }
-    
-    /**
-     * получить работника по его id
-     * @param employeeId
-     * @returns {Promise<*>}
-     */
-    async getById(employeeId) {
-        return await Employees.findById(employeeId);
-    }
-    
-    async findAll() {
+
+
+    async findAllEmployees() {
         let employees = await Employees.findAll({
             include: [{
                 model: models.cvs,
@@ -154,7 +136,7 @@ class EmployeesService {
             }],
             attributes: ["user_id", "name", "surname", "photo_path", "city", "birthday"]
         });
-        
+
         employees = await employees.map((employee) => {
             if (employee.birthday)
                 employee.age = new Date().getFullYear() - employee.birthday.getFullYear();
@@ -162,7 +144,7 @@ class EmployeesService {
             let specifications = [];
             for (let i = 0; i < employee.cvs.length; ++i) {
                 for (let j = 0; j < employee.cvs[i].skills.length; ++j) {
-                    skills.push(employee.cvs[i].skills[j].name)
+                    skills.push(employee.cvs[i].skills[j].name);
                 }
                 specifications.push(employee.cvs[i].profile.name);
             }
@@ -173,7 +155,7 @@ class EmployeesService {
         });
         return employees;
     }
-    
+
     async countEndedWorks(employee) {
         return await Works.count({
             where: {
@@ -191,7 +173,7 @@ class EmployeesService {
             }
         })
     }
-    
+
     async countCurrentWorks(employee) {
         return await Works.count({
             where: {
@@ -209,7 +191,7 @@ class EmployeesService {
             }
         })
     }
-    
+
     async findCurrentWorksWithVacancies(employee) {
         return await Works.findAll({
             where: {
@@ -230,7 +212,7 @@ class EmployeesService {
             }],
         })
     }
-    
+
     async getIncome(employee) {
         let currentContracts = await this.findCurrentWorksWithVacancies(employee);
         let result = 0;

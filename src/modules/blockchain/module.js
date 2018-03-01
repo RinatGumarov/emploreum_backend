@@ -8,8 +8,6 @@ const controllersPath = path.resolve(__dirname, "controllers");
 const middlewaresPath = path.resolve(__dirname, "middlewares");
 
 var module = new ModuleClass("blockchain", controllersPath, middlewaresPath);
-// const creator = require("./utils/creator");
-// creator.createMainContract();
 
 /**
  * устанавливаем фукнции которые должны выполниться при конекте пользователя к сокету
