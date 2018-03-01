@@ -10,7 +10,7 @@ class TestHelpers {
      * все функции без обрашения к обьекту создает mocha
      */
     authTestCompany() {
-        it("auth for test company by next test",(done) => {
+        it("[ auth for company ]",(done) => {
             testIniter.getChaiRequest()
                 .post("/auth/login")
                 .set("Content-Type", "application/json")
@@ -31,7 +31,7 @@ class TestHelpers {
      * за тестового сотрудника
      */
     authTestEmployee() {
-        it("auth for test employee by next test",(done) => {
+        it("[ auth for employee ]",(done) => {
             testIniter.getChaiRequest()
                 .post("/auth/login")
                 .set("Content-Type", "application/json")
@@ -51,7 +51,7 @@ class TestHelpers {
      * выход из пользователя
      */
     logout() {
-        it("user logout",(done) => {
+        it("[ user logout ]",(done) => {
             testIniter.getChaiRequest()
                 .get("/auth/logout")
                 .set("Content-Type", "application/json")
