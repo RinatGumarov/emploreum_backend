@@ -111,12 +111,12 @@ class CompaniesService {
         return await Companies.findAll();
     }
 
-    async findAllEmployees(companyId) {
+    async findAllEmployees(comapny) {
         let employees = await models.works.findAll({
             attributes: [],
             where: {
                 company_id: {
-                    [Op.eq]: companyId,
+                    [Op.eq]: comapny.id,
                 },
             },
             include: [{

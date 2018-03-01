@@ -74,7 +74,7 @@ module.exports.func = (router) => {
     router.get('/employees', async (req, res) => {
         try {
             let company = req.user.company;
-            res.send(await companyService.findAllEmployees(company.id));
+            res.send(await companyService.findAllEmployees(company));
         } catch (err) {
             logger.error(err.stack);
             res.status(500).send("error");
