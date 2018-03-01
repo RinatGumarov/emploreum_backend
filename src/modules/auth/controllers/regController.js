@@ -117,7 +117,7 @@ module.exports.func = (router) => {
                         let skills = profile.skills;
                         // сохраняем скилы
                         for (let j = 0; j < skills.length; j++) {
-                            cvService.addSkill(cv, skills[j])
+                            await cvService.addSkill(cv, skills[j])
                         }
                     }
                     break;
