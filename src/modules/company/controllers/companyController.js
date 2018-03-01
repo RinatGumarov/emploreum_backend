@@ -28,8 +28,6 @@ module.exports.func = (router) => {
     
     router.get('/indicators', async (req, res) => {
         let company = req.user.company;
-        if (!company)
-            return res.send({error: 'It is not you!'});
         let activeContracts = await companyService.findAllActiveContracts(company);
         let spending = await companyService.countSpending(activeContracts);
         let employeeCount = await companyService.countEmployees(activeContracts);
