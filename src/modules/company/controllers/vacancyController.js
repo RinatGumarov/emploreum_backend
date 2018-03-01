@@ -11,6 +11,7 @@ module.exports.func = (router) => {
         try {
             let company = req.user.company;
             let options = req.body;
+            options.test_id = options.testId;
             options.week_payment = options.weekPayment;
             options.company_id = company.id;
             let vacancy = await vacancyService.save(options);
@@ -25,7 +26,6 @@ module.exports.func = (router) => {
                     logger.log(vacancyProfileSkill);
                 });
             });
-            
             return res.status(200).send({vacancy: vacancy});
         }
         catch (err) {

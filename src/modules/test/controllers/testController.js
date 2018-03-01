@@ -1,8 +1,6 @@
 const testService = require('../services/testService');
 const testScoresService = require('../services/testScoresService');
 const profileService = require('../../specialisation/services/profileService');
-const companyService = require('../../company/services/companyService');
-const employeeService = require('../../employee/services/employeeService');
 const vacancyService = require('../../company/services/vacancyService');
 
 module.exports.func = (router) => {
