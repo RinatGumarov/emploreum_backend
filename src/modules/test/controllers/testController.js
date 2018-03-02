@@ -43,6 +43,7 @@ module.exports.func = (router) => {
         res.send({data: 'success'});
     });
 
+    // спросить что значит
     router.get('/:id([0-9]+)/', async (req, res) => {
         let vacancy = await vacancyService.findById(req.params.id);
         let company = req.user.company;
