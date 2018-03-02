@@ -8,11 +8,15 @@ module.exports.func = (router) => {
     
     router.get('/', checkIsCompany);
     router.post('/update', checkIsCompany);
-    router.post('/indicators', checkIsCompany);
-    router.post('/employees', checkIsCompany);
-    router.post('/tests', checkIsCompany);
-    router.post('/transactions', checkIsCompany);
+    router.get('/indicators', checkIsCompany);
+    router.get('/employees', checkIsCompany);
+    router.get('/tests', checkIsCompany);
+    router.get('/transactions', checkIsCompany);
+    router.get('/vacancy', checkIsCompany);
+    router.get('/vacancy/:vacancyId([0-9]+)/candidate/:candidatesId([0-9]+)/reject', checkIsCompany);
     
+    router.post('/vacancy/create', checkIsCompany);
     router.get('/vacancy/:vacancyId([0-9]+)/available', checkIsEmployee);
+    
     return router;
 };
