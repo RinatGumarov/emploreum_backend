@@ -1,6 +1,6 @@
 const testService = require('../services/testService');
 const testScoresService = require('../services/testScoresService');
-const profileService = require('../../specialisation/services/profileService');
+const profileSkillService = require('../../specialisation/services/profileSkillService');
 const vacancyService = require('../../company/services/vacancyService');
 const logger = require('../../../utils/logger');
 
@@ -15,7 +15,7 @@ module.exports.func = (router) => {
             let profiles = req.body.specifications;
             await profiles.forEach(async (profile) => {
                 await profile.skills.forEach(async (skill) => {
-                    let profileSkill = await profileService.findProfileSkill(profile.id, skill.id);
+                    let profileSkill = await profileSkillService.findProfileSkill(profile.id, skill.id);
                     await testService.addProfileSkills(test, profileSkill);
                 });
             });
