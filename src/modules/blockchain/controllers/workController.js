@@ -5,10 +5,10 @@ const blockchainInfo = require('../../blockchain/services/blockchainEventService
 const configUtils = require('../../../utils/config');
 const logger = require('../../../utils/logger');
 
-
 module.exports.func = (router) => {
 
     router.post('/approve', async (req, res) => {
+        req.connection.setTimeout(1000 * 60 * 10);
         let vacancyId = req.body.vacancyId;
         let address = req.user.account_address;
         let employee = await employeeService.getByUserId(req.body.userId);
