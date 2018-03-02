@@ -3,7 +3,7 @@ module.exports.func = (router) => {
 
     router.get('/profiles', async (req, res) => {
         let profiles = await profileService.all();
-        res.json({profiles: profiles})
+        res.json(profiles)
     });
 
     return router;

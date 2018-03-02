@@ -167,6 +167,7 @@ class WorkService {
         for (let i = 0; i < companies.length; ++i) {
 
             logger.log(`deposit for ${companies[i].name}`);
+            
             let allWorks = await Works.findAll({
                 where: {
                     company_id: {

@@ -34,7 +34,7 @@ class ChatService {
      * @returns {Promise<*>}
      */
     async getAllChatsForCompany(company) {
-        return await company.chats();
+        return await company.getChats();
     }
     
     /**
@@ -42,7 +42,7 @@ class ChatService {
      * @returns {Promise<*>}
      */
     async getAllChatsForEmployee(employee) {
-        return await employee.chats();
+        return await employee.getChats();
     }
     
     /**
