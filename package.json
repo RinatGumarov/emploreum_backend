@@ -83,7 +83,7 @@
         "seeds": "cross-env NODE_ENV=production sequelize db:seed:all",
         "db:reset": "npm run migrate:down:all && npm run migrate:up && npm run seeds",
         "console:script:test": "node $NODE_DEBUG_OPTION src/console/console.js -s test",
-        "test:run": "npm run test:db:reset && cross-env NODE_ENV=test node_modules/.bin/mocha src/test.js"
+        "test": "npm run test:db:reset && cross-env NODE_ENV=test node_modules/.bin/mocha src/test.js"
     },
     "scriptsComments": {
         "start": "стартует сервер",
@@ -98,7 +98,7 @@
         "seeds": "накатить всех сидов",
         "db:reset": "чистка базы + сиды",
         "console:script:test": "проверка консоли",
-        "test:run": "запуск всех тестов для всех модулей"
+        "test": "запуск всех тестов для всех модулей"
     },
     "author": "",
     "license": "MIT"
