@@ -79,4 +79,35 @@ describe('companyController', () => {
     
     testHelpers.logout();
     
+    it("[ auth for new company reg in regControllerTest ]", (done) => {
+        testIniter.getChaiRequest()
+            .post("/auth/login")
+            .set("Content-Type", "application/json")
+            .send({
+                email: "kzn.magomedov@gmail.com",
+                password: "asdasd123",
+            })
+            .end(function (err, res) {
+                res.should.have.status(200);
+                testIniter.setCookie(res.headers['set-cookie'].pop().split(';')[0]);
+                done();
+            });
+    });
+    
+    it('company indicators', (done) => {
+        testIniter.getChaiRequest()
+            .get("/company/indicators")
+            .set("Content-Type", "application/json")
+            .set('Cookie', testIniter.getCookie())
+            .end(function (err, res) {
+                res.should.have.status(200);
+                res.body.should.have.property("address");
+                res.body.should.have.property("spending");
+                res.body.should.have.property("balance");
+                res.body.should.have.property("canBePaid");
+                done();
+            });
+    });
+    
+    testHelpers.logout();
 });

@@ -103,6 +103,4 @@ describe('employeeController', () => {
             });
     });
     
-    testHelpers.logout();
-    
 });
