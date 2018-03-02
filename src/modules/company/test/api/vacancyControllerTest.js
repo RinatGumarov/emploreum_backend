@@ -36,45 +36,6 @@ describe('vacancyController', () => {
                 });
         });
         
-        it('send not valid profile', (done) => {
-            testIniter.getChaiRequest()
-                .post("/company/vacancy/create")
-                .set("Content-Type", "application/json")
-                .set('Cookie', testIniter.getCookie())
-                .send({
-                    name: "test_vacancy",
-                    specifications: [{
-                        id: 0,
-                        skills: [{
-                            id: 1
-                        }]
-                    }]
-                })
-                .end(function (err, res) {
-                    res.should.have.status(500);
-                    done();
-                });
-        });
-        
-        it('send not valid skill', (done) => {
-            testIniter.getChaiRequest()
-                .post("/company/vacancy/create")
-                .set("Content-Type", "application/json")
-                .set('Cookie', testIniter.getCookie())
-                .send({
-                    name: "test_vacancy",
-                    specifications: [{
-                        id: 0,
-                        skills: [{
-                            id: 0
-                        }]
-                    }]
-                })
-                .end(function (err, res) {
-                    res.should.have.status(500);
-                    done();
-                });
-        });
         
         it('send valid json', (done) => {
             testIniter.getChaiRequest()
