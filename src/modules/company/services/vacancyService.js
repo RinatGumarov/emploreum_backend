@@ -5,6 +5,7 @@ const VacancyEmployees = models.vacancy_employees;
 const ProfileSkills = models.profile_skills;
 const Profiles = models.profiles;
 const VacancyProfileSkills = models.vacancy_profile_skills;
+const testService = require('../../test/services/testService');
 
 const queryScanner = require('../../../core/queryScanner');
 const employeeService = require('../../employee/services/employeeService');
@@ -19,41 +20,41 @@ const Op = models.sequelize.Op;
 let instance;
 
 class VacanciesService {
-    
+
     async save(params) {
         return await Vacancies.create(params);
     }
-    
+
     async addProfileSkillToVacancy(options) {
         return await VacancyProfileSkills.create(
             options
         )
     }
-    
+
     async findAllVacanciesByCompany(company) {
-        
+
         let option = {where: {}};
-        
+
         if (company) {
             option.where.company_id = {
                 [Op.eq]: company.id,
             }
         }
-        
+
         option.where.opened = true;
-        
+
         // преобразовыываем в нормалььный вид
         let vacancies = await Vacancies.findAll(option);
-        
+
         // преобразовывем в человечиский вид)
         for (let i = 0; vacancies.length && i < vacancies.length; ++i) {
-            
+
             let profiles = await this.getVacancyProfiles(vacancies[i].id);
             vacancies[i].dataValues.profiles = profiles;
         }
-        
+
         return vacancies;
-        
+
     }
 
     /**
@@ -70,7 +71,7 @@ class VacanciesService {
         let skillsIds = skills.map((skill) => {
             return skill.id
         });
-        
+
         let queryStr = queryScanner.company.recommended_vacancies;
         return await models.sequelize.query(queryStr,
             {
@@ -82,11 +83,11 @@ class VacanciesService {
                 include: [models.companies]
             });
     }
-    
+
     async findById(id) {
         return await Vacancies.findById(id);
     }
-    
+
     /**
      * найти все профили и скилы вакансии
      * @param vacancyId
@@ -130,7 +131,7 @@ class VacanciesService {
         });
         return profiles;
     }
-    
+
     /**
      * получить всех кто постучался
      * @param vacancyId
@@ -153,7 +154,7 @@ class VacanciesService {
         });
         return candidates
     }
-    
+
     /**
      * Удалить связть вакансии и работника
      * @param vacancyId
@@ -177,17 +178,17 @@ class VacanciesService {
         });
         return true;
     }
-    
+
     /**
      * может ли данный емплой постучаться на вакансию
      * @param vacancyId
      * @param userId
-     * @returns {Promise<boolean>}
+     * @returns {Promise<string>} state of vacancy: Available, submitted, start, continue, failed
      */
     async isAvailable(vacancyId, userId) {
         let employee = await employeeService.getByUserId(userId);
         let employeeId = employee.id;
-        let result = await Vacancies.findOne({
+        let vacancy = await Vacancies.findOne({
             where: {
                 id: {
                     [Op.eq]: vacancyId,
@@ -195,6 +196,7 @@ class VacanciesService {
             },
             include: [{
                 model: models.employees,
+                required: false,
                 where: {
                     id: {
                         [Op.eq]: employeeId,
@@ -202,9 +204,27 @@ class VacanciesService {
                 }
             }]
         });
-        return result === null;
+        if (vacancy.employees.length !== 0 )
+            return 'submitted';
+        if (vacancy.test_id === null)
+            return 'available';
+        else {
+            let testEnds = await testService.findTestEnds(employee.id, vacancy.test_id);
+            if (testEnds === null)
+                return 'start';
+            else {
+                // если тест уже засабмитили то надо бы ему махнуть ends time
+                if (testEnds.dataValues.ends !== null && testEnds.dataValues.ends < new Date()) {
+                    if ((2 + 2) === 4)
+                        return 'available';
+                    else
+                        return 'failed';
+                } else
+                    return 'continue';
+            }
+        }
     }
-    
+
     async sendInvitationToEmployee(company, vacancy, employeeUserId) {
         let employee = await employeeService.getByUserId(employeeUserId);
         if (vacancy.company_id !== company) {
@@ -213,9 +233,10 @@ class VacanciesService {
         await messageService.sendToEmployee(company, employee.id, "You have new invitation to vacancy");
         await socketSender.sendSocketMessage(`${employee.user_id}:invitation`, vacancy);
     }
-    
-    
+
+
 }
 
 instance = new VacanciesService();
-module.exports = instance;
+module
+    .exports = instance;

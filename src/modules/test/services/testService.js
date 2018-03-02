@@ -136,20 +136,24 @@ class TestService {
     }
 
     async alreadyStarted(employee, test) {
-        let started = await models.test_ends.findOne({
+        let started = await this.findTestEnds(employee.id, test.id);
+        // тест существует, у теста есть конечный срок, срок уже прошел
+        return (started !== null && started.dataValues.ends !== null && started.dataValues.ends < new Date());
+    }
+
+    async findTestEnds(employeeId, testId) {
+        return await models.test_ends.findOne({
             where: {
                 [Op.and]: {
                     employee_id: {
-                        [Op.eq]: employee.id,
+                        [Op.eq]: employeeId,
                     },
                     test_id: {
-                        [Op.eq]: test.id,
+                        [Op.eq]: testId,
                     }
                 }
             }
         });
-        // тест существует, у теста есть конечный срок, срок уже прошел
-        return (started !== null && started.dataValues.ends !== null && started.dataValues.ends < new Date());
     }
 }
 

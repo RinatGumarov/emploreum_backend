@@ -112,7 +112,8 @@ module.exports.func = (router) => {
     router.get('/:id([0-9]+)/start', async (req, res) => {
         try {
             let employee = req.user.employee;
-            let test = await testService.findById(req.params.id);
+            let vacancy = await vacancyService.findById(req.params.id);
+            let test = await testService.findById(vacancy.test_id);
             if (!employee || testService.alreadyStarted(employee, test))
                 return res.status(405).send({error: "Not Allowed"});
             await testService.startTest(employee, test);
