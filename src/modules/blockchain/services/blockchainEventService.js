@@ -1,13 +1,15 @@
 const logger = require('../../../utils/logger');
 const socketSender = require('../../../core/socketSender');
+
 let instance;
 
 class BlockChainEventService {
-    
+
     constructor() {
         this.events = {};
     }
-    
+
+
     /**
      * проверяет есть ли не завершенные транзакции в блокчайне
      * @param userId
@@ -15,7 +17,7 @@ class BlockChainEventService {
      */
     isLoad(userId) {
         if (this.events[userId]) {
-            return this.events[userId].length > 0
+            return this.events[userId].length > 0;
         }
         return false;
     }
@@ -27,9 +29,9 @@ class BlockChainEventService {
      * @param desc
      */
     set(userId, event, desc) {
-        if (!this.events[userId]) {
+        if (!this.events[userId])
             this.events[userId] = {};
-        }
+
         this.events[userId][event] = desc;
         let contracts = this.get(userId);
         logger.log(`=====================\nsockeTTT!!!!OLOLO\n==================`);
@@ -38,7 +40,7 @@ class BlockChainEventService {
             contracts: contracts
         });
     }
-    
+
     /**
      * говорит что транзакция завершена
      * @param userId
@@ -49,13 +51,12 @@ class BlockChainEventService {
             // если такой эвент еще идет и мы говорим что он закончился
             delete this.events[userId][event];
             let hasEvents = false;
-            if (Object.keys(this.events[userId]).length > 0) {
-                hasEvents = true
-            }
+
+            if (Object.keys(this.events[userId]).length > 0)
+                hasEvents = true;
+
             if (!hasEvents) {
-                socketSender.sendSocketMessage(`${userId}:blockchain`, {
-                    success: true
-                });
+                socketSender.sendSocketMessage(`${userId}:blockchain`, { success: true });
                 delete this.events[userId];
             } else {
                 let contracts = this.get(userId);
@@ -66,7 +67,7 @@ class BlockChainEventService {
             }
         }
     }
-    
+
     /**
      * отдает все незавершенные транзакции
      * @param userId

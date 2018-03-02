@@ -11,7 +11,7 @@ const Web3InitError = require('../utils/Web3Error');
 const Account = require('../utils/account');
 const web3 = require('../utils/web3');
 const logger = require('../../../utils/logger');
-
+const employeeService = require('../../employee/services/employeeService');
 const Op = models.sequelize.Op;
 
 let instance;
@@ -43,8 +43,65 @@ class WorkService {
         return works;
     }
 
+    async approve(vacancyId, address, employee, company, companyUser) {
+        let promises = [];
+
+        try {
+            let message;
+
+            if (!employee.contract) {
+                let promise = employeeService.createBlockchainAccountForEmployee(employee);
+
+                promises.push(promise);
+                message = ` employee ${employee.name}`;
+            }
+
+            if (!company.contract) {
+                let promise = companyService.createBlockchainAccountForCompany(companyUser, 10);
+
+                promises.push(promise);
+
+                if (message)
+                    message += ' and';
+
+                message += ` company ${company.name}.`;
+            }
+
+
+            if (message) {
+                await blockchainInfo.set(company.user_id, `contract creation ${address}`,
+                    `Creating contract in blockchain for${message}`);
+
+                await Promise.all(promises);
+
+                await blockchainInfo.unset(company.user_id, `contract creation ${address}`);
+            }
+
+            message = `employee ${employee.name} and company ${company.name}.`;
+
+            await blockchainInfo.set(company.user_id, `work creation ${address}`,
+                `Creating contract in blockchain between ${message}`);
+
+            await this.createWork(vacancyId, employee, companyUser);
+
+            await blockchainInfo.unset(company.user_id, `work creation ${address}`);
+
+            return true;
+        } catch (e) {
+            logger.error(e.stack);
+            logger.log('Waiting promises, count: ' + promises.length);
+
+            await Promise.all(promises);
+
+            await blockchainInfo.unset(company.user_id, `contract creation ${address}`);
+            await blockchainInfo.unset(company.user_id, `work creation ${address}`);
+
+            return false;
+        }
+    }
+
     //toDo
-    async createWork(vacancyId, employee, user) {
+    async createWork(vacancyId, employee, companyUser) {
         let vacancy = await vacancyService.findById(vacancyId);
         let begin = new Date();
         let end = new Date().setMonth(begin.getMonth() + vacancy.duration);
@@ -54,7 +111,7 @@ class WorkService {
             begin_date: begin,
             end_date: end,
             employee_id: employee.id,
-            company_id: user.company.id,
+            company_id: companyUser.company.id,
             status: 0
         };
 
@@ -63,12 +120,13 @@ class WorkService {
             skillToPosition: [],
             duration: vacancy.duration,
             employee: employee.user.account_address,
-            company: user.account_address,
+            company: companyUser.account_address,
             weekPayment: web3.utils.toWei(String(vacancy.week_payment), 'ether')
         };
 
-        await blockchainInfo.set(user.id, `work${employee.user.account_address}`,
+        await blockchainInfo.set(companyUser.id, `work${employee.user.account_address}`,
             `creating contract for work ${vacancy.id}`);
+
         let contract = await blockchainWork.createWork(blockchainWorkData).then(async (result) => {
             if (!result)
                 throw new Web3InitError('Could not register company in blockchain');
@@ -78,15 +136,18 @@ class WorkService {
                 type: 'ADD',
                 vacancy: result.address
             });
-            await blockchainInfo.unset(user.id, `work${employee.user.account_address}`);
+            await blockchainInfo.unset(companyUser.id, `work${employee.user.account_address}`);
 
             return result;
         });
+
         workData.contract = contract.address;
         await this.save(workData);
+
         // Закрыть вакансию
         vacancy.opened = false;
         await vacancy.save();
+
         return contract;
     }
 
