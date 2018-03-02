@@ -4,9 +4,9 @@ const employeesService = require('../../employee/services/employeeService');
 const companiesService = require('../../company/services/companyService');
 const messageService = require('../../message/services/messageService');
 
-const logger = require('../../../utils/logger');
-const account = require('../../blockchain/utils/account');
-const web3 = require('../../blockchain/utils/web3');
+const logger = require("../../../utils/logger");
+const account = require("../../blockchain/utils/account");
+const web3 = require("../../blockchain/utils/web3");
 
 const FIRST_STATE = 1;
 const SECOND_STATE = 2;
@@ -29,7 +29,7 @@ module.exports.func = (router) => {
         if (user.status === stateNumber) {
             user = await usersService.incrementStep(req.user);
         }
-        return res.json({
+        res.json({
             registrationStep: user.status,
             userId: user.id,
         });
@@ -40,18 +40,18 @@ module.exports.func = (router) => {
      */
     router.post('/signup/email', async (req, res) => {
         if (!(await usersService.isEmailFree(req.body.email))) {
-            return res.status(400).send('email is already in use');
+            res.status(400).json('email is already in use');
         } else {
             
             if (String(req.body.password) !== String(req.body.passwordConfirmation)) {
-                return res.status(400).send("passwords not equal");
+                return res.status(400).json("passwords not equal");
             }
             
             req.session.email = req.body.email;
             req.session.password = req.body.password;
             req.session.role = req.body.role;
             req.session.verifyCode = messageService.sendCodeToUser(req.body.email);
-            res.json({data: "success"});
+            res.json({data: 'success'});
             
             logger.log(req.session.verifyCode);
         }
@@ -65,16 +65,9 @@ module.exports.func = (router) => {
     router.post('/signup/verification', async (req, res) => {
         try {
             if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
-                let encryptedKey = '';
-                //toDo переделать
                 let keyPassword = web3.utils.randomHex(32);
-                switch (req.session.role) {
-                    case 'EMPLOYEE':
-                        encryptedKey = JSON.stringify(account.generateEmployeeAccount(keyPassword));
-                        break;
-                    case 'COMPANY':
-                        encryptedKey = JSON.stringify(account.generateCompanyAccount(keyPassword));
-                }
+                let encryptedKey = JSON.stringify(account.generateAccount(keyPassword));
+                
                 let account_address = account.decryptAccount(JSON.parse(encryptedKey), keyPassword).address;
                 let user = await usersService.saveUser(
                     req.session.email,
@@ -87,11 +80,9 @@ module.exports.func = (router) => {
                 );
                 req.login(user, (err) => {
                     if (err) {
-                        return res.status(401).send({
-                            error: 'Unauthorized'
-                        });
+                        res.status(401).json({error: "Unauthorized"});
                     } else {
-                        return res.send({
+                        res.json({
                             registrationStep: user.status,
                             role: req.session.role,
                             userId: req.user.id,
@@ -99,13 +90,13 @@ module.exports.func = (router) => {
                     }
                 });
             } else {
-                return res.status(400).send('code mismatch')
+                res.status(400).json('code mismatch')
             }
         } catch (err) {
-            logger.error(err);
-            return res.status(500).json({
+            logger.error(err.stack);
+            res.status(500).json({
                 error: err.message
-            })
+            });
         }
     });
     
@@ -126,7 +117,7 @@ module.exports.func = (router) => {
                         let skills = profile.skills;
                         // сохраняем скилы
                         for (let j = 0; j < skills.length; j++) {
-                            cvService.addSkill(cv, skills[j])
+                            await cvService.addSkill(cv, skills[j])
                         }
                     }
                     break;
@@ -139,7 +130,7 @@ module.exports.func = (router) => {
             }
             await incrementStatusAndReturnResponse(req, res, FIRST_STATE);
         } catch (err) {
-            logger.error(err);
+            logger.error(err.stack);
             res.status(500).json({
                 error: err.message
             });
@@ -161,10 +152,10 @@ module.exports.func = (router) => {
             }
             await incrementStatusAndReturnResponse(req, res, SECOND_STATE);
         } catch (err) {
-            logger.error(err);
+            logger.error(err.stack);
             res.status(500).json({
                 error: err.message
-            })
+            });
         }
     });
     
@@ -172,10 +163,10 @@ module.exports.func = (router) => {
      * метод удаления пользователя из системы
      */
     router.delete('/unreg', async (req, res) => {
-        if (await usersService.deleteUser(req.user.id)) {
-            return res.json({data: "success"});
+        if (await usersService.deleteUser(req.user)) {
+            res.json({data: "success"});
         } else {
-            return res.status(500).send('server error');
+            res.status(500).json('server error');
         }
     });
     

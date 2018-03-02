@@ -1,15 +1,14 @@
 const testService = require('../services/testService');
 const testScoresService = require('../services/testScoresService');
 const profileService = require('../../specialisation/services/profileService');
-const companyService = require('../../company/services/companyService');
-const employeeService = require('../../employee/services/employeeService');
 const vacancyService = require('../../company/services/vacancyService');
+const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
 
     router.post('/company/create', async (req, res) => {
         try {
-            let company = await companyService.findByUserId(req.user.id);
+            let company = req.user.company;
             let options = req.body;
             options.company_id = company.id;
             let test = await testService.save(options);
@@ -46,7 +45,7 @@ module.exports.func = (router) => {
 
     router.get('/:id([0-9]+)/', async (req, res) => {
         let vacancy = await vacancyService.findById(req.params.id);
-        let company = await companyService.findByUserId(req.user.id);
+        let company = req.user.company;
         let test = await testService.findById(vacancy.test_id);
         if (company && test && test.company_id === company.id) {
             res.send(test);
@@ -93,7 +92,6 @@ module.exports.func = (router) => {
     });
 
     router.get('/:id([0-9]+)/questions', async (req, res) => {
-        let company = await companyService.findByUserId(req.user.id);
         let questions = await testService.findAllQuestionsByTestId(req.params.id);
         return res.send(questions);
     });
@@ -107,12 +105,30 @@ module.exports.func = (router) => {
         return res.send(question);
     });
 
+
+    /**
+     * начало теста
+     */
+    router.get('/:id([0-9]+)/start', async (req, res) => {
+        try {
+            let employee = req.user.employee;
+            let test = await testService.findById(req.params.id);
+            if (!employee || testService.alreadyStarted(employee, test))
+                return res.status(405).send({error: "Not Allowed"});
+            await testService.startTest(employee, test);
+            return res.send({data: success});
+        } catch (err) {
+            logger.error(err.stack);
+            return res.status(500).send({error: err.message});
+        }
+    });
+
     /**
      * получить ответ и проверить его правильность
      */
     router.post('/question/:questionId([0-9]+)/answer', async (req, res) => {
         let answers = req.body.answers;
-        let employee = employeeService.getByUserId(req.user.id);
+        let employee = req.user.employee;
         let correctAnswers = await testService.getCorrectAnswers(req.params.questionId);
         let question = await testService.findQuestionById(req.params.questionId);
         let result;
@@ -134,11 +150,6 @@ module.exports.func = (router) => {
         return res.send({data: 'success'});
     });
 
-    // rou
-
-
     return router;
 
-}
-;
-
+};

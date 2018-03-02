@@ -19,11 +19,6 @@ module.exports = (sequelize, DataTypes) => {
         test_scores.belongsTo(models.tests, {
             foreignKey: "test_id",
         });
-        test_scores.belongsToMany(models.profile_skills, {
-            through: 'test_profile_skills',
-            foreignKey: 'test_id',
-            timestamps: false,
-        });
     };
 
 

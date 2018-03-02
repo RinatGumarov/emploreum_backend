@@ -14,7 +14,9 @@ class Logger {
      * метод для логирования ошибок
      */
     error(err) {
-        console.error(chalk.red(err));
+        if (process.env.NODE_ENV !== "test") {
+            console.error(chalk.red(err));
+        }
     }
     
     /**

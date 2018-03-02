@@ -1,5 +1,6 @@
 const companyService = require('../services/companyService');
 const vacancyService = require('../services/vacancyService');
+const profileSkillService = require('../../specialisation/services/profileSkillService');
 const employeeService = require('../../employee/services/employeeService');
 const logger = require('../../../utils/logger');
 
@@ -8,15 +9,17 @@ module.exports.func = (router) => {
     
     router.post('/vacancy/create', async (req, res) => {
         try {
-            let company = await companyService.findByUserId(req.user.id);
+            let company = req.user.company;
             let options = req.body;
+            options.test_id = options.testId;
             options.week_payment = options.weekPayment;
             options.company_id = company.id;
             let vacancy = await vacancyService.save(options);
             let profiles = options.specifications;
+            //toDo переделать на for так как происходит асинхроноо
             await profiles.forEach(async (profile) => {
                 await profile.skills.forEach(async (skill) => {
-                    let profileSkill = await vacancyService.findProfileSkill(profile.id, skill.id);
+                    let profileSkill = await profileSkillService.findProfileSkill(profile.id, skill.id);
                     let vacancyProfileSkill = await vacancyService.addProfileSkillToVacancy({
                         vacancy_id: vacancy.id,
                         profile_skill_id: profileSkill.id
@@ -24,8 +27,7 @@ module.exports.func = (router) => {
                     logger.log(vacancyProfileSkill);
                 });
             });
-            
-            return res.status(200).send({vacancy: vacancy});
+            return res.status(200).send(vacancy);
         }
         catch (err) {
             logger.error(err.stack);
@@ -38,8 +40,8 @@ module.exports.func = (router) => {
      */
     router.get('/vacancy', async (req, res) => {
         try {
-            let company = await companyService.findByUserId(req.user.id);
-            let vacancies = await vacancyService.findAll(company.id);
+            let company = req.user.company;
+            let vacancies = await vacancyService.findAllVacanciesByCompany(company);
             res.send(vacancies);
         } catch (err) {
             logger.error(err.stack);
@@ -102,17 +104,23 @@ module.exports.func = (router) => {
      * Только для работника. Узнать может ли он постучаться на вакансию.
      */
     router.get('/vacancy/:vacancyId([0-9]+)/available', async (req, res) => {
-        if (await vacancyService.isAvailable(req.params.vacancyId, req.user.id))
+        if (await vacancyService.isAvailable(req.params.vacancyId, req.user.id)) {
             res.send({data: "successful"});
-        else
+        } else {
             res.status(405).send({error: "Not allowed"});
+        }
     });
     
     
     router.post('/vacancy/:id([0-9]+)/invite', async (req, res) => {
-        let vacancy = await vacancyService.findById(req.params.id);
-        await vacancyService.sendInvitationToEmployee(req.user.company, vacancy, req.body.employeeId);
-        res.send({data: 'success'});
+        try {
+            let vacancy = await vacancyService.findById(req.params.id);
+            await vacancyService.sendInvitationToEmployee(req.user.company, vacancy, req.body.employeeId);
+            res.send({data: 'success'});
+        } catch (err) {
+            logger.error(err.stack);
+            return res.status(500).send({error: err.message});
+        }
     });
     
     return router;

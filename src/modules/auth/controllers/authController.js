@@ -21,7 +21,7 @@ module.exports.func = (router) => {
 
     router.get('/logout', async (req, res) => {
         req.session.destroy();
-        res.send();
+        res.json("success");
     });
 
 

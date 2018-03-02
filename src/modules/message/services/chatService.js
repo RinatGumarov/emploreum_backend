@@ -33,7 +33,7 @@ class ChatService {
      * все чаты у компании
      * @returns {Promise<*>}
      */
-    async getAllChatsFroCompany(company) {
+    async getAllChatsForCompany(company) {
         return await company.chats();
     }
     
@@ -41,7 +41,7 @@ class ChatService {
      * все чаты у работника
      * @returns {Promise<*>}
      */
-    async getAllChatsFroEmployee(employee) {
+    async getAllChatsForEmployee(employee) {
         return await employee.chats();
     }
     
@@ -70,7 +70,7 @@ class ChatService {
      * @param email
      * @returns {number}
      */
-    sendCodeToUser(email) {
+    async sendCodeToUser(email) {
         const code = this.generateCode();
         
         const mailOptions = {

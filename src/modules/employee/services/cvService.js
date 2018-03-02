@@ -37,6 +37,9 @@ class CvsService {
      */
     async addSkill(cv, skill) {
         let result = await cv.addSkills([skill.id]);
+        if(!result[0]){
+            throw Error("skill not found")
+        }
         return result[0];
     }
     
@@ -68,7 +71,7 @@ class CvsService {
                     required: true,
                     model: models.employees,
                     where: {
-                        id: {[Op.eq]: employeeUserId}
+                        user_id: {[Op.eq]: employeeUserId}
                     }
                 }]
         });
