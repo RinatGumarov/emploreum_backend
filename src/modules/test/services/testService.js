@@ -126,6 +126,31 @@ class TestService {
             }
         })
     }
+
+    async startTest(employee, test) {
+        return await models.test_ends.create({
+            employee_id: employee.id,
+            test_id: test.id,
+            ends: test.duration ? new Date().setMinutes(new Date().getMinutes() + test.duration) : null
+        });
+    }
+
+    async alreadyStarted(employee, test) {
+        let started = await models.test_ends.findOne({
+            where: {
+                [Op.and]: {
+                    employee_id: {
+                        [Op.eq]: employee.id,
+                    },
+                    test_id: {
+                        [Op.eq]: test.id,
+                    }
+                }
+            }
+        });
+        // тест существует, у теста есть конечный срок, срок уже прошел
+        return (started !== null && started.dataValues.ends !== null && started.dataValues.ends < new Date());
+    }
 }
 
 if (typeof instance !== TestService) {
