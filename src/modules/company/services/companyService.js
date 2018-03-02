@@ -1,6 +1,9 @@
 const models = require('../../../core/models');
 const Companies = models.companies;
 const CompanyProfiles = models.company_profiles;
+const WorkTransactions = models.work_transactions;
+const Works = models.works;
+const Tests = models.tests;
 
 const Account = require('../../blockchain/utils/account');
 const _ = require('lodash');
@@ -10,7 +13,7 @@ const Web3InitError = require('../../blockchain/utils/Web3Error');
 let instance;
 
 class CompaniesService {
-
+    
     /**
      * создание профиля для компании
      * @param companyId
@@ -22,7 +25,7 @@ class CompaniesService {
             profile_id: profileId
         });
     }
-
+    
     async save(userId) {
         return (await Companies.findOrCreate({
             where: {
@@ -35,15 +38,15 @@ class CompaniesService {
             }
         }))[0];
     }
-
+    
     async update(userId, params) {
         return await Companies.update(params, {
             where: {
-                user_id: { [Op.eq]: userId }
+                user_id: {[Op.eq]: userId}
             }
         });
     }
-
+    
     async findByUserId(userId) {
         return await Companies.findOne({
             where: {
@@ -54,7 +57,7 @@ class CompaniesService {
             include: [models.users]
         });
     }
-
+    
     async findByIdWithUser(id) {
         return await Companies.findOne({
             include: [{
@@ -67,7 +70,7 @@ class CompaniesService {
             }
         });
     }
-
+    
     createBlockchainAccountForCompany(companyUser, rating) {
         let blockchainCompany = {
             name: companyUser.company.name,
@@ -77,13 +80,13 @@ class CompaniesService {
         return Account.registerCompany(blockchainCompany).then(async (contract) => {
             if (!contract)
                 throw new Web3InitError('Could not register company in blockchain');
-
+            
             companyUser.company.contract = contract.address;
             companyUser.company.save();
             return contract;
         });
     }
-
+    
     async findByVacancyId(vacancyId) {
         return await Companies.findOne({
             include: [{
@@ -91,12 +94,12 @@ class CompaniesService {
                 required: true,
                 model: models.vacancies,
                 where: {
-                    id: { [Op.eq]: vacancyId, },
+                    id: {[Op.eq]: vacancyId,},
                 },
             }],
         });
     }
-
+    
     async findById(id) {
         return await Companies.findOne({
             where: {
@@ -106,13 +109,13 @@ class CompaniesService {
             }
         });
     }
-
+    
     async getAll() {
         return await Companies.findAll();
     }
-
+    
     async findAllEmployees(companyId) {
-        let employees = await models.works.findAll({
+        let employees = await Works.findAll({
             attributes: [],
             where: {
                 company_id: {
@@ -126,9 +129,9 @@ class CompaniesService {
         });
         return _.uniqBy(employees, 'employee.user_id');
     }
-
+    
     async findAllTests(companyId) {
-        let tests = await models.tests.findAll({
+        let tests = await Tests.findAll({
             attributes: ['id', 'name'],
             include: [{
                 model: models.profile_skills,
@@ -162,9 +165,9 @@ class CompaniesService {
         });
         return tests;
     }
-
+    
     async findAllActiveContracts(company) {
-        let contracts = await models.works.findAll({
+        let contracts = await Works.findAll({
             where: {
                 [Op.and]: {
                     company_id: {
@@ -185,7 +188,7 @@ class CompaniesService {
         });
         return contracts;
     }
-
+    
     async countSpending(contracts) {
         let result = 0;
         for (let contract of contracts) {
@@ -193,13 +196,13 @@ class CompaniesService {
         }
         return parseFloat(result.toFixed(10));
     }
-
+    
     async countEmployees(contracts) {
         return await _.uniqBy(contracts, 'employeeId').length;
     }
-
+    
     async getAllTransactions(company) {
-        let transactions = await models.work_transactions.findAll({
+        let transactions = await WorkTransactions.findAll({
             include: {
                 model: models.works,
                 where: {

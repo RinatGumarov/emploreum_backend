@@ -46,6 +46,7 @@ module.exports.func = (router) => {
     
     /**
      * получить инфу по коипании
+     * /ToDo
      */
     router.get('/info/:id([0-9]+)', async (req, res) => {
         try {
