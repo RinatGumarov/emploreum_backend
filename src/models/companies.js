@@ -4,12 +4,19 @@ module.exports = (sequelize, DataTypes) => {
         about: DataTypes.TEXT,
         logo: DataTypes.STRING,
         city: DataTypes.STRING,
-        response_text: DataTypes.TEXT,
+        responseText: {
+            type: DataTypes.TEXT,
+            field: "response_text"
+        },
         contract: DataTypes.STRING,
+        userId: {
+            type: DataTypes.BIGINT,
+            field: "user_id"
+        }
     }, {
         timestamps: false
     });
-
+    
     companies.associate = function (models) {
         companies.belongsToMany(models.profiles, {
             through: 'company_profiles',
@@ -28,6 +35,6 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'company_id',
         });
     };
-
+    
     return companies;
 };

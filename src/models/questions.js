@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.ENUM,
             values: ["multipleChoice", "input"],
         },
+        testId: {
+            type: DataTypes.BIGINT,
+            field: "test_id"
+        }
     }, {
         timestamps: false
     });
@@ -21,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'question_id',
         })
     };
-
-
+    
+    
     return questions;
 };

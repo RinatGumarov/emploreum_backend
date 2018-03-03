@@ -2,34 +2,45 @@ module.exports = (sequelize, DataTypes) => {
     let vacancies = sequelize.define('vacancies', {
         name: DataTypes.STRING,
         info: DataTypes.TEXT,
-        week_payment: DataTypes.DOUBLE,
+        weekPayment: {
+            type: DataTypes.DOUBLE,
+            field: "week_payment"
+        },
         duration: DataTypes.INTEGER,
         opened: DataTypes.BOOLEAN,
+        companyId: {
+            type: DataTypes.BIGINT,
+            field: "company_id"
+        },
+        testId: {
+            type: DataTypes.BIGINT,
+            field: "test_id"
+        }
     }, {
         timestamps: false
     });
-
+    
     vacancies.associate = function (models) {
         vacancies.belongsTo(models.companies, {
             foreignKey: 'company_id'
         });
-
+        
         vacancies.belongsToMany(models.employees, {
             through: 'vacancy_employees',
             foreignKey: 'vacancy_id',
             timestamps: false,
         });
-
+        
         vacancies.belongsToMany(models.profile_skills, {
             through: 'vacancy_profile_skills',
             foreignKey: 'vacancy_id',
             timestamps: false,
         });
-
+        
         vacancies.belongsTo(models.tests, {
             foreignKey: 'test_id',
         })
     };
-
+    
     return vacancies;
 };

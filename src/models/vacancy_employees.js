@@ -1,6 +1,15 @@
 module.exports = (sequelize, DataTypes) => {
     
-    let vacancyEmployees = sequelize.define('vacancy_employees', {}, {
+    let vacancyEmployees = sequelize.define('vacancy_employees', {
+        vacancyId: {
+            type: DataTypes.BIGINT,
+            field: "vacancy_id"
+        },
+        employeeId: {
+            type: DataTypes.BIGINT,
+            field: "employee_id"
+        }
+    }, {
         timestamps: false
     });
     

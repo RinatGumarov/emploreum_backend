@@ -1,14 +1,24 @@
 module.exports = (sequelize, DataTypes) => {
-
+    
     let test_scores = sequelize.define('test_scores', {
-        questions_count: {
+        questionsCount: {
             type: DataTypes.INTEGER,
             defaultValue: 0,
+            field: "questions_count"
         },
-        correct_answers_count: {
+        correctAnswersCount: {
             type: DataTypes.INTEGER,
             defaultValue: 0,
+            field: "correct_answers_count"
         },
+        employeeId: {
+            type: DataTypes.BIGINT,
+            field: "employee_id"
+        },
+        testId: {
+            type: DataTypes.BIGINT,
+            field: "test_id"
+        }
     }, {
         timestamps: false
     });
@@ -20,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: "test_id",
         });
     };
-
-
+    
+    
     return test_scores;
 };

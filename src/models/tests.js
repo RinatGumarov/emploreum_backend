@@ -1,7 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
-
+    
     let tests = sequelize.define('tests', {
         name: DataTypes.TEXT,
+        companyId: {
+            type: DataTypes.BIGINT,
+            field: "company_id"
+        }
     }, {
         timestamps: false
     });
@@ -20,12 +24,12 @@ module.exports = (sequelize, DataTypes) => {
         tests.hasMany(models.passed_questions, {
             foreignKey: 'test_id'
         });
-
+        
         tests.hasOne(models.vacancies, {
             foreignKey: "test_id",
         })
     };
-
-
+    
+    
     return tests;
 };

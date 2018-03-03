@@ -1,9 +1,18 @@
 module.exports = (sequelize, DataTypes) => {
-
-    let cvs = sequelize.define('cvs', {}, {
+    
+    let cvs = sequelize.define('cvs', {
+        profileId: {
+            type: DataTypes.BIGINT,
+            field: "profile_id"
+        },
+        employeeId: {
+            type: DataTypes.BIGINT,
+            field: "employee_id"
+        }
+    }, {
         timestamps: false
     });
-
+    
     cvs.associate = function (models) {
         cvs.belongsTo(models.profiles, {
             foreignKey: 'profile_id',
@@ -22,6 +31,6 @@ module.exports = (sequelize, DataTypes) => {
             timestamps: false
         });
     };
-
+    
     return cvs;
 };

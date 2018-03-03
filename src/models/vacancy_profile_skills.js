@@ -1,8 +1,17 @@
 module.exports = (sequelize, DataTypes) => {
-    let vacancy_profile_skills = sequelize.define('vacancy_profile_skills', {}, {
+    let vacancy_profile_skills = sequelize.define('vacancy_profile_skills', {
+        vacancyId: {
+            type: DataTypes.BIGINT,
+            field: "vacancy_id"
+        },
+        profileSkillId: {
+            type: DataTypes.BIGINT,
+            field: "profile_skill_id"
+        }
+    }, {
         timestamps: false
     });
-
+    
     vacancy_profile_skills.associate = function (models) {
         vacancy_profile_skills.belongsTo(models.vacancies, {
             foreignKey: 'vacancy_id'
@@ -11,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'profile_skill_id'
         });
     };
-
-
+    
+    
     return vacancy_profile_skills;
 };

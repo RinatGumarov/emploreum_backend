@@ -4,7 +4,14 @@ module.exports = (sequelize, DataTypes) => {
         sex: DataTypes.BOOLEAN,
         name: DataTypes.STRING,
         surname: DataTypes.STRING,
-        photo_path: DataTypes.STRING,
+        photoPath: {
+            type: DataTypes.STRING,
+            field: "photo_path"
+        },
+        userId: {
+            type: DataTypes.BIGINT,
+            field: "user_id"
+        }
         city: DataTypes.STRING,
         birthday: DataTypes.DATE,
         about: DataTypes.TEXT,
@@ -12,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: false
     });
-
+    
     employees.associate = function (models) {
         employees.belongsTo(models.gradation_enums, {
             foreignKey: 'gradation'
@@ -47,16 +54,16 @@ module.exports = (sequelize, DataTypes) => {
         employees.hasMany(models.chats, {
             foreignKey: 'employee_id',
         });
-
+        
         employees.hasMany(models.works, {
             foreignKey: 'employee_id',
         });
-
+        
         employees.hasMany(models.passed_questions, {
             foreignKey: 'employee_id',
         })
-
+        
     };
-
+    
     return employees;
 };

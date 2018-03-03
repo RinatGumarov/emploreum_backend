@@ -2,7 +2,10 @@ module.exports = (sequelize, DataTypes) => {
     
     let skills = sequelize.define('skills', {
         name: DataTypes.STRING,
-        photo_path: DataTypes.STRING
+        photoPath: {
+            type: DataTypes.STRING,
+            field: "photo_path"
+        }
     }, {
         timestamps: false
     });

@@ -1,13 +1,17 @@
 module.exports = (sequelize, DataTypes) => {
     let profile_skills = sequelize.define('profile_skills', {
-        id: {
+        skillId: {
             type: DataTypes.BIGINT,
-            primaryKey: true,
+            field: "skill_id"
         },
+        profileId: {
+            type: DataTypes.BIGINT,
+            field: "profile_id"
+        }
     }, {
         timestamps: false
     });
-
+    
     profile_skills.associate = function (models) {
         profile_skills.belongsTo(models.skills, {
             foreignKey: 'skill_id'
@@ -25,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
             timestamps: false
         });
     };
-
-
+    
+    
     return profile_skills;
 };

@@ -5,9 +5,23 @@ module.exports = (sequelize, DataTypes) => {
         email: DataTypes.STRING,
         password: DataTypes.STRING,
         status: DataTypes.INTEGER,
-        encrypted_key: DataTypes.TEXT,
-        key_password: DataTypes.STRING,
-        account_address: DataTypes.STRING,
+        encryptedKey: {
+            type: DataTypes.TEXT,
+            field: "encrypted_key"
+        },
+        keyPassword: {
+            type: DataTypes.STRING,
+            field: "keyPassword"
+            
+        },
+        accountAddress: {
+            type: DataTypes.STRING,
+            field: "account_address"
+        },
+        roleId: {
+            type: DataTypes.BIGINT,
+            field: "role_id"
+        }
     }, {
         timestamps: false
     });

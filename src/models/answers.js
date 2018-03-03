@@ -1,7 +1,14 @@
 module.exports = (sequelize, DataTypes) => {
     let answers = sequelize.define('answers', {
         name: DataTypes.STRING,
-        is_true: DataTypes.BOOLEAN
+        isTrue: {
+            type: DataTypes.BOOLEAN,
+            filed: "is_true"
+        },
+        questionId: {
+            type: DataTypes.BIGINT,
+            field: "question_id"
+        }
     }, {
         timestamps: false
     });
@@ -10,6 +17,6 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'question_id'
         });
     };
-
+    
     return answers;
 };
