@@ -4,6 +4,7 @@ const CompanyProfiles = models.company_profiles;
 const WorkTransactions = models.work_transactions;
 const Works = models.works;
 const Tests = models.tests;
+const balanceService = require('../../blockchain/services/balanceService');
 
 const Account = require('../../blockchain/utils/account');
 const _ = require('lodash');
@@ -94,9 +95,9 @@ class CompaniesService {
                 required: true,
                 model: models.vacancies,
                 where: {
-                    id: {[Op.eq]: vacancyId,},
-                },
-            }],
+                    id: { [Op.eq]: vacancyId }
+                }
+            }]
         });
     }
     
@@ -104,8 +105,8 @@ class CompaniesService {
         return await Companies.findOne({
             where: {
                 id: {
-                    [Op.eq]: id,
-                },
+                    [Op.eq]: id
+                }
             }
         });
     }
@@ -119,13 +120,13 @@ class CompaniesService {
             attributes: [],
             where: {
                 company_id: {
-                    [Op.eq]: companyId,
-                },
+                    [Op.eq]: companyId
+                }
             },
             include: [{
                 attributes: ['photo_path', 'name', 'user_id'],
-                model: models.employees,
-            }],
+                model: models.employees
+            }]
         });
         return _.uniqBy(employees, 'employee.user_id');
     }
@@ -143,16 +144,16 @@ class CompaniesService {
                         model: models.skills,
                         attributes: ['id', 'name'],
                         through: {
-                            attributes: [],
-                        },
-                    }],
-                }],
+                            attributes: []
+                        }
+                    }]
+                }]
             }],
             where: {
                 company_id: {
-                    [Op.eq]: companyId,
-                },
-            },
+                    [Op.eq]: companyId
+                }
+            }
         });
         tests = tests.map((test) => {
             test.dataValues.specifications = [];
@@ -171,7 +172,7 @@ class CompaniesService {
             where: {
                 [Op.and]: {
                     company_id: {
-                        [Op.eq]: company.id,
+                        [Op.eq]: company.id
                     },
                     status: {
                         [Op.and]: {
@@ -183,16 +184,18 @@ class CompaniesService {
             },
             include: {
                 model: models.vacancies,
-                attributes: ['week_payment'],
-            },
+                attributes: ['week_payment']
+            }
         });
         return contracts;
     }
     
     async countSpending(contracts) {
         let result = 0;
+        let transactionFee = await balanceService.getSalaryFee();
         for (let contract of contracts) {
             result += contract.vacancy.week_payment;
+            result += transactionFee;
         }
         return parseFloat(result.toFixed(10));
     }
@@ -207,17 +210,17 @@ class CompaniesService {
                 model: models.works,
                 where: {
                     company_id: {
-                        [Op.eq]: company.id,
-                    },
+                        [Op.eq]: company.id
+                    }
                 },
                 include: {
                     model: models.employees,
-                    attributes: ["name"],
+                    attributes: ['name']
                 }
             },
             where: {
                 transaction_hash: {
-                    [Op.ne]: null,
+                    [Op.ne]: null
                 }
             }
         });

@@ -1,71 +1,35 @@
 const workService = require('../services/workService');
-const companyService = require('../../company/services/companyService');
 const employeeService = require('../../employee/services/employeeService');
-const blockchainInfo = require('../../blockchain/services/blockchainEventService');
 const configUtils = require('../../../utils/config');
 const logger = require('../../../utils/logger');
-
+const mutex = require('../utils/aproveMutex');
+const b = require('../services/blockchainEventService');
 
 module.exports.func = (router) => {
 
     router.post('/approve', async (req, res) => {
+        let p = b.get(req.user.company.user_id);
+        if (!mutex.addMutex(req.user.company.user_id, req.body.userId, req.body.vacancyId)) {
+            return res.status(500).json({ data: 'Multiple approve request.' });
+        }
+
+        req.connection.setTimeout(1000 * 60 * 10);
         let vacancyId = req.body.vacancyId;
         let address = req.user.account_address;
         let employee = await employeeService.getByUserId(req.body.userId);
         let company = req.user.company;
 
-        let promises = [];
+        let result = await workService.approve(vacancyId, address, employee, company, req.user);
 
-        try {
-            let message;
-
-            if (!employee.contract) {
-                let promise = employeeService.createBlockchainAccountForEmployee(employee);
-
-                promises.push(promise);
-                message = ` employee ${employee.name}`;
-            }
-
-            if (!company.contract) {
-                let promise = companyService.createBlockchainAccountForCompany(req.user, 10);
-
-                promises.push(promise);
-
-                if (message)
-                    message += ' and';
-
-                message += ` company ${company.name}.`;
-            }
-
-
-            if (message) {
-                await blockchainInfo.set(company.user_id, `contract creation ${address}`,
-                    `Creating contract in blockchain for${message}`);
-
-                await Promise.all(promises);
-
-                await blockchainInfo.unset(company.user_id, `contract creation ${address}`);
-            }
-
-            message = `employee ${employee.name} and company ${company.name}.`;
-
-            await blockchainInfo.set(company.user_id, `work creation ${address}`,
-                `Creating contract in blockchain between ${message}`);
-
-            await workService.createWork(vacancyId, employee, req.user);
-
-            await blockchainInfo.unset(company.user_id, `work creation ${address}`);
-
-            return res.json({ data: 'success' });
-        } catch (e) {
-            logger.error(e.stack);
-            logger.log('Waiting promises, count: ' + promises.length);
-
-            await Promise.all(promises);
-
-            await blockchainInfo.unset(company.user_id, `work creation ${address}`);
-            return res.status(500).json({ data: 'fail' });
+        if (!mutex.removeMutex(req.user.company.id, req.body.userId, req.body.vacancyId)) {
+            result = false;
         }
+
+        return result ?
+            res.json({ data: 'success' })
+            :
+            res.status(500).json({ data: 'fail' });
+
     });
 
     router.post('/:workId([0-9]+)/start', async (req, res) => {

@@ -1,5 +1,4 @@
 const passport = require('passport');
-const userService = require('../services/userService');
 
 module.exports.func = (router) => {
 
@@ -7,7 +6,7 @@ module.exports.func = (router) => {
         if (req.user.status > 2) {
             res.json({
                 userId: req.user.id,
-                role: req.user.role,
+                role: req.user.role
             });
         }
         else {
@@ -21,7 +20,7 @@ module.exports.func = (router) => {
 
     router.get('/logout', async (req, res) => {
         req.session.destroy();
-        res.json("success");
+        res.json('success');
     });
 
 
