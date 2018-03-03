@@ -168,6 +168,17 @@ class TestService {
         let started = await this.findTestEnds(employee.id, test.id);
         return (started.ends === null || started.ends > new Date());
     }
+
+    countValueOfQuestion(question, questions) {
+        let sumOfDifficulties = questions.reduce((sum, current) => {
+            return sum + (current.difficulty ? current.difficulty : 1)
+        }, 0);
+        return question.difficulty / sumOfDifficulties;
+    }
+
+    countValueOfAnswer(answer, answers) {
+        return (answer.is_true ? 1 : -1) * (1 / answers.length);
+    }
 }
 
 if (typeof instance !== TestService) {

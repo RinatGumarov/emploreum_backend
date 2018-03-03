@@ -95,8 +95,6 @@ module.exports.func = (router) => {
         let employee = req.user.employee;
         let questions = await testService.findAllQuestionsByTestId(req.params.id);
         let test = await testService.findById(req.params.id);
-        if (!(await testService.questionsAvailable(employee, test)))
-            return res.status(405).send({error: 'Not Allowed'});
         return res.send(questions);
     });
 
