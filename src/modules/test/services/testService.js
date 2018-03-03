@@ -138,7 +138,7 @@ class TestService {
     async alreadyStarted(employee, test) {
         let started = await this.findTestEnds(employee.id, test.id);
         // тест существует, у теста есть конечный срок, срок уже прошел
-        return (started !== null && started.dataValues.ends !== null && started.dataValues.ends < new Date());
+        return started;
     }
 
     async findTestEnds(employeeId, testId) {
@@ -154,6 +154,19 @@ class TestService {
                 }
             }
         });
+    }
+
+    async submitTest(employee, test){
+        let test_ends = await this.findTestEnds(employee.id, test.id);
+        test_ends.ends = new Date();
+        return await test_ends.save();
+    }
+
+    async questionsAvailable(employee, test) {
+        if (!test.duration)
+            return true;
+        let started = await this.findTestEnds(employee.id, test.id);
+        return (started.ends === null || started.ends > new Date());
     }
 }
 
