@@ -1,15 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
     
     let testScores = sequelize.define('testScores', {
-        questionsCount: {
-            type: DataTypes.INTEGER,
-            defaultValue: 0,
-            field: "questions_count"
-        },
-        correctAnswersCount: {
-            type: DataTypes.INTEGER,
-            defaultValue: 0,
-            field: "correct_answers_count"
+        passed: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
         },
         employeeId: {
             type: DataTypes.BIGINT,

@@ -14,7 +14,7 @@ const Web3InitError = require('../../blockchain/utils/Web3Error');
 let instance;
 
 class CompaniesService {
-    
+
     /**
      * создание профиля для компании
      * @param companyId
@@ -26,7 +26,7 @@ class CompaniesService {
             profileId: profileId
         });
     }
-    
+
     async save(userId) {
         return (await Companies.findOrCreate({
             where: {
@@ -39,7 +39,7 @@ class CompaniesService {
             }
         }))[0];
     }
-    
+
     async update(userId, params) {
         return await Companies.update(params, {
             where: {
@@ -166,7 +166,7 @@ class CompaniesService {
         });
         return tests;
     }
-    
+
     async findAllActiveContracts(company) {
         let contracts = await Works.findAll({
             where: {

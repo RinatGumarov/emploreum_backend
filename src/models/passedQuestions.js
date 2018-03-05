@@ -2,6 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     let passedQuestions = sequelize.define('passedQuestions', {
         answer: DataTypes.TEXT,
         correct: DataTypes.BOOLEAN,
+        value: DataTypes.DOUBLE,
         createdAt: {
             type: DataTypes.DATE,
             field: "created_at"

@@ -6,6 +6,10 @@ const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
 
+    /**
+     * создание теста компанией
+     *
+     */
     router.post('/company/create', async (req, res) => {
         try {
             let company = req.user.company;
@@ -28,26 +32,36 @@ module.exports.func = (router) => {
         }
     });
 
+    /**
+     * создение вопроса компанией
+     */
     router.post('/:id([0-9]+)/question/create', async (req, res) => {
-        let question = {};
-        question.name = req.body.question.name;
-        question.type = req.body.question.type;
-        question.test_id = req.params.id;
-        question = await testService.saveQuestion(question);
-        for (let answer of req.body.question.answers) {
-            answer.is_true = answer.isTrue;
-            delete answer.isTrue;
-            answer.question_id = question.id;
-            await testService.saveAnswer(answer);
+        try {
+            let question = {};
+            question.name = req.body.question.name;
+            question.type = req.body.question.type;
+            question.difficulty = req.body.difficulty;
+            question.test_id = req.params.id;
+            question = await testService.saveQuestion(question);
+            for (let answer of req.body.question.answers) {
+                answer.is_true = answer.isTrue;
+                delete answer.isTrue;
+                answer.question_id = question.id;
+                await testService.saveAnswer(answer);
+            }
+            res.send({data: 'success'});
+        } catch (err) {
+            logger.error(err.stack);
+            res.status(500).send({error: err.message});
         }
-        res.send({data: 'success'});
     });
 
-    // спросить что значит
-    router.get('/:id([0-9]+)/', async (req, res) => {
-        let vacancy = await vacancyService.findById(req.params.id);
+    /**
+     * запрашивание теста компанией
+     */
+    router.get('/:testId([0-9]+)/', async (req, res) => {
         let company = req.user.company;
-        let test = await testService.findById(vacancy.test_id);
+        let test = await testService.findById(req.params.testId);
         if (company && test && test.company_id === company.id) {
             res.send(test);
         } else {
@@ -74,6 +88,9 @@ module.exports.func = (router) => {
         }
     });
 
+    /**
+     * запрашивание теста работником по вакансии
+     */
     router.get('/vacancy/:id([0-9]+)/', async (req, res) => {
         let vacancy = await vacancyService.findById(req.params.id);
         let test = await testService.findByIdForEmployee(vacancy.test_id);
@@ -92,6 +109,9 @@ module.exports.func = (router) => {
         }
     });
 
+    /**
+     * запрашивание
+     */
     router.get('/:id([0-9]+)/questions', async (req, res) => {
         let employee = req.user.employee;
         let questions = await testService.findAllQuestionsByTestId(req.params.id);
@@ -114,12 +134,12 @@ module.exports.func = (router) => {
 
 
     /**
-     * начало теста
+     * начало теста, find по вакансии
      */
-    router.get('/:id([0-9]+)/start', async (req, res) => {
+    router.get('/:vacancyId([0-9]+)/start', async (req, res) => {
         try {
             let employee = req.user.employee;
-            let vacancy = await vacancyService.findById(req.params.id);
+            let vacancy = await vacancyService.findById(req.params.vacancyId);
             let test = await testService.findById(vacancy.test_id);
             let started = await  testService.findTestEnds(employee.id, test.id);
             if (started) {
@@ -142,27 +162,26 @@ module.exports.func = (router) => {
     router.post('/question/:questionId([0-9]+)/answer', async (req, res) => {
         let answers = req.body;
         let employee = req.user.employee;
-        let correctAnswers = await testService.getCorrectAnswers(req.params.questionId);
+        let correctAnswers = (await testService.getCorrectAnswers(req.params.questionId))
+            .map((answer) => answer.name);
         let question = await testService.findQuestionById(req.params.questionId);
         let test = await testService.findById(question.test_id);
         if (!(await testService.questionsAvailable(employee, test)))
             return res.status(405).send({error: 'Not Allowed'});
-        let result;
-        switch (question.type) {
-            case 'multipleChoice' :
-                for (let correct of correctAnswers) {
-                    if (answers.indexOf(correct) === -1) {
-                        result = false;
-                        break;
-                    } else
-                        result = true;
-                }
-                break;
-            case 'input':
-                result = !correctAnswers || correctAnswers[0].name === answers[0];
-                break;
+        for (let passed of answers) {
+            let correct = correctAnswers.indexOf(passed) !== -1;
+            let passedQuestion = {
+                employee_id: employee.id,
+                test_id: test.id,
+                question_id: question.id,
+                answer: passed,
+                correct,
+                value: (await testService.countValueOfQuestion(question, test.questions))
+                * (await testService.countValueOfAnswer(correct, question.answers, correctAnswers, question.type))
+            };
+            await testService.savePassedQuestion(passedQuestion);
         }
-        await testScoresService.save(question.test_id, employee, result);
+        await testScoresService.saveOrUpdate(question.test_id, employee);
         return res.send({data: 'success'});
     });
 
