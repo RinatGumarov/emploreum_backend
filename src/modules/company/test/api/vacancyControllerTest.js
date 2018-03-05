@@ -13,7 +13,7 @@ describe('vacancyController', () => {
             .set('Cookie', testIniter.getCookie())
             .send({})
             .end(function (err, res) {
-                res.should.have.status(405);
+                res.should.have.status(200);
                 done();
             });
     });
