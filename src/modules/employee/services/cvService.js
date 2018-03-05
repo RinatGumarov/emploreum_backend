@@ -37,10 +37,7 @@ class CvsService {
      */
     async addSkill(cv, skill) {
         let result = await cv.addSkills([skill.id]);
-        if(!result[0]){
-            throw Error("skill not found")
-        }
-        return result[0];
+        return result;
     }
     
     /**

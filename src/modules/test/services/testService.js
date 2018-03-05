@@ -136,20 +136,48 @@ class TestService {
     }
 
     async alreadyStarted(employee, test) {
-        let started = await models.test_ends.findOne({
+        let started = await this.findTestEnds(employee.id, test.id);
+        // тест существует, у теста есть конечный срок, срок уже прошел
+        return started;
+    }
+
+    async findTestEnds(employeeId, testId) {
+        return await models.test_ends.findOne({
             where: {
                 [Op.and]: {
                     employee_id: {
-                        [Op.eq]: employee.id,
+                        [Op.eq]: employeeId,
                     },
                     test_id: {
-                        [Op.eq]: test.id,
+                        [Op.eq]: testId,
                     }
                 }
             }
         });
-        // тест существует, у теста есть конечный срок, срок уже прошел
-        return (started !== null && started.dataValues.ends !== null && started.dataValues.ends < new Date());
+    }
+
+    async submitTest(employee, test){
+        let test_ends = await this.findTestEnds(employee.id, test.id);
+        test_ends.ends = new Date();
+        return await test_ends.save();
+    }
+
+    async questionsAvailable(employee, test) {
+        if (!test.duration)
+            return true;
+        let started = await this.findTestEnds(employee.id, test.id);
+        return (started.ends === null || started.ends > new Date());
+    }
+
+    countValueOfQuestion(question, questions) {
+        let sumOfDifficulties = questions.reduce((sum, current) => {
+            return sum + (current.difficulty ? current.difficulty : 1)
+        }, 0);
+        return question.difficulty / sumOfDifficulties;
+    }
+
+    countValueOfAnswer(answer, answers) {
+        return (answer.is_true ? 1 : -1) * (1 / answers.length);
     }
 }
 

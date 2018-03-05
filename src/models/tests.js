@@ -5,7 +5,8 @@ module.exports = (sequelize, DataTypes) => {
         companyId: {
             type: DataTypes.BIGINT,
             field: "company_id"
-        }
+        },
+        duration: DataTypes.INTEGER
     }, {
         timestamps: false
     });

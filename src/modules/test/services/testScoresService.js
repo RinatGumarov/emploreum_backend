@@ -8,7 +8,8 @@ let instance;
 class TestScoresService {
 
     async save(testId, employee, correct) {
-        let testScore = await models.test_scores.findOrBuild({
+        let testScore;
+        testScore = await models.test_scores.findOne({
             where: {
                 [Op.and]: {
                     employee_id: {
@@ -19,11 +20,12 @@ class TestScoresService {
                     }
                 }
             },
-            defaults: {
+        });
+        if (!testScore)
+            testScore = await models.test_scores.create({
                 employee_id: employee.id,
                 test_id: testId,
-            },
-        });
+            });
         testScore.questions_count += 1;
         if (correct)
             testScore.questions_count += 1;
