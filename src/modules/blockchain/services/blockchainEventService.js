@@ -14,7 +14,7 @@ class BlockChainEventService {
      */
     hasTransactions(userId) {
         if (this.events[userId]) {
-            return this.events[userId].length > 0;
+            return Object.keys(this.events[userId]).length > 0;
         }
         return false;
     }
