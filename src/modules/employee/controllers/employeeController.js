@@ -44,7 +44,7 @@ module.exports.func = (router) => {
         let endedContractsCount = await employeeService.countEndedWorks(req.user.employee);
         let currentContractsCount = await employeeService.countCurrentWorks(req.user.employee);
         let income = await employeeService.getIncome(req.user.employee);
-        let balance = await balanceService.getBalance(req.user.account_address);
+        let balance = await balanceService.getBalance(req.user.accountAddress);
         return res.send({
             endedContractsCount,
             currentContractsCount,
@@ -55,7 +55,7 @@ module.exports.func = (router) => {
     });
     
     router.get("/address", async (req, res) => {
-        return res.send(req.user.account_address);
+        return res.send(req.user.accountAddress);
     });
     
     router.get("/contracts/awaited", async (req, res) => {

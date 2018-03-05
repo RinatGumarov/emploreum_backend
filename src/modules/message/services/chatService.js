@@ -18,12 +18,12 @@ class ChatService {
     async save(companyId, employeeId) {
         let chat = await Chats.findOrCreate({
             where: {
-                company_id: {[Op.eq]: companyId},
-                employee_id: {[Op.eq]: employeeId}
+                companyId: {[Op.eq]: companyId},
+                employeeId: {[Op.eq]: employeeId}
             },
             defaults: {
-                company_id: companyId,
-                employee_id: employeeId
+                companyId: companyId,
+                employeeId: employeeId
             }
         });
         return chat;
@@ -54,12 +54,12 @@ class ChatService {
     async getChatBetweenEmployeeAndCompany(employeeId, companyId) {
         let chat = await Chats.findOrCreate({
             where: {
-                employee_id: employeeId,
-                company_id: companyId
+                employeeId: employeeId,
+                companyId: companyId
             },
             defaults: {
-                employee_id: employeeId,
-                company_id: companyId
+                employeeId: employeeId,
+                companyId: companyId
             }
         });
         return chat[0];

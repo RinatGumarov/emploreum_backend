@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     let languages = sequelize.define('languages', {
-        language: DataTypes.STRING
+        name: DataTypes.STRING
     }, {
         timestamps: false
     });

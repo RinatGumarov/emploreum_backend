@@ -1,27 +1,48 @@
 module.exports = (sequelize, DataTypes) => {
     let works = sequelize.define('works', {
         status: DataTypes.INTEGER,
-        begin_date: DataTypes.DATE,
-        end_date: DataTypes.DATE,
+        beginDate: {
+            type: DataTypes.DATE,
+            field: "begin_date"
+        },
+        endDate: {
+            type: DataTypes.DATE,
+            field: "end_date"
+        },
         contract: DataTypes.STRING,
-        pay_date: DataTypes.DATE,
+        payDate: {
+            type: DataTypes.DATE,
+            field: "pay_date"
+        },
+        companyId: {
+            type: DataTypes.BIGINT,
+            field: "company_id"
+        },
+        vacancyId: {
+            type: DataTypes.BIGINT,
+            field: "vacancy_id"
+        },
+        employeeId: {
+            type: DataTypes.BIGINT,
+            field: "employee_id"
+        }
     }, {
         timestamps: false
     });
-
+    
     works.associate = function (models) {
         works.belongsTo(models.companies, {
-            foreignKey: 'company_id'
+            foreignKey: 'companyId'
         });
-
+        
         works.belongsTo(models.employees, {
-            foreignKey: 'employee_id',
+            foreignKey: 'employeeId',
         });
-
+        
         works.belongsTo(models.vacancies, {
-            foreignKey: 'vacancy_id',
+            foreignKey: 'vacancyId',
         });
     };
-
+    
     return works;
 };

@@ -17,12 +17,12 @@ class CvsService {
     async save(profile, employee) {
         let cvs = await Cvs.findOrCreate({
             where: {
-                profile_id: {[Op.eq]: profile.id},
-                employee_id: {[Op.eq]: employee.id}
+                profileId: {[Op.eq]: profile.id},
+                employeeId: {[Op.eq]: employee.id}
             },
             defaults: {
-                profile_id: profile.id,
-                employee_id: employee.id
+                profileId: profile.id,
+                employeeId: employee.id
             }
         });
         
@@ -68,7 +68,7 @@ class CvsService {
                     required: true,
                     model: models.employees,
                     where: {
-                        user_id: {[Op.eq]: employeeUserId}
+                        userId: {[Op.eq]: employeeUserId}
                     }
                 }]
         });

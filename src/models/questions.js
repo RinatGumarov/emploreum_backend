@@ -7,21 +7,25 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.ENUM,
             values: ["multipleChoice", "input"],
         },
+        testId: {
+            type: DataTypes.BIGINT,
+            field: "test_id"
+        }
     }, {
         timestamps: false
     });
     questions.associate = function (models) {
         questions.belongsTo(models.tests, {
-            foreignKey: 'test_id'
+            foreignKey: 'testId'
         });
         questions.hasMany(models.answers, {
-            foreignKey: 'question_id',
+            foreignKey: 'questionId',
         });
-        questions.hasMany(models.passed_questions, {
-            foreignKey: 'question_id',
+        questions.hasMany(models.passedQuestions, {
+            foreignKey: 'questionId',
         })
     };
-
-
+    
+    
     return questions;
 };
