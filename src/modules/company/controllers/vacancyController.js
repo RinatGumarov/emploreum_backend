@@ -6,7 +6,7 @@ const logger = require('../../../utils/logger');
 
 
 module.exports.func = (router) => {
-    
+
     router.post('/vacancy/create', async (req, res) => {
         try {
             let company = req.user.company;
@@ -104,23 +104,22 @@ module.exports.func = (router) => {
      * Только для работника. Узнать может ли он постучаться на вакансию.
      */
     router.get('/vacancy/:vacancyId([0-9]+)/available', async (req, res) => {
-        if (await vacancyService.isAvailable(req.params.vacancyId, req.user.id)) {
-            res.send({data: "successful"});
-        } else {
-            res.status(405).send({error: "Not allowed"});
+        try {
+            let isAvailable = await vacancyService.isAvailable(req.params.vacancyId, req.user.id);
+            res.send(isAvailable);
+        } catch (err) {
+            logger.error(err.stack);
+            res.send({error: err.message});
         }
     });
     
     
     router.post('/vacancy/:id([0-9]+)/invite', async (req, res) => {
-        try {
-            let vacancy = await vacancyService.findById(req.params.id);
-            await vacancyService.sendInvitationToEmployee(req.user.company, vacancy, req.body.employeeId);
-            res.send({data: 'success'});
-        } catch (err) {
-            logger.error(err.stack);
-            return res.status(500).send({error: err.message});
-        }
+        let vacancy = await vacancyService.findById(req.params.id);
+        if (await vacancyService.sendInvitationToEmployee(req.user.company, vacancy, req.body.employeeId))
+            return res.send({data: 'success'});
+        return res.status(405).send({error: 'You are not provided to invite employee to another\'s vacancy'});
+
     });
     
     return router;

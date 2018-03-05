@@ -2,11 +2,11 @@ let instance;
 const logger = require('../../../utils/logger');
 const hashFromObject = require('object-hash');
 
-const generateHash = function (companyId, employeeId, vacancyId) {
-    if (!companyId && employeeId && vacancyId)
+const generateHash = function (obj) {
+    if (Object.keys(obj).length == 0)
         throw new TypeError('Mutex parameters error');
 
-    return hashFromObject({ companyId, employeeId, vacancyId });
+    return hashFromObject(obj);
 };
 
 class Mutex {
@@ -14,8 +14,8 @@ class Mutex {
         this.currentCalls = {};
     }
 
-    addMutex(companyId, employeeId, vacancyId) {
-        let hash = generateHash(companyId, employeeId, vacancyId);
+    addMutex(uniqueObj, message) {
+        let hash = generateHash(uniqueObj);
 
         if (!this.currentCalls[hash]) {
             this.currentCalls[hash] = true;
@@ -25,8 +25,8 @@ class Mutex {
         return false;
     }
 
-    removeMutex(companyId, employeeId, vacancyId) {
-        let hash = generateHash(companyId, employeeId, vacancyId);
+    removeMutex(uniqueObj) {
+        let hash = generateHash(uniqueObj);
 
         if (this.currentCalls[hash]) {
             delete this.currentCalls[hash];
