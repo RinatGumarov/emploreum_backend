@@ -35,18 +35,23 @@ module.exports.func = (router) => {
      * создение вопроса компанией
      */
     router.post('/:id([0-9]+)/question/create', async (req, res) => {
-        let question = {};
-        question.name = req.body.question.name;
-        question.type = req.body.question.type;
-        question.test_id = req.params.id;
-        question = await testService.saveQuestion(question);
-        for (let answer of req.body.question.answers) {
-            answer.is_true = answer.isTrue;
-            delete answer.isTrue;
-            answer.question_id = question.id;
-            await testService.saveAnswer(answer);
+        try {
+            let question = {};
+            question.name = req.body.question.name;
+            question.type = req.body.question.type;
+            question.test_id = req.params.id;
+            question = await testService.saveQuestion(question);
+            for (let answer of req.body.question.answers) {
+                answer.is_true = answer.isTrue;
+                delete answer.isTrue;
+                answer.question_id = question.id;
+                await testService.saveAnswer(answer);
+            }
+            res.send({data: 'success'});
+        } catch (err) {
+            logger.error(err.stack);
+            res.status(500).send({error: err.message});
         }
-        res.send({data: 'success'});
     });
 
     /**
