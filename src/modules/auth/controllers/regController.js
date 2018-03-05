@@ -78,17 +78,18 @@ module.exports.func = (router) => {
                     keyPassword,
                     account_address
                 );
-                req.login(user, (err) => {
-                    if (err) {
-                        res.status(401).json({error: "Unauthorized"});
-                    } else {
-                        res.json({
-                            registrationStep: user.status,
-                            role: req.session.role,
-                            userId: req.user.id,
-                        });
-                    }
-                });
+                res.redirect('/auth/login');
+                // req.login(user, (err) => {
+                //     if (err) {
+                //         res.status(401).json({error: "Unauthorized"});
+                //     } else {
+                //         res.json({
+                //             registrationStep: user.status,
+                //             role: req.session.role,
+                //             userId: req.user.id,
+                //         });
+                //     }
+                // });
             } else {
                 res.status(400).json('code mismatch')
             }

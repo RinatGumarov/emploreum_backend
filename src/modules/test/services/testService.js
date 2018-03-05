@@ -109,7 +109,7 @@ class TestService {
     }
 
     async savePassedQuestion(passedQuestion) {
-        return await models.passed_tests.create();
+        return await models.passed_questions.create(passedQuestion);
     }
 
     async getCorrectAnswers(questionId) {
@@ -173,11 +173,13 @@ class TestService {
         let sumOfDifficulties = questions.reduce((sum, current) => {
             return sum + (current.difficulty ? current.difficulty : 1)
         }, 0);
-        return question.difficulty / sumOfDifficulties;
+        return (question.difficulty || 1) / sumOfDifficulties;
     }
 
-    countValueOfAnswer(answer, answers) {
-        return (answer.is_true ? 1 : -1) * (1 / answers.length);
+    countValueOfAnswer(isTrue, answers, correctAnswers, type) {
+        if (type === 'input')
+            return isTrue ? 1 : 0;
+        return (isTrue ? 1 : -1) * (1 / (isTrue?correctAnswers.length : answers.length));
     }
 }
 

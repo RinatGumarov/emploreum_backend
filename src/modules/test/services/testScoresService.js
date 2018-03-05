@@ -7,7 +7,7 @@ let instance;
 
 class TestScoresService {
 
-    async save(testId, employee, correct) {
+    async saveOrUpdate(testId, employee) {
         let testScore;
         testScore = await models.test_scores.findOne({
             where: {
@@ -22,14 +22,29 @@ class TestScoresService {
             },
         });
         if (!testScore)
-            testScore = await models.test_scores.create({
+            testScore = await models.test_scores.build({
                 employee_id: employee.id,
                 test_id: testId,
             });
-        testScore.questions_count += 1;
-        if (correct)
-            testScore.questions_count += 1;
+        testScore.passed = (await this.findEmployeeTestAnswers(employee, testId))
+            .reduce((acc, cur) => {acc += 1}, 0);
+
         return await testScore.save();
+    }
+
+    async findEmployeeTestAnswers(employee, testId) {
+        return await models.passed_questions.findAll({
+            where: {
+                [Op.and]: {
+                    [Op.eq]: {
+                        test_id: testId,
+                    },
+                    [Op.eq]: {
+                        employee_id: employee.id,
+                    }
+                }
+            }
+        })
     }
 
 }
