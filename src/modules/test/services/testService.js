@@ -28,7 +28,7 @@ class TestService {
                 }]
             }, {
                 model: models.profileSkills,
-                attributes: ["profile_id"],
+                attributes: ["profileId"],
                 include: [{
                     model: models.profiles,
                     attributes: ["id", "name"],

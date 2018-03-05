@@ -15,7 +15,7 @@ class SkillService {
      */
     async findByProfileId(id) {
         let skills = await Skills.findAll({
-            attributes: ['id', 'name', 'parent_id', "photo_path"],
+            attributes: ['id', 'name', 'parentId', "photoPath"],
             include: [{
                 attributes: [],
                 model: Profiles,

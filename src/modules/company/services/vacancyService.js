@@ -96,7 +96,6 @@ class VacanciesService {
             include: [
                 {
                     model: models.skills,
-                    required: true,
                     include: [{
                         attributes: [],
                         required: true,
@@ -111,6 +110,20 @@ class VacanciesService {
                             }
                         }]
                     }]
+                },
+                {
+                    attributes: [],
+                    required: true,
+                    model: models.profileSkills,
+                    as: 'profileSkillsTrough',
+                    include: [{
+                        attributes: [],
+                        required: true,
+                        model: models.vacancies,
+                        where: {
+                            id: {[Op.eq]: vacancyId}
+                        }
+                    }]
                 }
             ]
         });
@@ -124,7 +137,7 @@ class VacanciesService {
      */
     async getCandidatesByVacancyId(vacancyId) {
         let candidates = await Employees.findAll({
-            attributes: ["name", "photo_path"],
+            attributes: ["name", "photoPath"],
             include: [{
                 model: models.users,
                 attributes: ["id"]
@@ -200,7 +213,7 @@ class VacanciesService {
             else {
                 // если тест уже засабмитили то надо бы ему махнуть ends time
                 if (testEnds.dataValues.ends !== null && testEnds.dataValues.ends < new Date()) {
-                    let testScore = await models.findOne({
+                    let testScore = await models.testScores.findOne({
                         where: {
                             [Op.and]: {
                                 employeeId: {
@@ -228,7 +241,7 @@ class VacanciesService {
             return false;
         }
         await messageService.sendToEmployee(company, employee.id, "You have new invitation to vacancy");
-        await socketSender.sendSocketMessage(`${employee.user_id}:invitation`, vacancy);
+        await socketSender.sendSocketMessage(`${employee.userId}:invitation`, vacancy);
         return true;
     }
 
