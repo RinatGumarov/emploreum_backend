@@ -1,6 +1,10 @@
 const models = require('../../../core/models');
 const Companies = models.companies;
 const CompanyProfiles = models.company_profiles;
+const WorkTransactions = models.work_transactions;
+const Works = models.works;
+const Tests = models.tests;
+const balanceService = require('../../blockchain/services/balanceService');
 
 const Account = require('../../blockchain/utils/account');
 const _ = require('lodash');
@@ -43,7 +47,7 @@ class CompaniesService {
             }
         });
     }
-
+    
     async findByUserId(userId) {
         return await Companies.findOne({
             where: {
@@ -54,7 +58,7 @@ class CompaniesService {
             include: [models.users]
         });
     }
-
+    
     async findByIdWithUser(id) {
         return await Companies.findOne({
             include: [{
@@ -67,7 +71,7 @@ class CompaniesService {
             }
         });
     }
-
+    
     createBlockchainAccountForCompany(companyUser, rating) {
         let blockchainCompany = {
             name: companyUser.company.name,
@@ -77,13 +81,13 @@ class CompaniesService {
         return Account.registerCompany(blockchainCompany).then(async (contract) => {
             if (!contract)
                 throw new Web3InitError('Could not register company in blockchain');
-
+            
             companyUser.company.contract = contract.address;
             companyUser.company.save();
             return contract;
         });
     }
-
+    
     async findByVacancyId(vacancyId) {
         return await Companies.findOne({
             include: [{
@@ -91,44 +95,44 @@ class CompaniesService {
                 required: true,
                 model: models.vacancies,
                 where: {
-                    id: { [Op.eq]: vacancyId, },
-                },
-            }],
+                    id: { [Op.eq]: vacancyId }
+                }
+            }]
         });
     }
-
+    
     async findById(id) {
         return await Companies.findOne({
             where: {
                 id: {
-                    [Op.eq]: id,
-                },
+                    [Op.eq]: id
+                }
             }
         });
     }
-
+    
     async getAll() {
         return await Companies.findAll();
     }
-
-    async findAllEmployees(comapny) {
-        let employees = await models.works.findAll({
+    
+    async findAllEmployees(companyId) {
+        let employees = await Works.findAll({
             attributes: [],
             where: {
                 company_id: {
-                    [Op.eq]: comapny.id,
-                },
+                    [Op.eq]: companyId
+                }
             },
             include: [{
                 attributes: ['photo_path', 'name', 'user_id'],
-                model: models.employees,
-            }],
+                model: models.employees
+            }]
         });
         return _.uniqBy(employees, 'employee.user_id');
     }
-
+    
     async findAllTests(companyId) {
-        let tests = await models.tests.findAll({
+        let tests = await Tests.findAll({
             attributes: ['id', 'name'],
             include: [{
                 model: models.profile_skills,
@@ -140,16 +144,16 @@ class CompaniesService {
                         model: models.skills,
                         attributes: ['id', 'name'],
                         through: {
-                            attributes: [],
-                        },
-                    }],
-                }],
+                            attributes: []
+                        }
+                    }]
+                }]
             }],
             where: {
                 company_id: {
-                    [Op.eq]: companyId,
-                },
-            },
+                    [Op.eq]: companyId
+                }
+            }
         });
         tests = tests.map((test) => {
             test.dataValues.specifications = [];
@@ -164,11 +168,11 @@ class CompaniesService {
     }
 
     async findAllActiveContracts(company) {
-        let contracts = await models.works.findAll({
+        let contracts = await Works.findAll({
             where: {
                 [Op.and]: {
                     company_id: {
-                        [Op.eq]: company.id,
+                        [Op.eq]: company.id
                     },
                     status: {
                         [Op.and]: {
@@ -180,41 +184,43 @@ class CompaniesService {
             },
             include: {
                 model: models.vacancies,
-                attributes: ['week_payment'],
-            },
+                attributes: ['week_payment']
+            }
         });
         return contracts;
     }
-
+    
     async countSpending(contracts) {
         let result = 0;
+        let transactionFee = await balanceService.getSalaryFee();
         for (let contract of contracts) {
             result += contract.vacancy.week_payment;
+            result += transactionFee;
         }
         return parseFloat(result.toFixed(10));
     }
-
+    
     async countEmployees(contracts) {
         return await _.uniqBy(contracts, 'employeeId').length;
     }
-
+    
     async getAllTransactions(company) {
-        let transactions = await models.work_transactions.findAll({
+        let transactions = await WorkTransactions.findAll({
             include: {
                 model: models.works,
                 where: {
                     company_id: {
-                        [Op.eq]: company.id,
-                    },
+                        [Op.eq]: company.id
+                    }
                 },
                 include: {
                     model: models.employees,
-                    attributes: ["name"],
+                    attributes: ['name']
                 }
             },
             where: {
                 transaction_hash: {
-                    [Op.ne]: null,
+                    [Op.ne]: null
                 }
             }
         });

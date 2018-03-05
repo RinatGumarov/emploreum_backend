@@ -16,6 +16,7 @@ module.exports.func = (router) => {
             options.company_id = company.id;
             let vacancy = await vacancyService.save(options);
             let profiles = options.specifications;
+            //toDo переделать на for так как происходит асинхроноо
             await profiles.forEach(async (profile) => {
                 await profile.skills.forEach(async (skill) => {
                     let profileSkill = await profileSkillService.findProfileSkill(profile.id, skill.id);
@@ -26,7 +27,7 @@ module.exports.func = (router) => {
                     logger.log(vacancyProfileSkill);
                 });
             });
-            return res.status(200).send({vacancy: vacancy});
+            return res.status(200).send(vacancy);
         }
         catch (err) {
             logger.error(err.stack);
@@ -114,11 +115,14 @@ module.exports.func = (router) => {
 
 
     router.post('/vacancy/:id([0-9]+)/invite', async (req, res) => {
-        let vacancy = await vacancyService.findById(req.params.id);
-        if (await vacancyService.sendInvitationToEmployee(req.user.company, vacancy, req.body.employeeId))
-            return res.send({data: 'success'});
-        return res.status(405).send({error: 'You are not provided to invite employee to another\'s vacancy'});
-
+        try {
+            let vacancy = await vacancyService.findById(req.params.id);
+            await vacancyService.sendInvitationToEmployee(req.user.company, vacancy, req.body.employeeId);
+            res.send({data: 'success'});
+        } catch (err) {
+            logger.error(err.stack);
+            return res.status(500).send({error: err.message});
+        }
     });
 
     return router;

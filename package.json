@@ -10,6 +10,8 @@
     "dependencies": {
         "bcrypt-nodejs": "0.0.3",
         "body-parser": "^1.18.2",
+        "chai": "^3.5.0",
+        "chai-http": "^2.0.1",
         "chalk": "^1.1.3",
         "connect-pg-simple": "^4.2.1",
         "cookie-parser": "^1.4.3",
@@ -21,9 +23,11 @@
         "lodash": "^4.17.5",
         "minimist": "^1.2.0",
         "mkdirp": "^0.5.1",
+        "mocha": "^2.4.5",
         "multer": "^1.3.0",
         "nodemailer": "^4.4.2",
         "nodemon": "^1.14.12",
+        "object-hash": "^1.2.0",
         "passport": "^0.4.0",
         "passport-local": "^1.0.0",
         "passport.socketio": "^3.7.0",
@@ -34,10 +38,7 @@
         "sequelize-cli": "^3.2.0",
         "socket.io": "^2.0.4",
         "truffle-contract": "^3.0.3",
-        "web3": "^1.0.0-beta.29",
-        "chai": "^3.5.0",
-        "chai-http": "^2.0.1",
-        "mocha": "^2.4.5"
+        "web3": "^1.0.0-beta.29"
     },
     "dependenciesComments": {
         "bcrypt-nodejs": "либа для хеширования пароля",
@@ -53,6 +54,7 @@
         "mkdirp": "необходимо дл создания цепочки директорий",
         "nodemailer": "smtp отправка почты",
         "multer": "необходимо для загрузки файлов на сервер",
+        "object-hash": "для создания хешей из обьектов",
         "passport": "нужен для авторизации пользователя",
         "randomstring": "генерация рандомных строк",
         "passport-local": "стратегия для пасспорта, вход по логину и паролю",
@@ -83,7 +85,7 @@
         "seeds": "cross-env NODE_ENV=production sequelize db:seed:all",
         "db:reset": "npm run migrate:down:all && npm run migrate:up && npm run seeds",
         "console:script:test": "node $NODE_DEBUG_OPTION src/console/console.js -s test",
-        "test:run": "npm run test:db:reset && cross-env NODE_ENV=test node_modules/.bin/mocha src/test.js"
+        "test": "npm run test:db:reset && cross-env NODE_ENV=test node_modules/.bin/mocha src/test.js"
     },
     "scriptsComments": {
         "start": "стартует сервер",
@@ -98,7 +100,7 @@
         "seeds": "накатить всех сидов",
         "db:reset": "чистка базы + сиды",
         "console:script:test": "проверка консоли",
-        "test:run": "запуск всех тестов для всех модулей"
+        "test": "запуск всех тестов для всех модулей"
     },
     "author": "",
     "license": "MIT"

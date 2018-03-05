@@ -11,7 +11,7 @@ const Web3InitError = require('../utils/Web3Error');
 const Account = require('../utils/account');
 const web3 = require('../utils/web3');
 const logger = require('../../../utils/logger');
-
+const employeeService = require('../../employee/services/employeeService');
 const Op = models.sequelize.Op;
 
 let instance;
@@ -19,6 +19,7 @@ let instance;
 class WorkService {
 
     async save(workData) {
+
         let work = await Works.create(workData);
         await this.startWork(work.id);
         return work;
@@ -27,11 +28,11 @@ class WorkService {
     async findAllByEmployeeId(employeeId) {
         let works = await Works.findAll({
             include: [{
-                attributes: ["name"],
+                attributes: ['name'],
                 model: models.companies
             }, {
                 model: models.vacancies,
-                attributes: ["week_payment"]
+                attributes: ['week_payment']
             }],
             where: {
                 employee_id: {
@@ -42,8 +43,65 @@ class WorkService {
         return works;
     }
 
+    async approve(vacancyId, address, employee, company, companyUser) {
+        let promises = [];
+
+        try {
+            let message;
+
+            if (!employee.contract) {
+                let promise = employeeService.createBlockchainAccountForEmployee(employee);
+
+                promises.push(promise);
+                message = ` employee ${employee.name}`;
+            }
+
+            if (!company.contract) {
+                let promise = companyService.createBlockchainAccountForCompany(companyUser, 10);
+
+                promises.push(promise);
+
+                if (message)
+                    message += ' and';
+
+                message += ` company ${company.name}.`;
+            }
+
+
+            if (message) {
+                await blockchainInfo.set(company.user_id, `contract creation ${address}`,
+                    `Creating contract in blockchain for${message}`);
+
+                await Promise.all(promises);
+
+                await blockchainInfo.unset(company.user_id, `contract creation ${address}`);
+            }
+
+            message = `employee ${employee.name} and company ${company.name}.`;
+
+            await blockchainInfo.set(company.user_id, `work creation ${address}`,
+                `Creating contract in blockchain between ${message}`);
+
+            await this.createWork(vacancyId, employee, companyUser);
+
+            await blockchainInfo.unset(company.user_id, `work creation ${address}`);
+
+            return true;
+        } catch (e) {
+            logger.error(e.stack);
+            logger.log('Waiting promises, count: ' + promises.length);
+
+            await Promise.all(promises);
+
+            await blockchainInfo.unset(company.user_id, `contract creation ${address}`);
+            await blockchainInfo.unset(company.user_id, `work creation ${address}`);
+
+            return false;
+        }
+    }
+
     //toDo
-    async createWork(vacancyId, employee, user) {
+    async createWork(vacancyId, employee, companyUser) {
         let vacancy = await vacancyService.findById(vacancyId);
         let begin = new Date();
         let end = new Date().setMonth(begin.getMonth() + vacancy.duration);
@@ -53,8 +111,8 @@ class WorkService {
             begin_date: begin,
             end_date: end,
             employee_id: employee.id,
-            company_id: user.company.id,
-            status: 0,
+            company_id: companyUser.company.id,
+            status: 0
         };
 
         let blockchainWorkData = {
@@ -62,29 +120,34 @@ class WorkService {
             skillToPosition: [],
             duration: vacancy.duration,
             employee: employee.user.account_address,
-            company: user.account_address,
+            company: companyUser.account_address,
             weekPayment: web3.utils.toWei(String(vacancy.week_payment), 'ether')
         };
 
-        await blockchainInfo.set(user.id, `work${employee.user.account_address}`, `creating contract for work ${vacancy.id}`);
+        await blockchainInfo.set(companyUser.id, `work${employee.user.account_address}`,
+            `creating contract for work ${vacancy.id}`);
+
         let contract = await blockchainWork.createWork(blockchainWorkData).then(async (result) => {
             if (!result)
                 throw new Web3InitError('Could not register company in blockchain');
 
             await vacancyService.deleteAwaitedContractByVacancyId(vacancy.id, employee.user_id);
             await socketSender.sendSocketMessage(`${employee.user_id}:vacancy`, {
-                type: "ADD",
+                type: 'ADD',
                 vacancy: result.address
             });
-            await blockchainInfo.unset(user.id, `work${employee.user.account_address}`);
+            await blockchainInfo.unset(companyUser.id, `work${employee.user.account_address}`);
 
             return result;
         });
+
         workData.contract = contract.address;
         await this.save(workData);
+
         // Закрыть вакансию
         vacancy.opened = false;
         await vacancy.save();
+
         return contract;
     }
 
@@ -100,7 +163,8 @@ class WorkService {
         let company = await companyService.findByIdWithUser(work.company_id);
         let vacancy = await vacancyService.findById(work.vacancy_id);
         let decryptResult = await Account.decryptAccount(company.user.encrypted_key, company.user.key_password);
-        let result = await blockchainWork.start(work.contract, web3.utils.toWei(vacancy.week_payment.toFixed(18), "ether"), decryptResult.privateKey);
+        let result = await blockchainWork.start(work.contract,
+            web3.utils.toWei(vacancy.week_payment.toFixed(18), 'ether'), decryptResult.privateKey);
         return result;
     }
 
@@ -113,8 +177,9 @@ class WorkService {
      */
     async sendWeekSalary(work) {
 
-        let amount = web3.utils.toWei(String(work.vacancy.week_payment.toFixed(18)), "ether");
-        let privateKey = await Account.decryptAccount(work.company.user.encrypted_key, work.company.user.key_password).privateKey;
+        let amount = web3.utils.toWei(String(work.vacancy.week_payment.toFixed(18)), 'ether');
+        let privateKey = await Account.decryptAccount(work.company.user.encrypted_key,
+            work.company.user.key_password).privateKey;
 
         // передаем callback функцию так как web3 принимает собственные promise
 
@@ -136,15 +201,15 @@ class WorkService {
             currency: 'eth',
             amount: parseFloat(work.vacancy.week_payment.toFixed(18)),
             transaction_hash: result.transactionHash,
-            work_id: work.id,
+            work_id: work.id
 
         };
 
         let savedTransaction = await this.createContractTransaction(transaction);
 
-        await messageService.sendToCompany(work.employee, work.company.id, "New transaction for employee");
+        await messageService.sendToCompany(work.employee, work.company.id, 'New transaction for employee');
         await socketSender.sendSocketMessage(`${work.company.user_id}:transactions`, {
-            transaction: savedTransaction,
+            transaction: savedTransaction
         });
         logger.log(`===\nsalary paid\n===\n${result}\n===`);
         return result;
@@ -167,6 +232,7 @@ class WorkService {
         for (let i = 0; i < companies.length; ++i) {
 
             logger.log(`deposit for ${companies[i].name}`);
+            
             let allWorks = await Works.findAll({
                 where: {
                     company_id: {
@@ -174,8 +240,8 @@ class WorkService {
                     }
                 },
                 include: [
-                    {model: models.employees, include: [models.users]},
-                    {model: models.companies, include: [models.users]},
+                    { model: models.employees, include: [models.users] },
+                    { model: models.companies, include: [models.users] },
                     models.vacancies
                 ]
             });
