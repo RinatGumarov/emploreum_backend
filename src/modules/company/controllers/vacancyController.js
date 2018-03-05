@@ -21,7 +21,6 @@ module.exports.func = (router) => {
                         vacancyId: vacancy.id,
                         profileSkillId: profileSkill.id
                     });
-                    logger.log(vacancyProfileSkill);
                 });
             });
             return res.status(200).send(vacancy);

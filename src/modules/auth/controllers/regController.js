@@ -112,12 +112,9 @@ module.exports.func = (router) => {
                 case 'EMPLOYEE':
                     let employee = await employeesService.save(req.user.id);
                     for (let i = 0; i < profiles.length; i++) {
-                        let profile = profiles[i];
-                        let cv = await cvService.save(profile, employee);
-                        let skills = profile.skills;
-                        // сохраняем скилы
-                        for (let j = 0; j < skills.length; j++) {
-                            await cvService.addSkill(cv, skills[j])
+                        let cv = await cvService.save(profiles[i], employee);
+                        for (let j = 0; j < profiles[i].skills.length; j++) {
+                            await cvService.addSkill(cv, profiles[i].skills[j])
                         }
                     }
                     break;
