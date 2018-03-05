@@ -1,5 +1,8 @@
 const models = require("../../../core/models");
 const Tests = models.tests;
+const PassedQuestions = models.passedQuestions;
+const TestEnds = models.testEnds;
+
 const Op = models.sequelize.Op;
 const logger = require('../../../utils/logger');
 const _ = require('lodash');
@@ -13,7 +16,7 @@ class TestService {
     }
 
     async addProfileSkills(test, profileSkills) {
-        return await test.addProfile_skills(profileSkills);
+        return await test.addProfileSkills(profileSkills);
     }
 
     async findById(id) {
@@ -24,7 +27,7 @@ class TestService {
                     model: models.answers,
                 }]
             }, {
-                model: models.profile_skills,
+                model: models.profileSkills,
                 attributes: ["profile_id"],
                 include: [{
                     model: models.profiles,
@@ -43,11 +46,11 @@ class TestService {
         if (!test)
             return test;
         test.dataValues.specifications = [];
-        _.uniqBy(test.dataValues.profile_skills, "profile_id")
+        _.uniqBy(test.dataValues.profileSkills, "profileId")
             .map((specification) => {
                 test.dataValues.specifications.push(specification.profile);
             });
-        delete test.dataValues.profile_skills;
+        delete test.dataValues.profileSkills;
         return test;
     }
 
@@ -64,7 +67,7 @@ class TestService {
     async findAllQuestionsByTestId(testId) {
         let questions = await models.questions.findAll({
             where: {
-                test_id: {
+                testId: {
                     [Op.eq]: testId,
                 }
             },
@@ -91,9 +94,9 @@ class TestService {
     }
 
     async findPassedQuestions(testId) {
-        return await models.passed_questions.findAll({
+        return await PassedQuestions.findAll({
             where: {
-                test_id: {
+                testId: {
                     [Op.eq]: testId,
                 }
             },
@@ -109,17 +112,17 @@ class TestService {
     }
 
     async savePassedQuestion(passedQuestion) {
-        return await models.passed_questions.create(passedQuestion);
+        return await PassedQuestions.create(passedQuestion);
     }
 
     async getCorrectAnswers(questionId) {
         return await models.answers.findAll({
             where: {
                 [Op.and]: {
-                    question_id: {
+                    questionId: {
                         [Op.eq]: questionId,
                     },
-                    is_true: {
+                    isTrue: {
                         [Op.eq]: true,
                     },
                 }
@@ -128,9 +131,9 @@ class TestService {
     }
 
     async startTest(employee, test) {
-        return await models.test_ends.create({
-            employee_id: employee.id,
-            test_id: test.id,
+        return await TestEnds.create({
+            employeeId: employee.id,
+            testId: test.id,
             ends: test.duration ? new Date().setMinutes(new Date().getMinutes() + test.duration) : null
         });
     }
@@ -142,13 +145,13 @@ class TestService {
     }
 
     async findTestEnds(employeeId, testId) {
-        return await models.test_ends.findOne({
+        return await TestEnds.findOne({
             where: {
                 [Op.and]: {
-                    employee_id: {
+                    employeeId: {
                         [Op.eq]: employeeId,
                     },
-                    test_id: {
+                    testId: {
                         [Op.eq]: testId,
                     }
                 }
@@ -157,9 +160,9 @@ class TestService {
     }
 
     async submitTest(employee, test){
-        let test_ends = await this.findTestEnds(employee.id, test.id);
-        test_ends.ends = new Date();
-        return await test_ends.save();
+        let testEnds = await this.findTestEnds(employee.id, test.id);
+        testEnds.ends = new Date();
+        return await testEnds.save();
     }
 
     async questionsAvailable(employee, test) {
