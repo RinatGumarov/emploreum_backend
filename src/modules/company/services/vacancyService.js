@@ -96,6 +96,7 @@ class VacanciesService {
             include: [
                 {
                     model: models.skills,
+                    required: true,
                     include: [{
                         attributes: [],
                         required: true,
@@ -109,20 +110,6 @@ class VacanciesService {
                                 id: {[Op.eq]: vacancyId}
                             }
                         }]
-                    }]
-                },
-                {
-                    attributes: [],
-                    required: true,
-                    model: models.profileSkills,
-                    as: 'profileSkillsTrough',
-                    include: [{
-                        attributes: [],
-                        required: true,
-                        model: models.vacancies,
-                        where: {
-                            id: {[Op.eq]: vacancyId}
-                        }
                     }]
                 }
             ]
@@ -213,7 +200,19 @@ class VacanciesService {
             else {
                 // если тест уже засабмитили то надо бы ему махнуть ends time
                 if (testEnds.dataValues.ends !== null && testEnds.dataValues.ends < new Date()) {
-                    if ((2 + 2) === 4)
+                    let testScore = await models.findOne({
+                        where: {
+                            [Op.and]: {
+                                employeeId: {
+                                    [Op.eq]: employee.id,
+                                },
+                                testId: {
+                                    [Op.eq]: vacancy.testId,
+                                }
+                            }
+                        }
+                    });
+                    if (testScore.passed)
                         return 'available';
                     else
                         return 'failed';

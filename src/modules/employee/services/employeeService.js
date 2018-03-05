@@ -1,15 +1,12 @@
 const models = require('../../../core/models');
+const Vacancies = models.vacancies;
 const Account = require('../../blockchain/utils/account');
 
 const Employees = models.employees;
 const Works = models.works;
-const blockchainInfo = require('../../blockchain/services/blockchainEventService');
 const _ = require('lodash');
-const socketSender = require('../../../core/socketSender');
-const logger = require('../../../utils/logger');
 
 const Web3InitError = require('../../blockchain/utils/Web3Error');
-const web3 = require('../../blockchain/utils/web3');
 const Op = models.sequelize.Op;
 
 let instance;
@@ -75,13 +72,22 @@ class EmployeesService {
 
     /**
      * получить все вакансии на которые откликнулся чувак
-     * @param userId
      * @returns {Promise<void>}
      */
     async getAwaitedContracts(employee) {
-        let vacancies = await employee.getVacancies();
+        let vacancies = await Vacancies.findAll({
+            include: [{
+                model: models.companies
+            }, {
+                attributes: [],
+                required: true,
+                model: models.employees,
+                where: {
+                    id: {[Op.eq]: employee.id},
+                }
+            }]
+        });
         return vacancies;
-
     }
 
     /**

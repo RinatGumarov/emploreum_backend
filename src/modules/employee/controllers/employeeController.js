@@ -50,7 +50,7 @@ module.exports.func = (router) => {
             currentContractsCount,
             income,
             balance,
-            address: req.user.account_address
+            address: req.user.accountAddress
         });
     });
     
