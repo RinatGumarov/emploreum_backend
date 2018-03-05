@@ -9,7 +9,7 @@ module.exports.func = (router) => {
 
     router.post('/approve', async (req, res) => {
         let object = {
-            userId: req.user.company.user_id,
+            userId: req.user.company.userId,
             employeeId: req.body.userId,
             vacancyId: req.body.vacancyId
         };
@@ -20,7 +20,7 @@ module.exports.func = (router) => {
         req.connection.setTimeout(1000 * 60 * 10);
 
         let vacancyId = req.body.vacancyId;
-        let address = req.user.account_address;
+        let address = req.user.accountAddress;
         let employee = await employeeService.getByUserId(req.body.userId);
         let company = req.user.company;
 
