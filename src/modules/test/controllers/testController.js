@@ -6,6 +6,9 @@ const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
 
+    /**
+     * создание теста компанией
+     */
     router.post('/company/create', async (req, res) => {
         try {
             let company = req.user.company;
@@ -28,6 +31,9 @@ module.exports.func = (router) => {
         }
     });
 
+    /**
+     * создение вопроса компанией
+     */
     router.post('/:id([0-9]+)/question/create', async (req, res) => {
         let question = {};
         question.name = req.body.question.name;
@@ -43,6 +49,9 @@ module.exports.func = (router) => {
         res.send({data: 'success'});
     });
 
+    /**
+     * запрашивание теста компанией
+     */
     router.get('/:id([0-9]+)/', async (req, res) => {
         let vacancy = await vacancyService.findById(req.params.id);
         let company = req.user.company;
@@ -73,6 +82,9 @@ module.exports.func = (router) => {
         }
     });
 
+    /**
+     * запрашивание теста работником по вакансии
+     */
     router.get('/vacancy/:id([0-9]+)/', async (req, res) => {
         let vacancy = await vacancyService.findById(req.params.id);
         let test = await testService.findByIdForEmployee(vacancy.test_id);
@@ -91,6 +103,9 @@ module.exports.func = (router) => {
         }
     });
 
+    /**
+     * запрашивание
+     */
     router.get('/:id([0-9]+)/questions', async (req, res) => {
         let employee = req.user.employee;
         let questions = await testService.findAllQuestionsByTestId(req.params.id);
