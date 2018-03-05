@@ -1,13 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
 
     let test_scores = sequelize.define('test_scores', {
-        questions_count: {
-            type: DataTypes.INTEGER,
-            defaultValue: 0,
-        },
-        correct_answers_count: {
-            type: DataTypes.INTEGER,
-            defaultValue: 0,
+        passed: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
         },
     }, {
         timestamps: false

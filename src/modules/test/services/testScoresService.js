@@ -27,7 +27,9 @@ class TestScoresService {
                 test_id: testId,
             });
         testScore.passed = (await this.findEmployeeTestAnswers(employee, testId))
-            .reduce((acc, cur) => {acc += 1}, 0);
+            .reduce((acc, cur) => {
+                return acc += 1
+            }, 0);
 
         return await testScore.save();
     }
@@ -36,15 +38,15 @@ class TestScoresService {
         return await models.passed_questions.findAll({
             where: {
                 [Op.and]: {
-                    [Op.eq]: {
-                        test_id: testId,
+                    test_id: {
+                        [Op.eq]: testId,
                     },
-                    [Op.eq]: {
-                        employee_id: employee.id,
+                    employee_id: {
+                        [Op.eq]: employee.id,
                     }
-                }
+                },
             }
-        })
+        });
     }
 
 }
