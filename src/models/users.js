@@ -5,9 +5,23 @@ module.exports = (sequelize, DataTypes) => {
         email: DataTypes.STRING,
         password: DataTypes.STRING,
         status: DataTypes.INTEGER,
-        encrypted_key: DataTypes.TEXT,
-        key_password: DataTypes.STRING,
-        account_address: DataTypes.STRING,
+        encryptedKey: {
+            type: DataTypes.TEXT,
+            field: "encrypted_key"
+        },
+        keyPassword: {
+            type: DataTypes.STRING,
+            field: "key_password"
+            
+        },
+        accountAddress: {
+            type: DataTypes.STRING,
+            field: "account_address"
+        },
+        roleId: {
+            type: DataTypes.BIGINT,
+            field: "role_id"
+        }
     }, {
         timestamps: false
     });
@@ -31,16 +45,16 @@ module.exports = (sequelize, DataTypes) => {
     
     users.associate = function (models) {
         users.hasOne(models.employees, {
-            foreignKey: 'user_id'
+            foreignKey: 'userId'
         });
         users.hasOne(models.companies, {
-            foreignKey: 'user_id'
+            foreignKey: 'userId'
         });
         users.belongsTo(models.roles, {
-            foreignKey: 'role_id'
+            foreignKey: 'roleId'
         });
         users.hasMany(models.notifications, {
-            foreignKey: 'user_id'
+            foreignKey: 'userId'
         });
     };
     

@@ -29,10 +29,10 @@ class MessageService {
         let chat = await chatService.getChatBetweenEmployeeAndCompany(employeeId, companyId);
         
         let message = await Messages.create({
-            chat_id: chat.id,
+            chatId: chat.id,
             text: text,
-            is_employee_message: isEmployeeMessage,
-            is_company_message: isCompanyCessage
+            isEmployeeMessage: isEmployeeMessage,
+            isCompanyMessage: isCompanyCessage
         });
         
         return message;
@@ -71,10 +71,10 @@ class MessageService {
             model: models.chats
         };
         if (company) {
-            includedModel.where.company_id = {[Op.eq]: company.id};
+            includedModel.where.companyId = {[Op.eq]: company.id};
         }
         if (employee) {
-            includedModel.where.company_id = {[Op.eq]: employee.id};
+            includedModel.where.companyId = {[Op.eq]: employee.id};
         }
         let messages = await Messages.findAll({
             include: [includedModel],

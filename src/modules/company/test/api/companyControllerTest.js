@@ -18,8 +18,8 @@ describe('companyController', () => {
                 res.body.should.have.property('about');
                 res.body.should.have.property('name');
                 res.body.should.have.property('city');
-                res.body.should.have.property('user_id');
-                res.body.should.have.property('response_text');
+                res.body.should.have.property('userId');
+                res.body.should.have.property('responseText');
                 res.body.should.have.property('logo');
                 res.body.should.have.property('contract');
                 done();
@@ -50,8 +50,8 @@ describe('companyController', () => {
                 res.body.should.have.property('about');
                 res.body.should.have.property('name');
                 res.body.should.have.property('city');
-                res.body.should.have.property('user_id');
-                res.body.should.have.property('response_text');
+                res.body.should.have.property('userId');
+                res.body.should.have.property('responseText');
                 res.body.should.have.property('logo');
                 res.body.should.have.property('contract');
                 done();
@@ -94,6 +94,9 @@ describe('companyController', () => {
             });
     });
     
+    /**
+     * тест работает только при включенном интернете
+     */
     it('company indicators', (done) => {
         testIniter.getChaiRequest()
             .get("/company/indicators")

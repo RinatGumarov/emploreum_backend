@@ -2,24 +2,31 @@ module.exports = (sequelize, DataTypes) => {
     
     let skills = sequelize.define('skills', {
         name: DataTypes.STRING,
-        photo_path: DataTypes.STRING
+        photoPath: {
+            type: DataTypes.STRING,
+            field: "photo_path"
+        },
+        parentId: {
+            type: DataTypes.BIGINT,
+            field: "parent_id"
+        }
     }, {
         timestamps: false
     });
     
     skills.associate = function (models) {
         skills.belongsTo(models.skills, {
-            foreignKey: 'parent_id'
+            foreignKey: 'parentId'
         });
         skills.belongsToMany(models.profiles, {
-            through: 'profile_skills',
-            foreignKey: 'skill_id',
+            through: 'profileSkills',
+            foreignKey: 'skillId',
             timestamps: false
         });
         
-        skills.hasMany(models.profile_skills, {
-            foreignKey: 'skill_id',
-            as: 'profile_skills_trough'
+        skills.hasMany(models.profileSkills, {
+            foreignKey: 'skillId',
+            as: 'profileSkillsTrough'
         });
         
         skills.belongsToMany(models.cvs, {

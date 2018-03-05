@@ -134,26 +134,26 @@ class UsersService {
      * @param password
      * @param roleName
      * @param status
-     * @param encrypted_key
-     * @param key_password
-     * @param account_address
-     * @returns {Promise<Model>}
+     * @param encryptedKey
+     * @param keyPassword
+     * @param accountAddress
+     * @returns {Promise<*>}
      */
-    async saveUser(email, password, roleName, status, encrypted_key, key_password, account_address) {
-        let role_id = (await rolesService.findByName(roleName)).id;
+    async saveUser(email, password, roleName, status, encryptedKey, keyPassword, accountAddress) {
+        let roleId = (await rolesService.findByName(roleName)).id;
         let user = await Users.create({
             email,
             password,
             status,
-            role_id,
-            encrypted_key,
-            key_password,
-            account_address
+            roleId,
+            encryptedKey,
+            keyPassword,
+            accountAddress
         });
         return user;
     }
-
-
+    
+    
     /**
      * @returns {Promise<T>}
      * @param user

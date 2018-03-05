@@ -11,20 +11,17 @@ module.exports.func = (router) => {
         try {
             let company = req.user.company;
             let options = req.body;
-            options.test_id = options.testId;
-            options.week_payment = options.weekPayment;
-            options.company_id = company.id;
+            options.companyId = company.id;
             let vacancy = await vacancyService.save(options);
             let profiles = options.specifications;
-            //toDo переделать на for так как происходит асинхроноо
+            //todo replace with for
             await profiles.forEach(async (profile) => {
                 await profile.skills.forEach(async (skill) => {
                     let profileSkill = await profileSkillService.findProfileSkill(profile.id, skill.id);
                     let vacancyProfileSkill = await vacancyService.addProfileSkillToVacancy({
-                        vacancy_id: vacancy.id,
-                        profile_skill_id: profileSkill.id
+                        vacancyId: vacancy.id,
+                        profileSkillId: profileSkill.id
                     });
-                    logger.log(vacancyProfileSkill);
                 });
             });
             return res.status(200).send(vacancy);
@@ -115,14 +112,11 @@ module.exports.func = (router) => {
 
 
     router.post('/vacancy/:id([0-9]+)/invite', async (req, res) => {
-        try {
-            let vacancy = await vacancyService.findById(req.params.id);
-            await vacancyService.sendInvitationToEmployee(req.user.company, vacancy, req.body.employeeId);
-            res.send({data: 'success'});
-        } catch (err) {
-            logger.error(err.stack);
-            return res.status(500).send({error: err.message});
-        }
+        let vacancy = await vacancyService.findById(req.params.id);
+        if (await vacancyService.sendInvitationToEmployee(req.user.company, vacancy, req.body.employeeId))
+            return res.send({data: 'success'});
+        return res.status(405).send({error: 'You are not provided to invite employee to another\'s vacancy'});
+
     });
 
     return router;

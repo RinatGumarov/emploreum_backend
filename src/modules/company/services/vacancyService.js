@@ -1,10 +1,10 @@
 const models = require('../../../core/models');
 const Vacancies = models.vacancies;
 const Employees = models.employees;
-const VacancyEmployees = models.vacancy_employees;
-const ProfileSkills = models.profile_skills;
+const VacancyEmployees = models.vacancyEmployees;
+const ProfileSkills = models.profileSkills;
 const Profiles = models.profiles;
-const VacancyProfileSkills = models.vacancy_profile_skills;
+const VacancyProfileSkills = models.vacancyProfileSkills;
 const testService = require('../../test/services/testService');
 
 const queryScanner = require('../../../core/queryScanner');
@@ -26,9 +26,7 @@ class VacanciesService {
     }
 
     async addProfileSkillToVacancy(options) {
-        return await VacancyProfileSkills.create(
-            options
-        )
+        return await VacancyProfileSkills.create(options)
     }
 
     async findAllVacanciesByCompany(company) {
@@ -36,7 +34,7 @@ class VacanciesService {
         let option = {where: {}};
 
         if (company) {
-            option.where.company_id = {
+            option.where.companyId = {
                 [Op.eq]: company.id,
             }
         }
@@ -101,8 +99,8 @@ class VacanciesService {
                     include: [{
                         attributes: [],
                         required: true,
-                        model: models.profile_skills,
-                        as: 'profile_skills_trough',
+                        model: models.profileSkills,
+                        as: 'profileSkillsTrough',
                         include: [{
                             attributes: [],
                             required: true,
@@ -116,8 +114,8 @@ class VacanciesService {
                 {
                     attributes: [],
                     required: true,
-                    model: models.profile_skills,
-                    as: 'profile_skills_trough',
+                    model: models.profileSkills,
+                    as: 'profileSkillsTrough',
                     include: [{
                         attributes: [],
                         required: true,
@@ -166,8 +164,8 @@ class VacanciesService {
         let employeeId = employee.id;
         let vacancyEmployees = await VacancyEmployees.destroy({
             where: {
-                employee_id: {[Op.eq]: employeeId},
-                vacancy_id: {[Op.eq]: vacancyId}
+                employeeId: {[Op.eq]: employeeId},
+                vacancyId: {[Op.eq]: vacancyId}
             }
         });
         let company = await companyService.findByVacancyId(vacancyId);
@@ -206,10 +204,10 @@ class VacanciesService {
         });
         if (vacancy.employees.length !== 0 )
             return 'submitted';
-        if (vacancy.test_id === null)
+        if (vacancy.testId === null)
             return 'available';
         else {
-            let testEnds = await testService.findTestEnds(employee.id, vacancy.test_id);
+            let testEnds = await testService.findTestEnds(employee.id, vacancy.testId);
             if (testEnds === null)
                 return 'start';
             else {
@@ -227,11 +225,12 @@ class VacanciesService {
 
     async sendInvitationToEmployee(company, vacancy, employeeUserId) {
         let employee = await employeeService.getByUserId(employeeUserId);
-        if (vacancy.company_id !== company.id) {
-            throw Error('You are not provided to invite employee to another\'s vacancy');
+        if (vacancy.companyId !== company.id) {
+            return false;
         }
         await messageService.sendToEmployee(company, employee.id, "You have new invitation to vacancy");
         await socketSender.sendSocketMessage(`${employee.user_id}:invitation`, vacancy);
+        return true;
     }
 
 

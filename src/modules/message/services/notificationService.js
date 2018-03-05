@@ -20,7 +20,7 @@ class NotificationService {
      */
     async sendNotification(userId, text) {
         let notification = await Notifications.create({
-            user_id: userId,
+            userId: userId,
             text: text
         });
         await socketSender.sendSocketMessage(userId, notification);
@@ -34,8 +34,8 @@ class NotificationService {
     async getAllNotifications(user) {
         let notifications = await Notifications.findAll({
             where: {
-                is_view: {[Op.eq]: false},
-                user_id: {[Op.eq]: user.id}
+                isView: {[Op.eq]: false},
+                userId: {[Op.eq]: user.id}
             },
             order: [
                 ['is_view', 'DESC'],
@@ -47,11 +47,11 @@ class NotificationService {
     
     async readNotifications(user) {
         Notifications.update({
-            is_view: true
+            isView: true
         }, {
             where: {
-                is_view: {[Op.eq]: false},
-                user_id: {[Op.eq]: user.id}
+                isView: {[Op.eq]: false},
+                userId: {[Op.eq]: user.id}
             }
         });
     }

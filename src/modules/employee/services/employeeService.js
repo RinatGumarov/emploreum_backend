@@ -28,10 +28,10 @@ class EmployeesService {
         
         let savedEmployees = await Employees.findOrCreate({
             where: {
-                user_id: {[Op.eq]: userId}
+                userId: {[Op.eq]: userId}
             },
             defaults: {
-                user_id: userId
+                userId: userId
             }
         });
 
@@ -56,7 +56,7 @@ class EmployeesService {
     async getByUserId(userId) {
         let employee = await Employees.findOne({
             where: {
-                user_id: {[Op.eq]: userId}
+                userId: {[Op.eq]: userId}
             },
             include: [models.users]
         });
@@ -94,7 +94,7 @@ class EmployeesService {
             firstName: employee.name,
             lastName: employee.name,
             email: employee.user.email,
-            address: employee.user.account_address
+            address: employee.user.accountAddress
         };
 
         return Account.registerEmployee(blockchainEmployee).then(contract => {
@@ -160,7 +160,7 @@ class EmployeesService {
         return await Works.count({
             where: {
                 [Op.and]: {
-                    employee_id: {
+                    employeeId: {
                         [Op.eq]: employee.id,
                     },
                     status: {
@@ -178,7 +178,7 @@ class EmployeesService {
         return await Works.count({
             where: {
                 [Op.and]: {
-                    employee_id: {
+                    employeeId: {
                         [Op.eq]: employee.id,
                     },
                     status: {
@@ -196,7 +196,7 @@ class EmployeesService {
         return await Works.findAll({
             where: {
                 [Op.and]: {
-                    employee_id: {
+                    employeeId: {
                         [Op.eq]: employee.id,
                     },
                     status: {
@@ -217,7 +217,7 @@ class EmployeesService {
         let currentContracts = await this.findCurrentWorksWithVacancies(employee);
         let result = 0;
         for (let contract of currentContracts) {
-            result += contract.vacancy.week_payment;
+            result += contract.vacancy.weekPayment;
         }
         return parseFloat(result.toFixed(10));
     }

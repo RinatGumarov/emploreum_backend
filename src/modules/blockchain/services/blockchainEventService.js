@@ -5,19 +5,16 @@ let instance;
 
 class BlockChainEventService {
 
-    constructor() {
-        this.events = {};
-    }
-
+    constructor() { this.events = {}; }
 
     /**
      * проверяет есть ли не завершенные транзакции в блокчайне
      * @param userId
      * @returns {boolean}
      */
-    isLoad(userId) {
+    hasTransactions(userId) {
         if (this.events[userId]) {
-            return this.events[userId].length > 0;
+            return Object.keys(this.events[userId]).length > 0;
         }
         return false;
     }
@@ -33,12 +30,7 @@ class BlockChainEventService {
             this.events[userId] = {};
 
         this.events[userId][event] = desc;
-        let contracts = this.get(userId);
-        logger.log(`=====================\nsockeTTT!!!!OLOLO\n==================`);
-        socketSender.sendSocketMessage(`${userId}:blockchain`, {
-            success: false,
-            contracts: contracts
-        });
+        this.sendData(userId);
     }
 
     /**
@@ -48,38 +40,26 @@ class BlockChainEventService {
      */
     unset(userId, event) {
         if (this.events[userId] && this.events[userId][event]) {
-            // если такой эвент еще идет и мы говорим что он закончился
             delete this.events[userId][event];
-            let hasEvents = false;
 
-            if (Object.keys(this.events[userId]).length > 0)
-                hasEvents = true;
-
-            if (!hasEvents) {
-                socketSender.sendSocketMessage(`${userId}:blockchain`, { success: true });
-                delete this.events[userId];
-            } else {
-                let contracts = this.get(userId);
-                socketSender.sendSocketMessage(`${userId}:blockchain`, {
-                    success: false,
-                    contracts: contracts
-                });
-            }
+            this.sendData(userId);
+            return true;
         }
+
+        logger.error(`Blockchain error. Can not find events by given userId: ${userId}.`);
+        return false;
     }
 
-    /**
-     * отдает все незавершенные транзакции
-     * @param userId
-     * @returns {null}
-     */
-    get(userId) {
-        return (this.events[userId]) ? this.events[userId] : null;
+    sendData(userId) {
+        let data = { contracts: this.events[userId] };
+
+        if (Object.keys(this.events[userId]).length == 0)
+            data = { success: true };
+
+        socketSender.sendSocketMessage(`${userId}:blockchain`, data);
     }
 }
 
-if (typeof instance !== BlockChainEventService) {
-    instance = new BlockChainEventService();
-}
+instance = new BlockChainEventService();
 
 module.exports = instance;
