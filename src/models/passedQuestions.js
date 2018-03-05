@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    let passed_questions = sequelize.define('passed_questions', {
+    let passedQuestions = sequelize.define('passedQuestions', {
         answer: DataTypes.TEXT,
         correct: DataTypes.BOOLEAN,
         createdAt: {
@@ -19,23 +19,24 @@ module.exports = (sequelize, DataTypes) => {
             field: "employee_id"
         }
     }, {
-        timestamps: false
+        timestamps: false,
+        tableName: "passed_questions"
     });
     
-    passed_questions.associate = function (models) {
-        passed_questions.belongsTo(models.tests, {
-            foreignKey: 'test_id',
+    passedQuestions.associate = function (models) {
+        passedQuestions.belongsTo(models.tests, {
+            foreignKey: 'testId',
         });
         
-        passed_questions.belongsTo(models.questions, {
-            foreignKey: 'question_id',
+        passedQuestions.belongsTo(models.questions, {
+            foreignKey: 'questionId',
         });
         
-        passed_questions.belongsTo(models.employees, {
-            foreignKey: 'employee_id',
+        passedQuestions.belongsTo(models.employees, {
+            foreignKey: 'employeeId',
         });
     };
     
     
-    return passed_questions;
+    return passedQuestions;
 };

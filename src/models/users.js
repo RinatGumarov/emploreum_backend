@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         keyPassword: {
             type: DataTypes.STRING,
-            field: "keyPassword"
+            field: "key_password"
             
         },
         accountAddress: {
@@ -45,16 +45,16 @@ module.exports = (sequelize, DataTypes) => {
     
     users.associate = function (models) {
         users.hasOne(models.employees, {
-            foreignKey: 'user_id'
+            foreignKey: 'userId'
         });
         users.hasOne(models.companies, {
-            foreignKey: 'user_id'
+            foreignKey: 'userId'
         });
         users.belongsTo(models.roles, {
-            foreignKey: 'role_id'
+            foreignKey: 'roleId'
         });
         users.hasMany(models.notifications, {
-            foreignKey: 'user_id'
+            foreignKey: 'userId'
         });
     };
     

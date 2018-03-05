@@ -11,18 +11,15 @@ module.exports.func = (router) => {
         try {
             let company = req.user.company;
             let options = req.body;
-            options.test_id = options.testId;
-            options.week_payment = options.weekPayment;
-            options.company_id = company.id;
+            options.companyId = company.id;
             let vacancy = await vacancyService.save(options);
             let profiles = options.specifications;
-            //toDo переделать на for так как происходит асинхроноо
             await profiles.forEach(async (profile) => {
                 await profile.skills.forEach(async (skill) => {
                     let profileSkill = await profileSkillService.findProfileSkill(profile.id, skill.id);
                     let vacancyProfileSkill = await vacancyService.addProfileSkillToVacancy({
-                        vacancy_id: vacancy.id,
-                        profile_skill_id: profileSkill.id
+                        vacancyId: vacancy.id,
+                        profileSkillId: profileSkill.id
                     });
                     logger.log(vacancyProfileSkill);
                 });
@@ -30,6 +27,7 @@ module.exports.func = (router) => {
             return res.status(200).send(vacancy);
         }
         catch (err) {
+            console.log(err.stack);
             logger.error(err.stack);
             return res.status(500).send({error: err.message});
         }

@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             field: "is_employee_message"
         },
         isCompanyMessage: {
-            type: DataTypes.BOOLEAN
+            type: DataTypes.BOOLEAN,
             field: "is_company_message"
         },
         isView: {
@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     
     messages.associate = function (models) {
         messages.belongsTo(models.chats, {
-            foreignKey: 'chat_id',
+            foreignKey: 'chatId',
         });
     };
     

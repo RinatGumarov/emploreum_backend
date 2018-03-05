@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     
-    let vacancyEmployees = sequelize.define('vacancy_employees', {
+    let vacancyEmployees = sequelize.define('vacancyEmployees', {
         vacancyId: {
             type: DataTypes.BIGINT,
             field: "vacancy_id"
@@ -10,16 +10,17 @@ module.exports = (sequelize, DataTypes) => {
             field: "employee_id"
         }
     }, {
-        timestamps: false
+        timestamps: false,
+        tableName: 'vacancy_employees'
     });
     
     
     vacancyEmployees.associate = function (models) {
         vacancyEmployees.belongsTo(models.vacancies, {
-            foreignKey: 'vacancy_id'
+            foreignKey: 'vacancyId'
         });
         vacancyEmployees.belongsTo(models.employees, {
-            foreignKey: 'employee_id'
+            foreignKey: 'employeeId'
         });
     };
     

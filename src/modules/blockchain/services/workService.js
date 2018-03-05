@@ -217,7 +217,7 @@ class WorkService {
 
     async createContractTransaction(transaction) {
         if (transaction.transaction_hash)
-            return await models.work_transactions.create(transaction);
+            return await models.workTransactions.create(transaction);
     }
 
     /**

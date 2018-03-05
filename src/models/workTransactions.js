@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    let work_transactions = sequelize.define('work_transactions', {
+    let workTransactions = sequelize.define('workTransactions', {
         currency: DataTypes.STRING,
         createdAt: {
             type: DataTypes.DATE,
@@ -15,14 +15,15 @@ module.exports = (sequelize, DataTypes) => {
             field: "work_id"
         }
     }, {
-        timestamps: false
+        timestamps: false,
+        tableName : "work_transactions"
     });
     
-    work_transactions.associate = function (models) {
-        work_transactions.belongsTo(models.works, {
-            foreignKey: 'work_id'
+    workTransactions.associate = function (models) {
+        workTransactions.belongsTo(models.works, {
+            foreignKey: 'workId'
         });
     };
     
-    return work_transactions;
+    return workTransactions;
 };

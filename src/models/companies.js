@@ -19,20 +19,20 @@ module.exports = (sequelize, DataTypes) => {
     
     companies.associate = function (models) {
         companies.belongsToMany(models.profiles, {
-            through: 'company_profiles',
-            foreignKey: 'company_id'
+            through: 'companyProfiles',
+            foreignKey: 'companyId'
         });
         companies.belongsTo(models.users, {
-            foreignKey: 'user_id',
+            foreignKey: 'userId',
         });
         companies.hasMany(models.chats, {
-            foreignKey: 'company_id',
+            foreignKey: 'companyId',
         });
         companies.hasMany(models.vacancies, {
-            foreignKey: 'company_id',
+            foreignKey: 'companyId',
         });
         companies.hasMany(models.tests, {
-            foreignKey: 'company_id',
+            foreignKey: 'companyId',
         });
     };
     

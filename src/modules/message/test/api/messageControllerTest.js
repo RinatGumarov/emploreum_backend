@@ -16,8 +16,8 @@ describe('messageController', () => {
                 res.body.should.be.a('array');
                 res.body[0].should.be.a('object');
                 res.body[0].should.have.property('text');
-                res.body[0].should.have.property('is_employee_message');
-                res.body[0].should.have.property('is_company_message');
+                res.body[0].should.have.property('isEmployeeMessage');
+                res.body[0].should.have.property('isCompanyMessage');
                 done();
             });
     });
@@ -36,8 +36,8 @@ describe('messageController', () => {
                 res.body.should.be.a('array');
                 res.body[0].should.be.a('object');
                 res.body[0].should.have.property('text');
-                res.body[0].should.have.property('is_employee_message');
-                res.body[0].should.have.property('is_company_message');
+                res.body[0].should.have.property('isEmployeeMessage');
+                res.body[0].should.have.property('isCompanyMessage');
                 done();
             });
     });

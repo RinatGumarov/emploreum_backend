@@ -17,10 +17,10 @@ class ProfileService {
     async findProfileSkill(profileId, skillId) {
         return await Profiles.findOne({
             where: {
-                profile_id: {
+                profileId: {
                     [Op.eq]: profileId,
                 },
-                skill_id: {
+                skillId: {
                     [Op.eq]: skillId,
                 }
             }

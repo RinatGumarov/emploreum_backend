@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     
-    let test_scores = sequelize.define('test_scores', {
+    let testScores = sequelize.define('testScores', {
         questionsCount: {
             type: DataTypes.INTEGER,
             defaultValue: 0,
@@ -20,17 +20,18 @@ module.exports = (sequelize, DataTypes) => {
             field: "test_id"
         }
     }, {
-        timestamps: false
+        timestamps: false,
+        tableName: "test_scores"
     });
-    test_scores.associate = function (models) {
-        test_scores.belongsTo(models.employees, {
-            foreignKey: 'employee_id'
+    testScores.associate = function (models) {
+        testScores.belongsTo(models.employees, {
+            foreignKey: 'employeeId'
         });
-        test_scores.belongsTo(models.tests, {
-            foreignKey: "test_id",
+        testScores.belongsTo(models.tests, {
+            foreignKey: "testId",
         });
     };
     
     
-    return test_scores;
+    return testScores;
 };

@@ -1,20 +1,19 @@
 module.exports = (sequelize, DataTypes) => {
-    let not_valid_jobs = sequelize.define('not_valid_jobs', {
+    let notValidJobs = sequelize.define('notValidJobs', {
         name: DataTypes.STRING,
         desc: DataTypes.TEXT,
         start: DataTypes.DATE,
         finish: DataTypes.DATE
     }, {
-        timestamps: false
+        timestamps: false,
+        tableName: 'not_valid_jobs'
     });
-
-    not_valid_jobs.associate = function (models) {
-        not_valid_jobs.belongsToMany(models.skills, {
+    notValidJobs.associate = function (models) {
+        notValidJobs.belongsToMany(models.skills, {
             through: 'not_valid_job_skills',
             foreignKey: 'not_valid_job_id',
             timestamps: false
         });
     };
-
-    return not_valid_jobs;
+    return notValidJobs;
 };

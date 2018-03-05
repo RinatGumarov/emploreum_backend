@@ -68,7 +68,7 @@ module.exports.func = (router) => {
                 let keyPassword = web3.utils.randomHex(32);
                 let encryptedKey = JSON.stringify(account.generateAccount(keyPassword));
                 
-                let account_address = account.decryptAccount(JSON.parse(encryptedKey), keyPassword).address;
+                let accountAddress = account.decryptAccount(JSON.parse(encryptedKey), keyPassword).address;
                 let user = await usersService.saveUser(
                     req.session.email,
                     req.session.password,
@@ -76,7 +76,7 @@ module.exports.func = (router) => {
                     FIRST_STATE,
                     encryptedKey,
                     keyPassword,
-                    account_address
+                    accountAddress
                 );
                 req.login(user, (err) => {
                     if (err) {

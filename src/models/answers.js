@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     answers.associate = function (models) {
         answers.belongsTo(models.questions, {
-            foreignKey: 'question_id'
+            foreignKey: 'questionId'
         });
     };
     

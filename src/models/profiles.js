@@ -4,26 +4,26 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: false
     });
-
+    
     profiles.associate = function (models) {
         profiles.belongsToMany(models.skills, {
-            through: 'profile_skills',
-            foreignKey: 'profile_id',
+            through: 'profileSkills',
+            foreignKey: 'profileId',
             timestamps: false
         });
-    
-        profiles.hasMany(models.profile_skills, {
-            foreignKey: 'profile_id',
-            as: 'profile_skills_trough'
+        
+        profiles.hasMany(models.profileSkills, {
+            foreignKey: 'profileId',
+            as: 'profileSkillsTrough'
         });
         
         profiles.belongsToMany(models.companies, {
-            through: 'company_profiles',
-            foreignKey: 'profile_id',
+            through: 'companyProfiles',
+            foreignKey: 'profileId',
             timestamps: false
         });
     };
-
-
+    
+    
     return profiles;
 };

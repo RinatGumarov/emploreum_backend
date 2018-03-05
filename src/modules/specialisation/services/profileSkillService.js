@@ -1,5 +1,5 @@
 const models = require('../../../core/models');
-const ProfileSkills = models.profile_skills;
+const ProfileSkills = models.profileSkills;
 let instance;
 const Op = models.sequelize.Op;
 
@@ -8,10 +8,10 @@ class ProfileSkillService {
     async findProfileSkill(profileId, skillId) {
         return await ProfileSkills.findOne({
             where: {
-                profile_id: {
+                profileId: {
                     [Op.eq]: profileId,
                 },
-                skill_id: {
+                skillId: {
                     [Op.eq]: skillId,
                 }
             }

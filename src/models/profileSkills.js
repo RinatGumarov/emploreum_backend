@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    let profile_skills = sequelize.define('profile_skills', {
+    let profile_skills = sequelize.define('profileSkills', {
         skillId: {
             type: DataTypes.BIGINT,
             field: "skill_id"
@@ -9,19 +9,21 @@ module.exports = (sequelize, DataTypes) => {
             field: "profile_id"
         }
     }, {
-        timestamps: false
+        timestamps: false,
+        tableName: "profile_skills"
     });
     
     profile_skills.associate = function (models) {
         profile_skills.belongsTo(models.skills, {
-            foreignKey: 'skill_id'
+            foreignKey: 'skillId'
         });
         profile_skills.belongsTo(models.profiles, {
-            foreignKey: 'profile_id'
+            foreignKey: 'profileId'
         });
         profile_skills.belongsToMany(models.vacancies, {
-            foreignKey: 'profile_skill_id',
-            through: 'vacancy_profile_skills'
+            foreignKey: 'profileSkillId',
+            through: 'vacancyProfileSkills',
+            timestamps: false
         });
         profile_skills.belongsToMany(models.tests, {
             foreignKey: 'profile_skill_id',

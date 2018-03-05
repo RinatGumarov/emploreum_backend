@@ -14,10 +14,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             field: "pay_date"
         },
-        vacancyId: {
-            type: DataTypes.BIGINT,
-            field: "vacancy_id"
-        },
         companyId: {
             type: DataTypes.BIGINT,
             field: "company_id"
@@ -25,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
         vacancyId: {
             type: DataTypes.BIGINT,
             field: "vacancy_id"
+        },
+        employeeId: {
+            type: DataTypes.BIGINT,
+            field: "employee_id"
         }
     }, {
         timestamps: false
@@ -32,15 +32,15 @@ module.exports = (sequelize, DataTypes) => {
     
     works.associate = function (models) {
         works.belongsTo(models.companies, {
-            foreignKey: 'company_id'
+            foreignKey: 'companyId'
         });
         
         works.belongsTo(models.employees, {
-            foreignKey: 'employee_id',
+            foreignKey: 'employeeId',
         });
         
         works.belongsTo(models.vacancies, {
-            foreignKey: 'vacancy_id',
+            foreignKey: 'vacancyId',
         });
     };
     

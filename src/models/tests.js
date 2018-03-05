@@ -11,22 +11,22 @@ module.exports = (sequelize, DataTypes) => {
     });
     tests.associate = function (models) {
         tests.belongsTo(models.companies, {
-            foreignKey: 'company_id'
+            foreignKey: 'companyId'
         });
         tests.hasMany(models.questions, {
-            foreignKey: "test_id",
+            foreignKey: "testId",
         });
-        tests.belongsToMany(models.profile_skills, {
+        tests.belongsToMany(models.profileSkills, {
             through: 'test_profile_skills',
             foreignKey: 'test_id',
             timestamps: false,
         });
-        tests.hasMany(models.passed_questions, {
-            foreignKey: 'test_id'
+        tests.hasMany(models.passedQuestions, {
+            foreignKey: 'testId'
         });
         
         tests.hasOne(models.vacancies, {
-            foreignKey: "test_id",
+            foreignKey: "testId",
         })
     };
     

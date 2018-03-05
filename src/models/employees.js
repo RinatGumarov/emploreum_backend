@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
         userId: {
             type: DataTypes.BIGINT,
             field: "user_id"
-        }
+        },
         city: DataTypes.STRING,
         birthday: DataTypes.DATE,
         about: DataTypes.TEXT,
@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     
     employees.associate = function (models) {
-        employees.belongsTo(models.gradation_enums, {
+        employees.belongsTo(models.gradationEnums, {
             foreignKey: 'gradation'
         });
         employees.belongsToMany(models.languages, {
@@ -30,20 +30,20 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'employee_id'
         });
         employees.hasMany(models.achievements, {
-            foreignKey: 'employee_id'
+            foreignKey: 'employeeId'
         });
         employees.hasMany(models.cvs, {
-            foreignKey: 'employee_id'
+            foreignKey: 'employeeId'
         });
-        employees.hasMany(models.not_valid_jobs, {
-            foreignKey: 'employee_id'
+        employees.hasMany(models.notValidJobs, {
+            foreignKey: 'employeeId'
         });
         employees.belongsTo(models.users, {
-            foreignKey: 'user_id',
+            foreignKey: 'userId',
         });
         employees.belongsToMany(models.vacancies, {
-            through: 'vacancy_employees',
-            foreignKey: 'employee_id',
+            through: 'vacancyEmployees',
+            foreignKey: 'employeeId',
             timestamps: false,
         });
         // employees.belongsToMany(models.works, {
@@ -52,15 +52,15 @@ module.exports = (sequelize, DataTypes) => {
         //     timestamps: false,
         // });
         employees.hasMany(models.chats, {
-            foreignKey: 'employee_id',
+            foreignKey: 'employeeId',
         });
         
         employees.hasMany(models.works, {
-            foreignKey: 'employee_id',
+            foreignKey: 'employeeId',
         });
         
-        employees.hasMany(models.passed_questions, {
-            foreignKey: 'employee_id',
+        employees.hasMany(models.passedQuestions, {
+            foreignKey: 'employeeId',
         })
         
     };

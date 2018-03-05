@@ -22,23 +22,23 @@ module.exports = (sequelize, DataTypes) => {
     
     vacancies.associate = function (models) {
         vacancies.belongsTo(models.companies, {
-            foreignKey: 'company_id'
+            foreignKey: 'companyId'
         });
         
         vacancies.belongsToMany(models.employees, {
-            through: 'vacancy_employees',
-            foreignKey: 'vacancy_id',
+            through: 'vacancyEmployees',
+            foreignKey: 'vacancyId',
             timestamps: false,
         });
         
-        vacancies.belongsToMany(models.profile_skills, {
-            through: 'vacancy_profile_skills',
-            foreignKey: 'vacancy_id',
+        vacancies.belongsToMany(models.profileSkills, {
+            through: 'vacancyProfileSkills',
+            foreignKey: 'vacancyId',
             timestamps: false,
         });
         
         vacancies.belongsTo(models.tests, {
-            foreignKey: 'test_id',
+            foreignKey: 'testId',
         })
     };
     

@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     
-    let test_starts = sequelize.define('tests_starts', {
+    let testsStarts = sequelize.define('testsStarts', {
         ends: DataTypes.DATE,
         employeeId: {
             type: DataTypes.BIGINT,
@@ -13,15 +13,15 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: false,
     });
-    test_starts.associate = function (models) {
-        test_starts.belongsTo(models.employees, {
-            foreignKey: 'employee_id'
+    testsStarts.associate = function (models) {
+        testsStarts.belongsTo(models.employees, {
+            foreignKey: 'employeeId'
         });
-        test_starts.belongsTo(models.tests, {
-            foreignKey: "test_id",
+        testsStarts.belongsTo(models.tests, {
+            foreignKey: "testId",
         });
     };
     
     
-    return test_starts;
+    return testsStarts;
 };
