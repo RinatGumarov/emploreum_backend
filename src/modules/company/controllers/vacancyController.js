@@ -14,6 +14,7 @@ module.exports.func = (router) => {
             options.companyId = company.id;
             let vacancy = await vacancyService.save(options);
             let profiles = options.specifications;
+            //todo replace with for
             await profiles.forEach(async (profile) => {
                 await profile.skills.forEach(async (skill) => {
                     let profileSkill = await profileSkillService.findProfileSkill(profile.id, skill.id);
@@ -26,12 +27,11 @@ module.exports.func = (router) => {
             return res.status(200).send(vacancy);
         }
         catch (err) {
-            console.log(err.stack);
             logger.error(err.stack);
             return res.status(500).send({error: err.message});
         }
     });
-    
+
     /**
      * получить все вакансии по компании
      */
@@ -45,7 +45,7 @@ module.exports.func = (router) => {
             return res.status(500).send({error: err.message});
         }
     });
-    
+
     /**
      * получить инфомарцию о вакансии
      */
@@ -62,7 +62,7 @@ module.exports.func = (router) => {
             return res.status(500).send({error: err.message});
         }
     });
-    
+
     router.get('/vacancy/:id([0-9]+)/specification', async (req, res) => {
         try {
             let skills = await vacancyService.getVacancyProfiles(req.params.id);
@@ -72,8 +72,8 @@ module.exports.func = (router) => {
             return res.status(500).send({error: err.message});
         }
     });
-    
-    
+
+
     router.get('/vacancy/:id([0-9]+)/candidates', async (req, res) => {
         try {
             let candidates = await vacancyService.getCandidatesByVacancyId(req.params.id);
@@ -83,7 +83,7 @@ module.exports.func = (router) => {
             return res.status(500).send({error: err.message});
         }
     });
-    
+
     /**
      * отклонить постучавшегося кандидата
      */
@@ -96,7 +96,7 @@ module.exports.func = (router) => {
             return res.status(500).send({error: err.message});
         }
     });
-    
+
     /**
      * Только для работника. Узнать может ли он постучаться на вакансию.
      */
@@ -109,8 +109,8 @@ module.exports.func = (router) => {
             res.send({error: err.message});
         }
     });
-    
-    
+
+
     router.post('/vacancy/:id([0-9]+)/invite', async (req, res) => {
         let vacancy = await vacancyService.findById(req.params.id);
         if (await vacancyService.sendInvitationToEmployee(req.user.company, vacancy, req.body.employeeId))
@@ -118,7 +118,7 @@ module.exports.func = (router) => {
         return res.status(405).send({error: 'You are not provided to invite employee to another\'s vacancy'});
 
     });
-    
+
     return router;
-    
+
 };
