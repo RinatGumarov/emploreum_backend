@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
         answer: DataTypes.TEXT,
         correct: DataTypes.BOOLEAN,
         created_at: DataTypes.DATE,
+        value: DataTypes.DOUBLE,
     }, {
         timestamps: false
     });

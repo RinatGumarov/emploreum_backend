@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
 
-    let test_starts = sequelize.define('tests_starts', {
+    let test_starts = sequelize.define('test_ends', {
         ends: DataTypes.DATE,
     }, {
         timestamps: false,
