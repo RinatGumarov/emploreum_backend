@@ -227,11 +227,12 @@ class VacanciesService {
 
     async sendInvitationToEmployee(company, vacancy, employeeUserId) {
         let employee = await employeeService.getByUserId(employeeUserId);
-        if (vacancy.company_id !== company) {
-            return res.status(405).send({error: 'You are not provided to invite employee to another\'s vacancy'});
+        if (vacancy.company_id !== company.id) {
+            return false;
         }
         await messageService.sendToEmployee(company, employee.id, "You have new invitation to vacancy");
         await socketSender.sendSocketMessage(`${employee.user_id}:invitation`, vacancy);
+        return true;
     }
 
 

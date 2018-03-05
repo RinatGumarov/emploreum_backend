@@ -115,8 +115,10 @@ module.exports.func = (router) => {
 
     router.post('/vacancy/:id([0-9]+)/invite', async (req, res) => {
         let vacancy = await vacancyService.findById(req.params.id);
-        await vacancyService.sendInvitationToEmployee(req.user.company, vacancy, req.body.employeeId);
-        res.send({data: 'success'});
+        if (await vacancyService.sendInvitationToEmployee(req.user.company, vacancy, req.body.employeeId))
+            return res.send({data: 'success'});
+        return res.status(405).send({error: 'You are not provided to invite employee to another\'s vacancy'});
+
     });
 
     return router;
