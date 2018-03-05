@@ -1,15 +1,12 @@
 const models = require('../../../core/models');
 const Account = require('../../blockchain/utils/account');
+const employeeUtil = require('../../blockchain/utils/employee');
 
 const Employees = models.employees;
 const Works = models.works;
-const blockchainInfo = require('../../blockchain/services/blockchainEventService');
 const _ = require('lodash');
-const socketSender = require('../../../core/socketSender');
-const logger = require('../../../utils/logger');
 
 const Web3InitError = require('../../blockchain/utils/Web3Error');
-const web3 = require('../../blockchain/utils/web3');
 const Op = models.sequelize.Op;
 
 let instance;
@@ -18,17 +15,17 @@ let instance;
  * класс работника
  */
 class EmployeesService {
-    
+
     /**
      * сохранение работника и создание для него
      * резюме с определенными специализациями
      * @param userId
      */
     async save(userId) {
-        
+
         let savedEmployees = await Employees.findOrCreate({
             where: {
-                user_id: {[Op.eq]: userId}
+                user_id: { [Op.eq]: userId }
             },
             defaults: {
                 user_id: userId
@@ -45,9 +42,9 @@ class EmployeesService {
      * @returns {Promise<*>}
      */
     async update(employee, params) {
-        return await employee.update(params)
+        return await employee.update(params);
     }
-    
+
     /**
      * получить работника по юзеру
      * @param userId
@@ -56,13 +53,13 @@ class EmployeesService {
     async getByUserId(userId) {
         let employee = await Employees.findOne({
             where: {
-                user_id: {[Op.eq]: userId}
+                user_id: { [Op.eq]: userId }
             },
             include: [models.users]
         });
         return employee;
     }
-    
+
     /**
      * Прикрепить работника к вакансии по нажатию "Откликнуться".
      * @param userId
@@ -112,29 +109,29 @@ class EmployeesService {
         let employees = await Employees.findAll({
             include: [{
                 model: models.cvs,
-                attributes: ["id"],
+                attributes: ['id'],
                 include: [
                     {
                         model: models.profiles,
-                        attributes: ["name"]
+                        attributes: ['name']
                     },
                     {
                         model: models.skills,
-                        attributes: ["name"]
+                        attributes: ['name']
                     }
-                ],
+                ]
             }, {
                 model: models.works,
-                attributes: ["id"],
+                attributes: ['id'],
                 include: [{
                     model: models.companies,
-                    attributes: ["name"],
+                    attributes: ['name']
                 }, {
                     model: models.vacancies,
-                    attributes: ["name"],
+                    attributes: ['name']
                 }]
             }],
-            attributes: ["user_id", "name", "surname", "photo_path", "city", "birthday"]
+            attributes: ['user_id', 'name', 'surname', 'photo_path', 'city', 'birthday']
         });
 
         employees = await employees.map((employee) => {
@@ -161,17 +158,17 @@ class EmployeesService {
             where: {
                 [Op.and]: {
                     employee_id: {
-                        [Op.eq]: employee.id,
+                        [Op.eq]: employee.id
                     },
                     status: {
                         [Op.or]: {
                             [Op.eq]: -200,
-                            [Op.eq]: -500,
+                            [Op.eq]: -500
                         }
                     }
                 }
             }
-        })
+        });
     }
 
     async countCurrentWorks(employee) {
@@ -179,17 +176,17 @@ class EmployeesService {
             where: {
                 [Op.and]: {
                     employee_id: {
-                        [Op.eq]: employee.id,
+                        [Op.eq]: employee.id
                     },
                     status: {
                         [Op.and]: {
                             [Op.gt]: -2,
-                            [Op.lt]: 7,
+                            [Op.lt]: 7
                         }
                     }
                 }
             }
-        })
+        });
     }
 
     async findCurrentWorksWithVacancies(employee) {
@@ -197,20 +194,20 @@ class EmployeesService {
             where: {
                 [Op.and]: {
                     employee_id: {
-                        [Op.eq]: employee.id,
+                        [Op.eq]: employee.id
                     },
                     status: {
                         [Op.and]: {
                             [Op.gt]: -2,
-                            [Op.lt]: 7,
+                            [Op.lt]: 7
                         }
                     }
                 }
             },
             include: [{
-                model: models.vacancies,
-            }],
-        })
+                model: models.vacancies
+            }]
+        });
     }
 
     async getIncome(employee) {
@@ -220,6 +217,12 @@ class EmployeesService {
             result += contract.vacancy.week_payment;
         }
         return parseFloat(result.toFixed(10));
+    }
+
+    async getRating(id) {
+        let address = await this.getByUserId(id);
+
+        return await employeeUtil.calculateRating(address.contract);
     }
 }
 

@@ -28,17 +28,17 @@ class VacanciesService {
     async addProfileSkillToVacancy(options) {
         return await VacancyProfileSkills.create(
             options
-        )
+        );
     }
 
     async findAllVacanciesByCompany(company) {
 
-        let option = {where: {}};
+        let option = { where: {} };
 
         if (company) {
             option.where.company_id = {
-                [Op.eq]: company.id,
-            }
+                [Op.eq]: company.id
+            };
         }
 
         option.where.opened = true;
@@ -69,14 +69,14 @@ class VacanciesService {
     async getRecommendedVacancies(employee) {
         let skills = await skillService.getEmployeeSkills(employee);
         let skillsIds = skills.map((skill) => {
-            return skill.id
+            return skill.id;
         });
 
         let queryStr = queryScanner.company.recommended_vacancies;
         return await models.sequelize.query(queryStr,
             {
                 replacements: {
-                    skillsString: skillsIds.join(",")
+                    skillsString: skillsIds.join(',')
                 },
                 type: models.sequelize.QueryTypes.SELECT,
                 model: Vacancies,
@@ -108,7 +108,7 @@ class VacanciesService {
                             required: true,
                             model: models.vacancies,
                             where: {
-                                id: {[Op.eq]: vacancyId}
+                                id: { [Op.eq]: vacancyId }
                             }
                         }]
                     }]
@@ -123,7 +123,7 @@ class VacanciesService {
                         required: true,
                         model: models.vacancies,
                         where: {
-                            id: {[Op.eq]: vacancyId}
+                            id: { [Op.eq]: vacancyId }
                         }
                     }]
                 }
@@ -139,20 +139,20 @@ class VacanciesService {
      */
     async getCandidatesByVacancyId(vacancyId) {
         let candidates = await Employees.findAll({
-            attributes: ["name", "photo_path"],
+            attributes: ['name', 'photo_path'],
             include: [{
                 model: models.users,
-                attributes: ["id"]
+                attributes: ['id']
             }, {
                 attributes: [],
                 required: true,
                 model: models.vacancies,
                 where: {
-                    id: {[Op.eq]: vacancyId}
+                    id: { [Op.eq]: vacancyId }
                 }
             }]
         });
-        return candidates
+        return candidates;
     }
 
     /**
@@ -166,15 +166,15 @@ class VacanciesService {
         let employeeId = employee.id;
         let vacancyEmployees = await VacancyEmployees.destroy({
             where: {
-                employee_id: {[Op.eq]: employeeId},
-                vacancy_id: {[Op.eq]: vacancyId}
+                employee_id: { [Op.eq]: employeeId },
+                vacancy_id: { [Op.eq]: vacancyId }
             }
         });
         let company = await companyService.findByVacancyId(vacancyId);
-        await messageService.sendToEmployee(company, employee.id, "вам отклонили в вакансии");
+        await messageService.sendToEmployee(company, employee.id, 'вам отклонили в вакансии');
         socketSender.sendSocketMessage(`${userId}:vacancy`, {
-            type: "DELETE",
-            id: vacancyId,
+            type: 'DELETE',
+            id: vacancyId
         });
         return true;
     }
@@ -191,7 +191,7 @@ class VacanciesService {
         let vacancy = await Vacancies.findOne({
             where: {
                 id: {
-                    [Op.eq]: vacancyId,
+                    [Op.eq]: vacancyId
                 }
             },
             include: [{
@@ -199,12 +199,12 @@ class VacanciesService {
                 required: false,
                 where: {
                     id: {
-                        [Op.eq]: employeeId,
+                        [Op.eq]: employeeId
                     }
                 }
             }]
         });
-        if (vacancy.employees.length !== 0 )
+        if (vacancy.employees.length !== 0)
             return 'submitted';
         if (vacancy.test_id === null)
             return 'available';
@@ -230,12 +230,10 @@ class VacanciesService {
         if (vacancy.company_id !== company.id) {
             return false;
         }
-        await messageService.sendToEmployee(company, employee.id, "You have new invitation to vacancy");
+        await messageService.sendToEmployee(company, employee.id, 'You have new invitation to vacancy');
         await socketSender.sendSocketMessage(`${employee.user_id}:invitation`, vacancy);
         return true;
     }
-
-
 }
 
 instance = new VacanciesService();

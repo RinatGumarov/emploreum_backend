@@ -8,22 +8,22 @@ const employeeService = require('../../employee/services/employeeService');
 let instance;
 
 class SkillService {
-    
+
     /**
      * поиск скила по профилю
      * если likestr передан то будет искатьс вхождени в имя
      */
     async findByProfileId(id) {
         let skills = await Skills.findAll({
-            attributes: ['id', 'name', 'parent_id', "photo_path"],
+            attributes: ['id', 'name', 'parent_id', 'photo_path'],
             include: [{
                 attributes: [],
                 model: Profiles,
                 required: true,
-                where: {id: {[Op.eq]: id}},
+                where: { id: { [Op.eq]: id } }
             }]
         });
-        
+
         return skills;
     }
 
@@ -43,15 +43,13 @@ class SkillService {
                     required: true,
                     model: models.employees,
                     where: {
-                        id: {[Op.eq]: employeeId}
+                        id: { [Op.eq]: employeeId }
                     }
                 }
             }]
         });
         return skills;
     }
-    
-    
 }
 
 instance = new SkillService();

@@ -10,10 +10,10 @@ class ProfileSkillService {
             where: {
                 [Op.and]: {
                     profile_id: {
-                        [Op.eq]: profileId,
+                        [Op.eq]: profileId
                     },
                     skill_id: {
-                        [Op.eq]: skillId,
+                        [Op.eq]: skillId
                     }
                 }
             }
