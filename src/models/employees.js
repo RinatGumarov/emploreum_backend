@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
         userId: {
             type: DataTypes.BIGINT,
             field: "user_id"
-        }
+        },
         city: DataTypes.STRING,
         birthday: DataTypes.DATE,
         about: DataTypes.TEXT,

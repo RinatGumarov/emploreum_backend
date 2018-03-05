@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             field: "is_employee_message"
         },
         isCompanyMessage: {
-            type: DataTypes.BOOLEAN
+            type: DataTypes.BOOLEAN,
             field: "is_company_message"
         },
         isView: {
