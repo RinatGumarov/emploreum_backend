@@ -72,17 +72,23 @@ class WorkService {
                 await blockchainInfo.unset(company.userId, `contract creation ${address}`);
             }
             message = `employee ${employee.name} and company ${company.name}.`;
+
             await blockchainInfo.set(company.userId, `work creation ${address}`,
                 `Creating contract in blockchain between ${message}`);
+
             await this.createWork(vacancyId, employee, companyUser);
+
             await blockchainInfo.unset(company.userId, `work creation ${address}`);
             return true;
         } catch (e) {
             logger.error(e.stack);
             logger.log('Waiting promises, count: ' + promises.length);
+
             await Promise.all(promises);
+
             await blockchainInfo.unset(company.userId, `contract creation ${address}`);
             await blockchainInfo.unset(company.userId, `work creation ${address}`);
+
             return false;
         }
     }
@@ -102,15 +108,7 @@ class WorkService {
             status: 0
         };
 
-        let skillCodes = [];
-        let profiles = await vacancyService.getVacancyProfiles(vacancyId);
-        for (let profile of profiles) {
-            for (let skill of profile.skills) {
-                let code = ((profile.id - 1) << 12) + (skill.id - 1);
-                skillCodes.push(code);
-            }
-        }
-
+        let skillCodes = await this.generateCodes(vacancyId);
 
         let blockchainWorkData = {
             skillCodes,
@@ -210,13 +208,12 @@ class WorkService {
     async addRatingToEmployee(work) {
         let workAddress = work.contract;
         let employeeContractAddress = work.employee.contract;
-        let skills = await vacancyService.getVacancyProfiles(work.vacancy_id);
+        let skillCodes = await this.generateCodes(work.vacancyId);
 
-        await skills.forEach(async skill => {
+        return await skillCodes.forEach(async code => {
             let rating = this.calculateRating(workAddress, employeeContractAddress);
-            await employeeBlockchainUtil.changeSkillRating(employeeContractAddress, skill, rating);
+            return await employeeBlockchainUtil.changeSkillRating(employeeContractAddress, code, rating);
         });
-
     }
 
     async createContractTransaction(transaction) {
@@ -267,6 +264,19 @@ class WorkService {
 
     calculateRating(workAddress, employeeContractAddress) {
         return 5;
+    }
+
+    async generateCodes(vacancyId) {
+        let skillCodes = [];
+        let profiles = await vacancyService.getVacancyProfiles(vacancyId);
+        for (let profile of profiles) {
+            for (let skill of profile.skills) {
+                let code = ((profile.id - 1) << 12) + (skill.id - 1);
+                skillCodes.push(code);
+            }
+        }
+
+        return skillCodes;
     }
 }
 

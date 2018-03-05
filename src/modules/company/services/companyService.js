@@ -184,7 +184,7 @@ class CompaniesService {
             },
             include: {
                 model: models.vacancies,
-                attributes: ['week_payment']
+                attributes: ['weekPayment']
             }
         });
         return contracts;
