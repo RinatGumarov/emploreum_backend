@@ -14,7 +14,7 @@ module.exports.func = (router) => {
         try {
             let company = req.user.company;
             let options = req.body;
-            options.company_id = company.id;
+            options.companyId = company.id;
             let test = await testService.save(options);
             let profiles = req.body.specifications;
             await profiles.forEach(async (profile) => {
@@ -41,12 +41,12 @@ module.exports.func = (router) => {
             question.name = req.body.question.name;
             question.type = req.body.question.type;
             question.difficulty = req.body.difficulty;
-            question.test_id = req.params.id;
+            question.testId = req.params.id;
             question = await testService.saveQuestion(question);
             for (let answer of req.body.question.answers) {
-                answer.is_true = answer.isTrue;
+                answer.isTrue = answer.isTrue;
                 delete answer.isTrue;
-                answer.question_id = question.id;
+                answer.questionId = question.id;
                 await testService.saveAnswer(answer);
             }
             res.send({data: 'success'});
@@ -62,7 +62,7 @@ module.exports.func = (router) => {
     router.get('/:testId([0-9]+)/', async (req, res) => {
         let company = req.user.company;
         let test = await testService.findById(req.params.testId);
-        if (company && test && test.company_id === company.id) {
+        if (company && test && test.companyId === company.id) {
             res.send(test);
         } else {
             if (test.questions) {
@@ -70,7 +70,7 @@ module.exports.func = (router) => {
                 let passedQuestionsIds;
                 if (passedQuestions)
                     passedQuestionsIds = await passedQuestions.map((pq) => {
-                        return pq.question_id;
+                        return pq.questionId;
                     });
                 test.questions = await test.questions.map((q) => {
                     if (!passedQuestions)
@@ -93,13 +93,13 @@ module.exports.func = (router) => {
      */
     router.get('/vacancy/:id([0-9]+)/', async (req, res) => {
         let vacancy = await vacancyService.findById(req.params.id);
-        let test = await testService.findByIdForEmployee(vacancy.test_id);
+        let test = await testService.findByIdForEmployee(vacancy.testId);
         if (test.questions) {
             let passedQuestions = await testService.findPassedQuestions(test.id);
             let passedQuestionsIds;
             if (passedQuestions)
                 passedQuestionsIds = await passedQuestions.map((pq) => {
-                    return pq.question_id;
+                    return pq.questionId;
                 });
             test.questions = await test.questions.map((q) => {
                 q.dataValues.viewed = passedQuestionsIds.indexOf(q.id) > -1;
@@ -122,7 +122,7 @@ module.exports.func = (router) => {
     router.get('/question/:id([0-9]+)', async (req, res) => {
         let employee = req.user.employee;
         let question = await testService.findQuestionById(req.params.id);
-        let test = await testService.findById(question.test_id);
+        let test = await testService.findById(question.testId);
         if (!(await testService.questionsAvailable(employee, test)))
             return res.status(405).send({error: 'Not Allowed'});
         if (question.type === 'input')
@@ -140,7 +140,7 @@ module.exports.func = (router) => {
         try {
             let employee = req.user.employee;
             let vacancy = await vacancyService.findById(req.params.vacancyId);
-            let test = await testService.findById(vacancy.test_id);
+            let test = await testService.findById(vacancy.testId);
             let started = await  testService.findTestEnds(employee.id, test.id);
             if (started) {
                 return res.send({data: 'already started'});
@@ -165,15 +165,15 @@ module.exports.func = (router) => {
         let correctAnswers = (await testService.getCorrectAnswers(req.params.questionId))
             .map((answer) => answer.name);
         let question = await testService.findQuestionById(req.params.questionId);
-        let test = await testService.findById(question.test_id);
+        let test = await testService.findById(question.testId);
         if (!(await testService.questionsAvailable(employee, test)))
             return res.status(405).send({error: 'Not Allowed'});
         for (let passed of answers) {
             let correct = correctAnswers.indexOf(passed) !== -1;
             let passedQuestion = {
-                employee_id: employee.id,
-                test_id: test.id,
-                question_id: question.id,
+                employeeId: employee.id,
+                testId: test.id,
+                questionId: question.id,
                 answer: passed,
                 correct,
                 value: (await testService.countValueOfQuestion(question, test.questions))
@@ -181,7 +181,7 @@ module.exports.func = (router) => {
             };
             await testService.savePassedQuestion(passedQuestion);
         }
-        await testScoresService.saveOrUpdate(question.test_id, employee);
+        await testScoresService.saveOrUpdate(question.testId, employee);
         return res.send({data: 'success'});
     });
 
@@ -191,7 +191,7 @@ module.exports.func = (router) => {
     router.get('/:id([0-9]+)/submit', async (req, res) => {
         let employee = req.user.employee;
         let vacancy = await vacancyService.findById(req.params.id);
-        let test = await testService.findById(vacancy.test_id);
+        let test = await testService.findById(vacancy.testId);
         await testService.submitTest(employee, test);
         res.send({data: 'success'});
     });

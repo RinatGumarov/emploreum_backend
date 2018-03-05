@@ -3,6 +3,7 @@ const Works = models.works;
 const blockchainWork = require('../utils/work');
 
 const socketSender = require('../../../core/socketSender');
+
 const blockchainInfo = require('./blockchainEventService');
 const companyService = require('../../company/services/companyService');
 const vacancyService = require('../../company/services/vacancyService');

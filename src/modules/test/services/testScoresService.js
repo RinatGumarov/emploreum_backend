@@ -1,4 +1,8 @@
 const models = require("../../../core/models");
+
+const TestScores = models.testScores;
+const PassedQuestions = models.passedQuestions;
+
 const Op = models.sequelize.Op;
 const logger = require('../../../utils/logger');
 const _ = require('lodash');
@@ -9,22 +13,22 @@ class TestScoresService {
 
     async saveOrUpdate(testId, employee) {
         let testScore;
-        testScore = await models.test_scores.findOne({
+        testScore = await TestScores.findOne({
             where: {
                 [Op.and]: {
-                    employee_id: {
+                    employeeId: {
                         [Op.eq]: employee.id,
                     },
-                    test_id: {
+                    testId: {
                         [Op.eq]: testId,
                     }
                 }
             },
         });
         if (!testScore)
-            testScore = await models.test_scores.build({
-                employee_id: employee.id,
-                test_id: testId,
+            testScore = await TestScores.build({
+                employeeId: employee.id,
+                testId: testId,
             });
         testScore.passed = (await this.findEmployeeTestAnswers(employee, testId))
             .reduce((acc, cur) => {
@@ -35,13 +39,13 @@ class TestScoresService {
     }
 
     async findEmployeeTestAnswers(employee, testId) {
-        return await models.passed_questions.findAll({
+        return await PassedQuestions.findAll({
             where: {
                 [Op.and]: {
-                    test_id: {
+                    testId: {
                         [Op.eq]: testId,
                     },
-                    employee_id: {
+                    employeeId: {
                         [Op.eq]: employee.id,
                     }
                 },
