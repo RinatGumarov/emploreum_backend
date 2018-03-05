@@ -16,8 +16,8 @@ describe('notificationController', () => {
                 res.body.should.be.a('array');
                 res.body[0].should.be.a('object');
                 res.body[0].should.have.property('text');
-                res.body[0].should.have.property('is_view');
-                res.body[0].is_view.should.equal(false);
+                res.body[0].should.have.property('isView');
+                res.body[0].isView.should.equal(false);
                 done();
             });
     });

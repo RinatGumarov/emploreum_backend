@@ -23,18 +23,18 @@ module.exports.func = (router) => {
             return res.status(500).send({ error: 'Could not attach vacancy' });
         }
     });
-
-
+    
+    
     router.get('/vacancy/recommended', async (req, res) => {
         let recommendedVacancies = await vacancyService.getRecommendedVacancies(req.user.employee);
         res.json(recommendedVacancies);
     });
-
+    
     router.get('/info/:employeeUserId([0-9]+)', async (req, res) => {
         let employee = await employeeService.getByUserId(req.params.employeeUserId);
         res.json(employee);
     });
-
+    
     router.get('/skills/:employeeUserId([0-9]+)', async (req, res) => {
         let employeeSkills = await cvService.getEmployeeSpecification(req.params.employeeUserId);
         res.json(employeeSkills);
@@ -44,7 +44,7 @@ module.exports.func = (router) => {
         let endedContractsCount = await employeeService.countEndedWorks(req.user.employee);
         let currentContractsCount = await employeeService.countCurrentWorks(req.user.employee);
         let income = await employeeService.getIncome(req.user.employee);
-        let balance = await balanceService.getBalance(req.user.account_address);
+        let balance = await balanceService.getBalance(req.user.accountAddress);
         return res.send({
             endedContractsCount,
             currentContractsCount,
@@ -53,9 +53,9 @@ module.exports.func = (router) => {
             address: req.user.account_address
         });
     });
-
+    
     router.get('/address', async (req, res) => {
-        return res.send(req.user.account_address);
+        return res.send(req.user.accountAddress);
     });
 
     router.get('/contracts/awaited', async (req, res) => {

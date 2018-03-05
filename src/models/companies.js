@@ -4,30 +4,37 @@ module.exports = (sequelize, DataTypes) => {
         about: DataTypes.TEXT,
         logo: DataTypes.STRING,
         city: DataTypes.STRING,
-        response_text: DataTypes.TEXT,
+        responseText: {
+            type: DataTypes.TEXT,
+            field: "response_text"
+        },
         contract: DataTypes.STRING,
+        userId: {
+            type: DataTypes.BIGINT,
+            field: "user_id"
+        }
     }, {
         timestamps: false
     });
-
+    
     companies.associate = function (models) {
         companies.belongsToMany(models.profiles, {
-            through: 'company_profiles',
-            foreignKey: 'company_id'
+            through: 'companyProfiles',
+            foreignKey: 'companyId'
         });
         companies.belongsTo(models.users, {
-            foreignKey: 'user_id',
+            foreignKey: 'userId',
         });
         companies.hasMany(models.chats, {
-            foreignKey: 'company_id',
+            foreignKey: 'companyId',
         });
         companies.hasMany(models.vacancies, {
-            foreignKey: 'company_id',
+            foreignKey: 'companyId',
         });
         companies.hasMany(models.tests, {
-            foreignKey: 'company_id',
+            foreignKey: 'companyId',
         });
     };
-
+    
     return companies;
 };

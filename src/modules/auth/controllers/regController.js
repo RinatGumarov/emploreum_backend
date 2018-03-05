@@ -12,8 +12,8 @@ const FIRST_STATE = 1;
 const SECOND_STATE = 2;
 
 module.exports.func = (router) => {
-    
-    
+
+
     /**
      * уввеличивать статус пользователя пока все не заполнит
      * является функцией вызова promise
@@ -34,7 +34,7 @@ module.exports.func = (router) => {
             userId: user.id,
         });
     };
-    
+
     /**
      * шаг регистрации с высыланием проверочного кода на почту
      */
@@ -42,21 +42,21 @@ module.exports.func = (router) => {
         if (!(await usersService.isEmailFree(req.body.email))) {
             res.status(400).json('email is already in use');
         } else {
-            
+
             if (String(req.body.password) !== String(req.body.passwordConfirmation)) {
                 return res.status(400).json("passwords not equal");
             }
-            
+
             req.session.email = req.body.email;
             req.session.password = req.body.password;
             req.session.role = req.body.role;
             req.session.verifyCode = messageService.sendCodeToUser(req.body.email);
             res.json({data: 'success'});
-            
+
             logger.log(req.session.verifyCode);
         }
     });
-    
+
     /**
      * шаг проверки высланного кода на почту
      * если пароль верный то регистрируем и аунтифицируем
@@ -67,8 +67,8 @@ module.exports.func = (router) => {
             if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
                 let keyPassword = web3.utils.randomHex(32);
                 let encryptedKey = JSON.stringify(account.generateAccount(keyPassword));
-                
-                let account_address = account.decryptAccount(JSON.parse(encryptedKey), keyPassword).address;
+
+                let accountAddress = account.decryptAccount(JSON.parse(encryptedKey), keyPassword).address;
                 let user = await usersService.saveUser(
                     req.session.email,
                     req.session.password,
@@ -76,7 +76,7 @@ module.exports.func = (router) => {
                     FIRST_STATE,
                     encryptedKey,
                     keyPassword,
-                    account_address
+                    accountAddress
                 );
                 req.login(user, (err) => {
                     if (err) {
@@ -99,7 +99,7 @@ module.exports.func = (router) => {
             });
         }
     });
-    
+
     /**
      * Шаг заполнения скилов и профилей компании
      * или работника
@@ -112,12 +112,9 @@ module.exports.func = (router) => {
                 case 'EMPLOYEE':
                     let employee = await employeesService.save(req.user.id);
                     for (let i = 0; i < profiles.length; i++) {
-                        let profile = profiles[i];
-                        let cv = await cvService.save(profile, employee);
-                        let skills = profile.skills;
-                        // сохраняем скилы
-                        for (let j = 0; j < skills.length; j++) {
-                            await cvService.addSkill(cv, skills[j])
+                        let cv = await cvService.save(profiles[i], employee);
+                        for (let j = 0; j < profiles[i].skills.length; j++) {
+                            await cvService.addSkill(cv, profiles[i].skills[j])
                         }
                     }
                     break;
@@ -136,7 +133,7 @@ module.exports.func = (router) => {
             });
         }
     });
-    
+
     /**
      * шаг заполнения лично информации
      */
@@ -158,7 +155,7 @@ module.exports.func = (router) => {
             });
         }
     });
-    
+
     /**
      * метод удаления пользователя из системы
      */
@@ -169,7 +166,7 @@ module.exports.func = (router) => {
             res.status(500).json('server error');
         }
     });
-    
+
     return router;
-    
+
 };

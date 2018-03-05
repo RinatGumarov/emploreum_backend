@@ -1,4 +1,8 @@
 const models = require("../../../core/models");
+
+const TestScores = models.testScores;
+const PassedQuestions = models.passedQuestions;
+
 const Op = models.sequelize.Op;
 const logger = require('../../../utils/logger');
 const _ = require('lodash');
@@ -7,29 +11,46 @@ let instance;
 
 class TestScoresService {
 
-    async save(testId, employee, correct) {
+    async saveOrUpdate(testId, employee) {
         let testScore;
-        testScore = await models.test_scores.findOne({
+        testScore = await TestScores.findOne({
             where: {
                 [Op.and]: {
-                    employee_id: {
+                    employeeId: {
                         [Op.eq]: employee.id,
                     },
-                    test_id: {
+                    testId: {
                         [Op.eq]: testId,
                     }
                 }
             },
         });
         if (!testScore)
-            testScore = await models.test_scores.create({
-                employee_id: employee.id,
-                test_id: testId,
+            testScore = await TestScores.build({
+                employeeId: employee.id,
+                testId: testId,
             });
-        testScore.questions_count += 1;
-        if (correct)
-            testScore.questions_count += 1;
+        testScore.passed = (await this.findEmployeeTestAnswers(employee, testId))
+            .reduce((acc, cur) => {
+                return acc += 1
+            }, 0);
+
         return await testScore.save();
+    }
+
+    async findEmployeeTestAnswers(employee, testId) {
+        return await PassedQuestions.findAll({
+            where: {
+                [Op.and]: {
+                    testId: {
+                        [Op.eq]: testId,
+                    },
+                    employeeId: {
+                        [Op.eq]: employee.id,
+                    }
+                },
+            }
+        });
     }
 
 }

@@ -22,13 +22,13 @@ class EmployeesService {
      * @param userId
      */
     async save(userId) {
-
+        
         let savedEmployees = await Employees.findOrCreate({
             where: {
-                user_id: { [Op.eq]: userId }
+                userId: {[Op.eq]: userId}
             },
             defaults: {
-                user_id: userId
+                userId: userId
             }
         });
 
@@ -36,7 +36,7 @@ class EmployeesService {
     }
 
     /**
-     * обновить рабоника
+     * обновить работника
      * @param userId
      * @param params
      * @returns {Promise<*>}
@@ -44,7 +44,7 @@ class EmployeesService {
     async update(employee, params) {
         return await employee.update(params);
     }
-
+    
     /**
      * получить работника по юзеру
      * @param userId
@@ -53,13 +53,13 @@ class EmployeesService {
     async getByUserId(userId) {
         let employee = await Employees.findOne({
             where: {
-                user_id: { [Op.eq]: userId }
+                userId: {[Op.eq]: userId}
             },
             include: [models.users]
         });
         return employee;
     }
-
+    
     /**
      * Прикрепить работника к вакансии по нажатию "Откликнуться".
      * @param userId
@@ -91,7 +91,7 @@ class EmployeesService {
             firstName: employee.name,
             lastName: employee.name,
             email: employee.user.email,
-            address: employee.user.account_address
+            address: employee.user.accountAddress
         };
 
         return Account.registerEmployee(blockchainEmployee).then(contract => {
@@ -157,8 +157,8 @@ class EmployeesService {
         return await Works.count({
             where: {
                 [Op.and]: {
-                    employee_id: {
-                        [Op.eq]: employee.id
+                    employeeId: {
+                        [Op.eq]: employee.id,
                     },
                     status: {
                         [Op.or]: {
@@ -175,8 +175,8 @@ class EmployeesService {
         return await Works.count({
             where: {
                 [Op.and]: {
-                    employee_id: {
-                        [Op.eq]: employee.id
+                    employeeId: {
+                        [Op.eq]: employee.id,
                     },
                     status: {
                         [Op.and]: {
@@ -193,8 +193,8 @@ class EmployeesService {
         return await Works.findAll({
             where: {
                 [Op.and]: {
-                    employee_id: {
-                        [Op.eq]: employee.id
+                    employeeId: {
+                        [Op.eq]: employee.id,
                     },
                     status: {
                         [Op.and]: {
@@ -214,7 +214,7 @@ class EmployeesService {
         let currentContracts = await this.findCurrentWorksWithVacancies(employee);
         let result = 0;
         for (let contract of currentContracts) {
-            result += contract.vacancy.week_payment;
+            result += contract.vacancy.weekPayment;
         }
         return parseFloat(result.toFixed(10));
     }
