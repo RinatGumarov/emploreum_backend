@@ -4,7 +4,7 @@ let instance;
 const Op = models.sequelize.Op;
 
 class ProfileService {
-    
+
     /**
      * @returns {Promise<Array<Model>>}
      */
@@ -13,20 +13,6 @@ class ProfileService {
         return profiles;
     }
 
-
-    async findProfileSkill(profileId, skillId) {
-        return await Profiles.findOne({
-            where: {
-                profile_id: {
-                    [Op.eq]: profileId,
-                },
-                skill_id: {
-                    [Op.eq]: skillId,
-                }
-            }
-        });
-    }
-    
 }
 
 instance = new ProfileService();

@@ -2,18 +2,23 @@ const workService = require('../services/workService');
 const employeeService = require('../../employee/services/employeeService');
 const configUtils = require('../../../utils/config');
 const logger = require('../../../utils/logger');
-const mutex = require('../utils/aproveMutex');
+const mutex = require('../utils/mutex');
 const b = require('../services/blockchainEventService');
 
 module.exports.func = (router) => {
 
     router.post('/approve', async (req, res) => {
-        let p = b.get(req.user.company.user_id);
-        if (!mutex.addMutex(req.user.company.user_id, req.body.userId, req.body.vacancyId)) {
+        let object = {
+            userId: req.user.company.user_id,
+            employeeId: req.body.userId,
+            vacancyId: req.body.vacancyId
+        };
+
+        if (!mutex.addMutex(object))
             return res.status(500).json({ data: 'Multiple approve request.' });
-        }
 
         req.connection.setTimeout(1000 * 60 * 10);
+
         let vacancyId = req.body.vacancyId;
         let address = req.user.account_address;
         let employee = await employeeService.getByUserId(req.body.userId);
@@ -21,9 +26,8 @@ module.exports.func = (router) => {
 
         let result = await workService.approve(vacancyId, address, employee, company, req.user);
 
-        if (!mutex.removeMutex(req.user.company.id, req.body.userId, req.body.vacancyId)) {
+        if (!mutex.removeMutex(object))
             result = false;
-        }
 
         return result ?
             res.json({ data: 'success' })

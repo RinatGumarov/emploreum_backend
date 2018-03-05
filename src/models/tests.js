@@ -2,6 +2,7 @@ module.exports = (sequelize, DataTypes) => {
 
     let tests = sequelize.define('tests', {
         name: DataTypes.TEXT,
+        duration: DataTypes.INTEGER
     }, {
         timestamps: false
     });

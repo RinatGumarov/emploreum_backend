@@ -6,16 +6,19 @@ const Op = models.sequelize.Op;
 class ProfileSkillService {
 
     async findProfileSkill(profileId, skillId) {
-        return await ProfileSkills.findOne({
+        let profileSkill = await ProfileSkills.findOne({
             where: {
-                profile_id: {
-                    [Op.eq]: profileId,
-                },
-                skill_id: {
-                    [Op.eq]: skillId,
+                [Op.and]: {
+                    profile_id: {
+                        [Op.eq]: profileId,
+                    },
+                    skill_id: {
+                        [Op.eq]: skillId,
+                    }
                 }
             }
         });
+        return profileSkill;
     }
 
 }

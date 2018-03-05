@@ -30,17 +30,10 @@ module.exports = {
                 onDelete: 'CASCADE',
             },
             questions_count: {
-                type: Sequelize.BIGINT,
-                allowNull: false,
-                references: {
-                    model: 'questions',
-                    key: 'id',
-                },
-                cascade: true,
-                onDelete: 'CASCADE',
+                type: Sequelize.INTEGER
             },
             correct_answers_count: {
-                type: Sequelize.TEXT,
+                type: Sequelize.INTEGER,
             },
         });
     },
