@@ -172,7 +172,7 @@
       },
       {
         "attributes": {
-          "SourceUnit": 1740,
+          "SourceUnit": 1749,
           "absolutePath": "zeppelin-solidity/contracts/ownership/Ownable.sol",
           "file": "zeppelin-solidity/contracts/ownership/Ownable.sol",
           "scope": 199,
@@ -187,7 +187,7 @@
       },
       {
         "attributes": {
-          "SourceUnit": 1586,
+          "SourceUnit": 1595,
           "absolutePath": "/D/node_projects/smart/smart_contract_example/contracts/Work.sol",
           "file": "./Work.sol",
           "scope": 199,
@@ -203,14 +203,14 @@
       {
         "attributes": {
           "contractDependencies": [
-            1739
+            1748
           ],
           "contractKind": "contract",
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
             198,
-            1739
+            1748
           ],
           "name": "Company",
           "scope": 199
@@ -227,7 +227,7 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "Ownable",
-                  "referencedDeclaration": 1739,
+                  "referencedDeclaration": 1748,
                   "type": "contract Ownable"
                 },
                 "id": 4,
@@ -468,7 +468,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 2340,
+                              "referencedDeclaration": 2349,
                               "type": "function (bool) pure",
                               "value": "require"
                             },
@@ -524,7 +524,7 @@
                                           "overloadedDeclarations": [
                                             null
                                           ],
-                                          "referencedDeclaration": 2337,
+                                          "referencedDeclaration": 2346,
                                           "type": "msg",
                                           "value": "msg"
                                         },
@@ -543,7 +543,7 @@
                                       "overloadedDeclarations": [
                                         null
                                       ],
-                                      "referencedDeclaration": 1687,
+                                      "referencedDeclaration": 1696,
                                       "type": "address",
                                       "value": "owner"
                                     },
@@ -589,7 +589,7 @@
                                           "overloadedDeclarations": [
                                             null
                                           ],
-                                          "referencedDeclaration": 2337,
+                                          "referencedDeclaration": 2346,
                                           "type": "msg",
                                           "value": "msg"
                                         },
@@ -1008,7 +1008,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 1687,
+                                  "referencedDeclaration": 1696,
                                   "type": "address",
                                   "value": "owner"
                                 },
@@ -1039,7 +1039,7 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 2337,
+                                  "referencedDeclaration": 2346,
                                   "type": "msg",
                                   "value": "msg"
                                 },
@@ -1142,7 +1142,7 @@
                       "overloadedDeclarations": [
                         null
                       ],
-                      "referencedDeclaration": 1713,
+                      "referencedDeclaration": 1722,
                       "type": "modifier ()",
                       "value": "onlyOwner"
                     },
@@ -2026,7 +2026,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 2340,
+                              "referencedDeclaration": 2349,
                               "type": "function (bool) pure",
                               "value": "require"
                             },
@@ -2802,5 +2802,5 @@
   },
   "networks": {},
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-03-05T17:33:56.108Z"
+  "updatedAt": "2018-03-06T00:24:58.463Z"
 }
