@@ -137,7 +137,7 @@ class VacanciesService {
      */
     async getCandidatesByVacancyId(vacancyId) {
         let candidates = await Employees.findAll({
-            attributes: ['name', 'photo_path'],
+            attributes: ["name", "photoPath"],
             include: [{
                 model: models.users,
                 attributes: ['id']
@@ -213,7 +213,19 @@ class VacanciesService {
             else {
                 // если тест уже засабмитили то надо бы ему махнуть ends time
                 if (testEnds.dataValues.ends !== null && testEnds.dataValues.ends < new Date()) {
-                    if ((2 + 2) === 4)
+                    let testScore = await models.testScores.findOne({
+                        where: {
+                            [Op.and]: {
+                                employeeId: {
+                                    [Op.eq]: employee.id,
+                                },
+                                testId: {
+                                    [Op.eq]: vacancy.testId,
+                                }
+                            }
+                        }
+                    });
+                    if (testScore.passed)
                         return 'available';
                     else
                         return 'failed';
@@ -228,8 +240,8 @@ class VacanciesService {
         if (vacancy.companyId !== company.id) {
             return false;
         }
-        await messageService.sendToEmployee(company, employee.id, 'You have new invitation to vacancy');
-        await socketSender.sendSocketMessage(`${employee.user_id}:invitation`, vacancy);
+        await messageService.sendToEmployee(company, employee.id, "You have new invitation to vacancy");
+        await socketSender.sendSocketMessage(`${employee.userId}:invitation`, vacancy);
         return true;
     }
 }
