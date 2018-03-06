@@ -20,7 +20,7 @@ class SkillService {
                 attributes: [],
                 model: Profiles,
                 required: true,
-                where: {id: {[Op.eq]: id}},
+                where: { id: { [Op.eq]: id } }
             }]
         });
         
@@ -43,15 +43,13 @@ class SkillService {
                     required: true,
                     model: models.employees,
                     where: {
-                        id: {[Op.eq]: employeeId}
+                        id: { [Op.eq]: employeeId }
                     }
                 }
             }]
         });
         return skills;
     }
-    
-    
 }
 
 instance = new SkillService();

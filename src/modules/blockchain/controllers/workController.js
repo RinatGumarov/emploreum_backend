@@ -3,7 +3,6 @@ const employeeService = require('../../employee/services/employeeService');
 const configUtils = require('../../../utils/config');
 const logger = require('../../../utils/logger');
 const mutex = require('../utils/mutex');
-const b = require('../services/blockchainEventService');
 
 module.exports.func = (router) => {
 
