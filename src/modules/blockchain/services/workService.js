@@ -210,10 +210,14 @@ class WorkService {
         let employeeContractAddress = work.employee.contract;
         let skillCodes = await this.generateCodes(work.vacancyId);
 
-        return await skillCodes.forEach(async code => {
+        let promises = [];
+
+        skillCodes.forEach(async code => {
             let rating = this.calculateRating(workAddress, employeeContractAddress);
-            return await employeeBlockchainUtil.changeSkillRating(employeeContractAddress, code, rating);
+            promises.push(employeeBlockchainUtil.changeSkillRating(employeeContractAddress, code, rating));
         });
+
+        await Promise.all(promises);
     }
 
     async createContractTransaction(transaction) {
