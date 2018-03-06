@@ -44,8 +44,6 @@ module.exports.func = (router) => {
             question.testId = req.params.id;
             question = await testService.saveQuestion(question);
             for (let answer of req.body.question.answers) {
-                answer.isTrue = answer.isTrue;
-                delete answer.isTrue;
                 answer.questionId = question.id;
                 await testService.saveAnswer(answer);
             }

@@ -31,7 +31,7 @@ class VacanciesService {
 
     async findAllVacanciesByCompany(company) {
 
-        let option = {where: {}};
+        let option = { where: {} };
 
         if (company) {
             option.where.companyId = {
@@ -67,14 +67,14 @@ class VacanciesService {
     async getRecommendedVacancies(employee) {
         let skills = await skillService.getEmployeeSkills(employee);
         let skillsIds = skills.map((skill) => {
-            return skill.id
+            return skill.id;
         });
 
         let queryStr = queryScanner.company.recommended_vacancies;
         return await models.sequelize.query(queryStr,
             {
                 replacements: {
-                    skillsString: skillsIds.join(",")
+                    skillsString: skillsIds.join(',')
                 },
                 type: models.sequelize.QueryTypes.SELECT,
                 model: Vacancies,
@@ -121,7 +121,7 @@ class VacanciesService {
                         required: true,
                         model: models.vacancies,
                         where: {
-                            id: {[Op.eq]: vacancyId}
+                            id: { [Op.eq]: vacancyId }
                         }
                     }]
                 }
@@ -137,20 +137,20 @@ class VacanciesService {
      */
     async getCandidatesByVacancyId(vacancyId) {
         let candidates = await Employees.findAll({
-            attributes: ["name", "photo_path"],
+            attributes: ["name", "photoPath"],
             include: [{
                 model: models.users,
-                attributes: ["id"]
+                attributes: ['id']
             }, {
                 attributes: [],
                 required: true,
                 model: models.vacancies,
                 where: {
-                    id: {[Op.eq]: vacancyId}
+                    id: { [Op.eq]: vacancyId }
                 }
             }]
         });
-        return candidates
+        return candidates;
     }
 
     /**
@@ -169,10 +169,10 @@ class VacanciesService {
             }
         });
         let company = await companyService.findByVacancyId(vacancyId);
-        await messageService.sendToEmployee(company, employee.id, "вам отклонили в вакансии");
+        await messageService.sendToEmployee(company, employee.id, 'вам отклонили в вакансии');
         socketSender.sendSocketMessage(`${userId}:vacancy`, {
-            type: "DELETE",
-            id: vacancyId,
+            type: 'DELETE',
+            id: vacancyId
         });
         return true;
     }
@@ -189,7 +189,7 @@ class VacanciesService {
         let vacancy = await Vacancies.findOne({
             where: {
                 id: {
-                    [Op.eq]: vacancyId,
+                    [Op.eq]: vacancyId
                 }
             },
             include: [{
@@ -197,12 +197,12 @@ class VacanciesService {
                 required: false,
                 where: {
                     id: {
-                        [Op.eq]: employeeId,
+                        [Op.eq]: employeeId
                     }
                 }
             }]
         });
-        if (vacancy.employees.length !== 0 )
+        if (vacancy.employees.length !== 0)
             return 'submitted';
         if (vacancy.testId === null)
             return 'available';
@@ -213,7 +213,19 @@ class VacanciesService {
             else {
                 // если тест уже засабмитили то надо бы ему махнуть ends time
                 if (testEnds.dataValues.ends !== null && testEnds.dataValues.ends < new Date()) {
-                    if ((2 + 2) === 4)
+                    let testScore = await models.testScores.findOne({
+                        where: {
+                            [Op.and]: {
+                                employeeId: {
+                                    [Op.eq]: employee.id,
+                                },
+                                testId: {
+                                    [Op.eq]: vacancy.testId,
+                                }
+                            }
+                        }
+                    });
+                    if (testScore.passed)
                         return 'available';
                     else
                         return 'failed';
@@ -229,11 +241,9 @@ class VacanciesService {
             return false;
         }
         await messageService.sendToEmployee(company, employee.id, "You have new invitation to vacancy");
-        await socketSender.sendSocketMessage(`${employee.user_id}:invitation`, vacancy);
+        await socketSender.sendSocketMessage(`${employee.userId}:invitation`, vacancy);
         return true;
     }
-
-
 }
 
 instance = new VacanciesService();
