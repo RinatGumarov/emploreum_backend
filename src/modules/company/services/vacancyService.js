@@ -225,7 +225,7 @@ class VacanciesService {
                             }
                         }
                     });
-                    if (testScore.passed)
+                    if (testScore && testScore.passed)
                         return 'available';
                     else
                         return 'failed';

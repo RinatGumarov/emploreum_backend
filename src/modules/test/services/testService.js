@@ -116,7 +116,7 @@ class TestService {
     }
 
     async getCorrectAnswers(questionId) {
-        return await models.answers.findAll({
+        let answers = await models.answers.findAll({
             where: {
                 [Op.and]: {
                     questionId: {
@@ -127,7 +127,8 @@ class TestService {
                     },
                 }
             }
-        })
+        });
+        return answers;
     }
 
     async startTest(employee, test) {
