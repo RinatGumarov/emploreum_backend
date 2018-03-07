@@ -46,7 +46,8 @@ module.exports.func = (router) => {
      */
     router.get('/run/salary/:token', async (req, res) => {
         let config = configUtils.get('server');
-        if (req.params.token === config.token) {
+        let token = process.env.SALARY_TOKEN || config.token;
+        if (req.params.token === token) {
             try {
                 await workService.sendWeekSalaryForAllCompanies();
                 res.send({ data: 'successful' });
