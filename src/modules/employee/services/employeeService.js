@@ -146,7 +146,7 @@ class EmployeesService {
                     attributes: ['name']
                 }]
             }],
-            attributes: ['userId', 'name', 'surname', 'photo_path', 'city', 'birthday']
+            attributes: ['userId', 'name', 'surname', 'photoPath', 'city', 'birthday']
         });
 
         employees = await employees.map((employee) => {
