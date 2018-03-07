@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const models = require('./models');
 
 let queryScannerInstance;
 
@@ -25,6 +26,18 @@ class QueryScanner {
             this[moduleName][queryName] = fs.readFileSync(filePath).toString().split(String.fromCharCode(10)).join(" ");
         });
     }
+    
+    /**
+     * метод для парсинга моделей в нативных запросах
+     * @param query
+     * @param options
+     * @returns {Promise<*>}
+     */
+    async query(query, options) {
+        options.hasJoin = true;
+        models.vacancies._validateIncludedElements(options);
+        return await models.sequelize.query(query, options)
+    };
     
 }
 

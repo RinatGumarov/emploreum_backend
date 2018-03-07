@@ -20,43 +20,42 @@ const Op = models.sequelize.Op;
 let instance;
 
 class VacanciesService {
-
+    
     async save(params) {
         return await Vacancies.create(params);
     }
-
+    
     async addProfileSkillToVacancy(options) {
         return await VacancyProfileSkills.create(options)
     }
-
+    
     async findAllVacanciesByCompany(company) {
-
-        let option = { where: {} };
-
+        
+        let option = {where: {}};
+        
         if (company) {
             option.where.companyId = {
                 [Op.eq]: company.id,
             }
         }
-
+        
         option.where.opened = true;
-
+        
         // преобразовыываем в нормалььный вид
         let vacancies = await Vacancies.findAll(option);
-
+        
         // преобразовывем в человечиский вид)
         for (let i = 0; vacancies.length && i < vacancies.length; ++i) {
-
-            let profiles = await this.getVacancyProfiles(vacancies[i].id);
+            
+            let profiles = await this.getVacancySpecification(vacancies[i].id);
             vacancies[i].dataValues.profiles = profiles;
         }
-
+        
         return vacancies;
-
+        
     }
-
+    
     /**
-     * //toDo
      * метод получения рекомендуемых вакансий по профилю работника
      * Добавить обработку в скрипте array_positions
      * для выявления сходства направления скила работника и направления
@@ -69,67 +68,40 @@ class VacanciesService {
         let skillsIds = skills.map((skill) => {
             return skill.id;
         });
-
+        
+        
         let queryStr = queryScanner.company.recommended_vacancies;
-        return await models.sequelize.query(queryStr,
-            {
-                replacements: {
-                    skillsString: skillsIds.join(',')
-                },
-                type: models.sequelize.QueryTypes.SELECT,
-                model: Vacancies,
-                include: [models.companies]
-            });
+        return await queryScanner.query(queryStr, {
+            model: models.vacancies,
+            include: [models.companies],
+            replacements: {
+                skillsString: skillsIds.join(",")
+            },
+        });
+        
+        
     }
-
+    
     async findById(id) {
         return await Vacancies.findById(id);
     }
-
+    
     /**
      * найти все профили и скилы вакансии
      * @param vacancyId
      * @returns {Promise<Array<Model>>}
      */
-    async getVacancyProfiles(vacancyId) {
-        let profiles = await Profiles.findAll({
-            include: [
-                {
-                    model: models.skills,
-                    include: [{
-                        attributes: [],
-                        required: true,
-                        model: models.profileSkills,
-                        as: 'profileSkillsTrough',
-                        include: [{
-                            attributes: [],
-                            required: true,
-                            model: models.vacancies,
-                            where: {
-                                id: {[Op.eq]: vacancyId}
-                            }
-                        }]
-                    }]
-                },
-                {
-                    attributes: [],
-                    required: true,
-                    model: models.profileSkills,
-                    as: 'profileSkillsTrough',
-                    include: [{
-                        attributes: [],
-                        required: true,
-                        model: models.vacancies,
-                        where: {
-                            id: { [Op.eq]: vacancyId }
-                        }
-                    }]
-                }
-            ]
+    async getVacancySpecification(vacancyId) {
+        let queryStr = queryScanner.company.vacancy_specifications;
+        return await queryScanner.query(queryStr, {
+            model: models.profiles,
+            include: [models.skills],
+            replacements: {
+                vacancyId: vacancyId
+            },
         });
-        return profiles;
     }
-
+    
     /**
      * получить всех кто постучался
      * @param vacancyId
@@ -152,7 +124,7 @@ class VacanciesService {
         });
         return candidates;
     }
-
+    
     /**
      * Удалить связть вакансии и работника
      * @param vacancyId
@@ -176,7 +148,7 @@ class VacanciesService {
         });
         return true;
     }
-
+    
     /**
      * может ли данный емплой постучаться на вакансию
      * @param vacancyId
@@ -234,7 +206,7 @@ class VacanciesService {
             }
         }
     }
-
+    
     async sendInvitationToEmployee(company, vacancy, employeeUserId) {
         let employee = await employeeService.getByUserId(employeeUserId);
         if (vacancy.companyId !== company.id) {
@@ -244,6 +216,8 @@ class VacanciesService {
         await socketSender.sendSocketMessage(`${employee.userId}:invitation`, vacancy);
         return true;
     }
+    
+    
 }
 
 instance = new VacanciesService();

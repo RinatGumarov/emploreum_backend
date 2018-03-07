@@ -24,11 +24,11 @@ module.exports.func = (router) => {
                     });
                 });
             });
-            return res.status(200).send(vacancy);
+            return res.status(200).json(vacancy);
         }
         catch (err) {
             logger.error(err.stack);
-            return res.status(500).send({error: err.message});
+            return res.status(500).json({error: err.message});
         }
     });
 
@@ -39,10 +39,10 @@ module.exports.func = (router) => {
         try {
             let company = req.user.company;
             let vacancies = await vacancyService.findAllVacanciesByCompany(company);
-            res.send(vacancies);
+            res.json(vacancies);
         } catch (err) {
             logger.error(err.stack);
-            return res.status(500).send({error: err.message});
+            return res.status(500).json({error: err.message});
         }
     });
 
@@ -56,20 +56,20 @@ module.exports.func = (router) => {
                 let available = await vacancyService.isAvailable(req.params.id, req.user.id);
                 vacancy.setDataValue("available", available);
             }
-            res.send(vacancy);
+            res.json(vacancy);
         } catch (err) {
             logger.error(err.stack);
-            return res.status(500).send({error: err.message});
+            return res.status(500).json({error: err.message});
         }
     });
 
     router.get('/vacancy/:id([0-9]+)/specification', async (req, res) => {
         try {
-            let skills = await vacancyService.getVacancyProfiles(req.params.id);
-            res.send(skills);
+            let specification = await vacancyService.getVacancySpecification(req.params.id);
+            res.json(specification);
         } catch (err) {
             logger.error(err.stack);
-            return res.status(500).send({error: err.message});
+            return res.status(500).json({error: err.message});
         }
     });
 
@@ -77,10 +77,10 @@ module.exports.func = (router) => {
     router.get('/vacancy/:id([0-9]+)/candidates', async (req, res) => {
         try {
             let candidates = await vacancyService.getCandidatesByVacancyId(req.params.id);
-            res.send(candidates);
+            res.json(candidates);
         } catch (err) {
             logger.error(err.stack);
-            return res.status(500).send({error: err.message});
+            return res.status(500).json({error: err.message});
         }
     });
 
@@ -90,10 +90,10 @@ module.exports.func = (router) => {
     router.post('/vacancy/:vacancyId([0-9]+)/candidate/:candidatesId([0-9]+)/reject', async (req, res) => {
         try {
             await vacancyService.deleteAwaitedContractByVacancyId(req.params.vacancyId, req.params.candidatesId);
-            res.send({data: "success"});
+            res.json({data: "success"});
         } catch (err) {
             logger.error(err.stack);
-            return res.status(500).send({error: err.message});
+            return res.status(500).json({error: err.message});
         }
     });
 
@@ -103,10 +103,10 @@ module.exports.func = (router) => {
     router.get('/vacancy/:vacancyId([0-9]+)/available', async (req, res) => {
         try {
             let isAvailable = await vacancyService.isAvailable(req.params.vacancyId, req.user.id);
-            res.send(isAvailable);
+            res.json(isAvailable);
         } catch (err) {
             logger.error(err.stack);
-            res.send({error: err.message});
+            res.json({error: err.message});
         }
     });
 
@@ -114,8 +114,8 @@ module.exports.func = (router) => {
     router.post('/vacancy/:id([0-9]+)/invite', async (req, res) => {
         let vacancy = await vacancyService.findById(req.params.id);
         if (await vacancyService.sendInvitationToEmployee(req.user.company, vacancy, req.body.employeeId))
-            return res.send({data: 'success'});
-        return res.status(405).send({error: 'You are not provided to invite employee to another\'s vacancy'});
+            return res.json({data: 'success'});
+        return res.status(405).json({error: 'You are not provided to invite employee to another\'s vacancy'});
 
     });
 
