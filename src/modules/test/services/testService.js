@@ -93,11 +93,16 @@ class TestService {
         });
     }
 
-    async findPassedQuestions(testId) {
+    async findPassedQuestions(employee, test) {
         return await PassedQuestions.findAll({
             where: {
-                testId: {
-                    [Op.eq]: testId,
+                [Op.and]: {
+                    testId: {
+                        [Op.eq]: test.id,
+                    },
+                    employeeId: {
+                        [Op.eq]: employee.id
+                    }
                 }
             },
         })
@@ -116,7 +121,7 @@ class TestService {
     }
 
     async getCorrectAnswers(questionId) {
-        return await models.answers.findAll({
+        let answers = await models.answers.findAll({
             where: {
                 [Op.and]: {
                     questionId: {
@@ -127,15 +132,22 @@ class TestService {
                     },
                 }
             }
-        })
+        });
+        return answers;
     }
 
     async startTest(employee, test) {
-        return await TestEnds.create({
+        let ends = new Date();
+        logger.log(ends);
+        if (test.duration)
+            ends.setMinutes(ends.getMinutes() + test.duration);
+        logger.log(ends);
+        let testEnds = await TestEnds.create({
             employeeId: employee.id,
             testId: test.id,
-            ends: test.duration ? new Date().setMinutes(new Date().getMinutes() + test.duration) : null
+            ends: ends
         });
+        return testEnds;
     }
 
     async alreadyStarted(employee, test) {
@@ -159,7 +171,7 @@ class TestService {
         });
     }
 
-    async submitTest(employee, test){
+    async submitTest(employee, test) {
         let testEnds = await this.findTestEnds(employee.id, test.id);
         testEnds.ends = new Date();
         return await testEnds.save();
@@ -169,6 +181,8 @@ class TestService {
         if (!test.duration)
             return true;
         let started = await this.findTestEnds(employee.id, test.id);
+        if (!started)
+            return false;
         return (started.ends === null || started.ends > new Date());
     }
 
@@ -182,7 +196,7 @@ class TestService {
     countValueOfAnswer(isTrue, answers, correctAnswers, type) {
         if (type === 'input')
             return isTrue ? 1 : 0;
-        return (isTrue ? 1 : -1) * (1 / (isTrue?correctAnswers.length : answers.length));
+        return (isTrue ? 1 : -1) * (1 / (isTrue ? correctAnswers.length : answers.length));
     }
 }
 

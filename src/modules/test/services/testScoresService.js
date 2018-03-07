@@ -32,7 +32,7 @@ class TestScoresService {
             });
         testScore.passed = (await this.findEmployeeTestAnswers(employee, testId))
             .reduce((acc, cur) => {
-                return acc += 1
+                return acc += cur.value;
             }, 0) / 1 > 0.8;
 
         return await testScore.save();

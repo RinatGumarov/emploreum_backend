@@ -212,7 +212,7 @@ class VacanciesService {
                 return 'start';
             else {
                 // если тест уже засабмитили то надо бы ему махнуть ends time
-                if (testEnds.dataValues.ends !== null && testEnds.dataValues.ends < new Date()) {
+                if (!(testEnds.ends === null || testEnds.ends > new Date())) {
                     let testScore = await models.testScores.findOne({
                         where: {
                             [Op.and]: {
@@ -225,7 +225,7 @@ class VacanciesService {
                             }
                         }
                     });
-                    if (testScore.passed)
+                    if (testScore && testScore.passed)
                         return 'available';
                     else
                         return 'failed';
