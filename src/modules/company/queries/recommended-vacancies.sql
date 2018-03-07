@@ -1,6 +1,21 @@
 SELECT
-  vacancies.*,
-  c2.name
+  "vacancies"."id",
+  "vacancies"."name",
+  "vacancies"."info",
+  "vacancies"."week_payment" AS "weekPayment",
+  "vacancies"."duration",
+  "vacancies"."opened",
+  "vacancies"."company_id"   AS "companyId",
+  "vacancies"."test_id"      AS "testId",
+  "company"."id"             AS "company.id",
+  "company"."name"           AS "company.name",
+  "company"."about"          AS "company.about",
+  "company"."logo"           AS "company.logo",
+  "company"."city"           AS "company.city",
+  "company"."response_text"  AS "company.responseText",
+  "company"."contract"       AS "company.contract",
+  "company"."user_id"        AS "company.userId",
+  "company"."name"           AS "company.name"
 FROM (SELECT
         vac_skill_array.v_id,
         vac_skill_array.count_skills,
@@ -27,5 +42,6 @@ FROM (SELECT
         vac_skill_array.count_skills
      ) AS employ_vac_accept
   JOIN vacancies ON vacancies.id = employ_vac_accept.v_id
-  JOIN companies c2 ON vacancies.company_id = c2.id
-WHERE employ_vac_accept.count_merged_skill_from_vacancy * 100 / employ_vac_accept.count_skills > 70 AND vacancies.opened = true
+  JOIN companies company ON vacancies.company_id = company.id
+WHERE employ_vac_accept.count_merged_skill_from_vacancy * 100 / employ_vac_accept.count_skills > 70 AND
+      vacancies.opened = TRUE
