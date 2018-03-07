@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
         name: DataTypes.STRING,
         isTrue: {
             type: DataTypes.BOOLEAN,
-            filed: "is_true"
+            field: "is_true"
         },
         questionId: {
             type: DataTypes.BIGINT,

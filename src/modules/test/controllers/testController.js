@@ -44,8 +44,6 @@ module.exports.func = (router) => {
             question.testId = req.params.id;
             question = await testService.saveQuestion(question);
             for (let answer of req.body.question.answers) {
-                answer.isTrue = answer.isTrue;
-                delete answer.isTrue;
                 answer.questionId = question.id;
                 await testService.saveAnswer(answer);
             }
@@ -65,25 +63,25 @@ module.exports.func = (router) => {
         if (company && test && test.companyId === company.id) {
             res.send(test);
         } else {
-            if (test.questions) {
-                let passedQuestions = await testService.findPassedQuestions(test.id);
-                let passedQuestionsIds;
-                if (passedQuestions)
-                    passedQuestionsIds = await passedQuestions.map((pq) => {
-                        return pq.questionId;
-                    });
-                test.questions = await test.questions.map((q) => {
-                    if (!passedQuestions)
-                        q.dataValues.viewed = passedQuestionsIds.indexOf(q.id) > -1;
-                    else
-                        q.dataValues.viewed = false;
-                    return q;
-                });
-                await test.questions.forEach((question) => {
-                    delete question.answers;
-                    delete question.name;
-                });
-            }
+            // if (test.questions) {
+            //     let passedQuestions = await testService.findPassedQuestions(test);
+            //     let passedQuestionsIds;
+            //     if (passedQuestions)
+            //         passedQuestionsIds = await passedQuestions.map((pq) => {
+            //             return pq.questionId;
+            //         });
+            //     test.questions = await test.questions.map((q) => {
+            //         if (!passedQuestions)
+            //             q.dataValues.viewed = passedQuestionsIds.indexOf(q.id) > -1;
+            //         else
+            //             q.dataValues.viewed = false;
+            //         return q;
+            //     });
+            //     await test.questions.forEach((question) => {
+            //         delete question.answers;
+            //         delete question.name;
+            //     });
+            // }
             res.send(test);
         }
     });
@@ -95,7 +93,7 @@ module.exports.func = (router) => {
         let vacancy = await vacancyService.findById(req.params.id);
         let test = await testService.findByIdForEmployee(vacancy.testId);
         if (test.questions) {
-            let passedQuestions = await testService.findPassedQuestions(test.id);
+            let passedQuestions = await testService.findPassedQuestions(req.user.employee, test);
             let passedQuestionsIds;
             if (passedQuestions)
                 passedQuestionsIds = await passedQuestions.map((pq) => {
@@ -123,8 +121,12 @@ module.exports.func = (router) => {
         let employee = req.user.employee;
         let question = await testService.findQuestionById(req.params.id);
         let test = await testService.findById(question.testId);
-        if (!(await testService.questionsAvailable(employee, test)))
+        let passed = await testService.findTestEnds(employee.id, question.testId);
+        if (!(await testService.questionsAvailable(employee, test))) {
+            if (passed)
+                logger.error(passed.ends);
             return res.status(405).send({error: 'Not Allowed'});
+        }
         if (question.type === 'input')
             for (let answer of question.dataValues.answers) {
                 delete answer.dataValues.name;
@@ -145,9 +147,7 @@ module.exports.func = (router) => {
             if (started) {
                 return res.send({data: 'already started'});
             }
-            if (!started || !(started.dataValues.ends !== null && started.dataValues.ends < new Date()))
-            // if (!employee || await testService.alreadyStarted(employee, test))
-            // return res.status(405).send({error: "Not Allowed"});
+            if (!started)
                 await testService.startTest(employee, test);
             return res.send({data: 'success'});
         } catch (err) {

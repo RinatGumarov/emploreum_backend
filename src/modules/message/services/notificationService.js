@@ -38,7 +38,7 @@ class NotificationService {
                 userId: {[Op.eq]: user.id}
             },
             order: [
-                ['is_view', 'DESC'],
+                ['isView', 'DESC'],
             ]
         });
         

@@ -124,7 +124,7 @@ class CompaniesService {
                 }
             },
             include: [{
-                attributes: ['photo_path', 'name', 'user_id'],
+                attributes: ['photoPath', 'name', 'userId'],
                 model: models.employees
             }]
         });
@@ -136,7 +136,7 @@ class CompaniesService {
             attributes: ['id', 'name'],
             include: [{
                 model: models.profileSkills,
-                attributes: ['profile_id'],
+                attributes: ['profileId'],
                 include: [{
                     model: models.profiles,
                     attributes: ['id', 'name'],
@@ -184,7 +184,7 @@ class CompaniesService {
             },
             include: {
                 model: models.vacancies,
-                attributes: ['week_payment']
+                attributes: ['weekPayment']
             }
         });
         return contracts;

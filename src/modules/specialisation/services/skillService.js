@@ -15,12 +15,12 @@ class SkillService {
      */
     async findByProfileId(id) {
         let skills = await Skills.findAll({
-            attributes: ['id', 'name', 'parent_id', "photo_path"],
+            attributes: ['id', 'name', 'parentId', "photoPath"],
             include: [{
                 attributes: [],
                 model: Profiles,
                 required: true,
-                where: {id: {[Op.eq]: id}},
+                where: { id: { [Op.eq]: id } }
             }]
         });
         
@@ -43,15 +43,13 @@ class SkillService {
                     required: true,
                     model: models.employees,
                     where: {
-                        id: {[Op.eq]: employeeId}
+                        id: { [Op.eq]: employeeId }
                     }
                 }
             }]
         });
         return skills;
     }
-    
-    
 }
 
 instance = new SkillService();

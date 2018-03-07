@@ -79,7 +79,7 @@ class MessageService {
         let messages = await Messages.findAll({
             include: [includedModel],
             order: [
-                ['created_at', 'ASC']
+                ['createdAt', 'ASC']
             ]
         });
         
