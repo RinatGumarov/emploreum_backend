@@ -15,7 +15,9 @@ SELECT
   "company"."response_text"  AS "company.responseText",
   "company"."contract"       AS "company.contract",
   "company"."user_id"        AS "company.userId",
-  "company"."name"           AS "company.name"
+  "company"."name"           AS "company.name",
+  "profiles"."id"            AS "profiles.id",
+  "profiles"."name"          AS "profiles.name"
 FROM (SELECT
         vac_skill_array.v_id,
         vac_skill_array.count_skills,
@@ -43,5 +45,8 @@ FROM (SELECT
      ) AS employ_vac_accept
   JOIN vacancies ON vacancies.id = employ_vac_accept.v_id
   JOIN companies company ON vacancies.company_id = company.id
+  LEFT JOIN vacancy_profile_skills v ON vacancies.id = v.vacancy_id
+  LEFT JOIN profile_skills ps ON v.profile_skill_id = ps.id
+  LEFT JOIN profiles ON ps.profile_id = profiles.id
 WHERE employ_vac_accept.count_merged_skill_from_vacancy * 100 / employ_vac_accept.count_skills > 70 AND
       vacancies.opened = TRUE
