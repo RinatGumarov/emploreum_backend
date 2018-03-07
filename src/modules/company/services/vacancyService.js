@@ -30,28 +30,19 @@ class VacanciesService {
     }
     
     async findAllVacanciesByCompany(company) {
-        
-        let option = {where: {}};
-        
-        if (company) {
-            option.where.companyId = {
-                [Op.eq]: company.id,
+        let vacancies = await Vacancies.findAll({
+            where: {
+                companyId: {
+                    [Op.eq]: company.id,
+                    
+                },
+                opened: {
+                    [Op.eq]: true
+                }
             }
-        }
+        });
         
-        option.where.opened = true;
-        
-        // преобразовыываем в нормалььный вид
-        let vacancies = await Vacancies.findAll(option);
-        
-        // преобразовывем в человечиский вид)
-        for (let i = 0; vacancies.length && i < vacancies.length; ++i) {
-            
-            let profiles = await this.getVacancySpecification(vacancies[i].id);
-            vacancies[i].dataValues.profiles = profiles;
-        }
-        
-        return vacancies;
+        return await this.initSpecificationsFromVacancies(vacancies);
         
     }
     
@@ -68,19 +59,30 @@ class VacanciesService {
         let skillsIds = skills.map((skill) => {
             return skill.id;
         });
-        
-        
         let queryStr = queryScanner.company.recommended_vacancies;
-        return await queryScanner.query(queryStr, {
+        let vacancies = await queryScanner.query(queryStr, {
             model: models.vacancies,
             include: [models.companies],
             replacements: {
                 skillsString: skillsIds.join(",")
             },
         });
-        
-        
+        return await this.initSpecificationsFromVacancies(vacancies);
     }
+    
+    /**
+     * toDo
+     * @param vacancies
+     * @returns {Promise<*>}
+     */
+    async initSpecificationsFromVacancies(vacancies) {
+        for (let i = 0; vacancies.length && i < vacancies.length; ++i) {
+            let profiles = await this.getVacancySpecification(vacancies[i].id);
+            vacancies[i].dataValues.profiles = profiles;
+        }
+        return vacancies;
+    };
+    
     
     async findById(id) {
         return await Vacancies.findById(id);
@@ -118,7 +120,7 @@ class VacanciesService {
                 required: true,
                 model: models.vacancies,
                 where: {
-                    id: { [Op.eq]: vacancyId }
+                    id: {[Op.eq]: vacancyId}
                 }
             }]
         });

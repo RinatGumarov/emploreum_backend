@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
             field: "company_id"
         }
     }, {
+        underscored: false,
         timestamps: false
     });
     
