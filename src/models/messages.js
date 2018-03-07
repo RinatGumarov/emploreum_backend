@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
         chatId: {
             type: DataTypes.BIGINT,
             field: "chat_id"
+        },
+        createdAt:{
+            type: DataTypes.DATE,
+            field: "created_at"
         }
     }, {
         timestamps: false

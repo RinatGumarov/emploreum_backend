@@ -23,7 +23,6 @@ describe('employeeController', () => {
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
-                console.log(res.body);
                 res.should.have.status(200);
                 res.body.should.be.a('array');
                 res.body[0].should.be.a('object');
