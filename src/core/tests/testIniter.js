@@ -10,6 +10,7 @@ class TestIniter {
         this.tests = [];
         this.should = chai.should();
         chai.use(chaiHttp);
+        this.session = {};
     }
     
     getChaiRequest() {
@@ -33,6 +34,14 @@ class TestIniter {
     
     getCookie() {
         return this.cookie;
+    }
+    
+    setRequestSession(key, value) {
+        this.session[key] = value;
+    }
+    
+    getRequestSession(key) {
+        return this.session[key];
     }
 }
 

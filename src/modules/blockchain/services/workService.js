@@ -267,7 +267,7 @@ class WorkService {
     // TODO raiting calculation for employee on paying week salary
 
     calculateRating(workAddress, employeeContractAddress) {
-        return 5;
+        return 1;
     }
 
     async generateCodes(vacancyId) {
