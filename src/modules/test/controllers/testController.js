@@ -5,7 +5,7 @@ const vacancyService = require('../../company/services/vacancyService');
 const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
-
+    
     /**
      * создание теста компанией
      *
@@ -23,15 +23,15 @@ module.exports.func = (router) => {
                     await testService.addProfileSkills(test, profileSkill);
                 });
             });
-
-            return res.send(test.id);
+            
+            return res.json(test.id);
         }
         catch (err) {
             logger.error(err.stack);
-            return res.status(500).send({error: err.message});
+            return res.status(500).json({error: err.message});
         }
     });
-
+    
     /**
      * создение вопроса компанией
      */
@@ -47,76 +47,65 @@ module.exports.func = (router) => {
                 answer.questionId = question.id;
                 await testService.saveAnswer(answer);
             }
-            res.send({data: 'success'});
+            res.json({data: 'success'});
         } catch (err) {
             logger.error(err.stack);
-            res.status(500).send({error: err.message});
+            res.status(500).json({error: err.message});
         }
     });
-
+    
     /**
      * запрашивание теста компанией
      */
-    router.get('/:testId([0-9]+)/', async (req, res) => {
-        let company = req.user.company;
-        let test = await testService.findById(req.params.testId);
-        if (company && test && test.companyId === company.id) {
-            res.send(test);
-        } else {
-            // if (test.questions) {
-            //     let passedQuestions = await testService.findPassedQuestions(test);
-            //     let passedQuestionsIds;
-            //     if (passedQuestions)
-            //         passedQuestionsIds = await passedQuestions.map((pq) => {
-            //             return pq.questionId;
-            //         });
-            //     test.questions = await test.questions.map((q) => {
-            //         if (!passedQuestions)
-            //             q.dataValues.viewed = passedQuestionsIds.indexOf(q.id) > -1;
-            //         else
-            //             q.dataValues.viewed = false;
-            //         return q;
-            //     });
-            //     await test.questions.forEach((question) => {
-            //         delete question.answers;
-            //         delete question.name;
-            //     });
-            // }
-            res.send(test);
+    router.get('/:testId([0-9]+)', async (req, res) => {
+        try {
+            let company = req.user.company;
+            let test = await testService.findById(req.params.testId);
+            if (company && test && test.companyId === company.id) {
+                return res.json(test);
+            }
+            res.status(500).json({error: "access deny"});
+        } catch (err) {
+            logger.error(err.stack);
+            res.status(500).json({error: err.message});
         }
     });
-
+    
     /**
      * запрашивание теста работником по вакансии
      */
-    router.get('/vacancy/:id([0-9]+)/', async (req, res) => {
-        let vacancy = await vacancyService.findById(req.params.id);
-        let test = await testService.findByIdForEmployee(vacancy.testId);
-        if (test.questions) {
-            let passedQuestions = await testService.findPassedQuestions(req.user.employee, test);
-            let passedQuestionsIds;
-            if (passedQuestions)
-                passedQuestionsIds = await passedQuestions.map((pq) => {
-                    return pq.questionId;
+    router.get('/vacancy/:id([0-9]+)', async (req, res) => {
+        try {
+            let vacancy = await vacancyService.findById(req.params.id);
+            let test = await testService.findByIdForEmployee(vacancy.testId);
+            if (test.questions) {
+                let passedQuestions = await testService.findPassedQuestions(req.user.employee, test);
+                let passedQuestionsIds;
+                if (passedQuestions)
+                    passedQuestionsIds = await passedQuestions.map((pq) => {
+                        return pq.questionId;
+                    });
+                test.questions = await test.questions.map((q) => {
+                    q.dataValues.viewed = passedQuestionsIds.indexOf(q.id) > -1;
+                    return q;
                 });
-            test.questions = await test.questions.map((q) => {
-                q.dataValues.viewed = passedQuestionsIds.indexOf(q.id) > -1;
-                return q;
-            });
-            res.send(test);
+                res.json(test);
+            }
+        } catch (err) {
+            logger.error(err.stack);
+            res.status(500).json({error: err.message});
         }
     });
-
+    
     /**
      * запрашивание
      */
     router.get('/:id([0-9]+)/questions', async (req, res) => {
-        let employee = req.user.employee;
         let questions = await testService.findAllQuestionsByTestId(req.params.id);
         let test = await testService.findById(req.params.id);
-        return res.send(questions);
+        return res.json(questions);
     });
-
+    
     router.get('/question/:id([0-9]+)', async (req, res) => {
         let employee = req.user.employee;
         let question = await testService.findQuestionById(req.params.id);
@@ -125,16 +114,16 @@ module.exports.func = (router) => {
         if (!(await testService.questionsAvailable(employee, test))) {
             if (passed)
                 logger.error(passed.ends);
-            return res.status(405).send({error: 'Not Allowed'});
+            return res.status(405).json({error: 'Not Allowed'});
         }
         if (question.type === 'input')
             for (let answer of question.dataValues.answers) {
                 delete answer.dataValues.name;
             }
-        return res.send(question);
+        return res.json(question);
     });
-
-
+    
+    
     /**
      * начало теста, find по вакансии
      */
@@ -145,17 +134,17 @@ module.exports.func = (router) => {
             let test = await testService.findById(vacancy.testId);
             let started = await  testService.findTestEnds(employee.id, test.id);
             if (started) {
-                return res.send({data: 'already started'});
+                return res.json({data: 'already started'});
             }
             if (!started)
                 await testService.startTest(employee, test);
-            return res.send({data: 'success'});
+            return res.json({data: 'success'});
         } catch (err) {
             logger.error(err.stack);
-            return res.status(500).send({error: err.message});
+            return res.status(500).json({error: err.message});
         }
     });
-
+    
     /**
      * получить ответ и проверить его правильность
      */
@@ -166,8 +155,9 @@ module.exports.func = (router) => {
             .map((answer) => answer.name);
         let question = await testService.findQuestionById(req.params.questionId);
         let test = await testService.findById(question.testId);
-        if (!(await testService.questionsAvailable(employee, test)))
-            return res.status(405).send({error: 'Not Allowed'});
+        if (!(await testService.questionsAvailable(employee, test))) {
+            return res.status(405).json({error: 'Not Allowed'});
+        }
         for (let passed of answers) {
             let correct = correctAnswers.indexOf(passed) !== -1;
             let passedQuestion = {
@@ -182,20 +172,20 @@ module.exports.func = (router) => {
             await testService.savePassedQuestion(passedQuestion);
         }
         await testScoresService.saveOrUpdate(question.testId, employee);
-        return res.send({data: 'success'});
+        return res.json({data: 'success'});
     });
-
+    
     /**
      * vacancyId
      */
-    router.get('/:id([0-9]+)/submit', async (req, res) => {
+    router.get('/:vacancyId([0-9]+)/submit', async (req, res) => {
         let employee = req.user.employee;
-        let vacancy = await vacancyService.findById(req.params.id);
+        let vacancy = await vacancyService.findById(req.params.vacancyId);
         let test = await testService.findById(vacancy.testId);
         await testService.submitTest(employee, test);
-        res.send({data: 'success'});
+        res.json({data: 'success'});
     });
-
+    
     return router;
-
+    
 };
