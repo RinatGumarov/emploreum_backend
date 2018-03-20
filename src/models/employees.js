@@ -46,15 +46,6 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'employeeId',
             timestamps: false,
         });
-        // employees.belongsToMany(models.works, {
-        //     through: 'employee_works',
-        //     foreignKey: 'employee_id',
-        //     timestamps: false,
-        // });
-        employees.hasMany(models.chats, {
-            foreignKey: 'employeeId',
-        });
-        
         employees.hasMany(models.works, {
             foreignKey: 'employeeId',
         });

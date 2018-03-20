@@ -1,7 +1,5 @@
-const companyService = require('../services/companyService');
 const vacancyService = require('../services/vacancyService');
 const profileSkillService = require('../../specialisation/services/profileSkillService');
-const employeeService = require('../../employee/services/employeeService');
 const logger = require('../../../utils/logger');
 
 

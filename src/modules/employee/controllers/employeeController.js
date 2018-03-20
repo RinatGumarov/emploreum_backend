@@ -1,6 +1,5 @@
 const cvService = require('../services/cvService');
 const employeeService = require('../services/employeeService');
-const messageService = require('../../message/services/messageService');
 const balanceService = require('../../blockchain/services/balanceService');
 const vacancyService = require('../../company/services/vacancyService');
 const companyService = require('../../company/services/companyService');
@@ -14,8 +13,6 @@ module.exports.func = (router) => {
             let vacancyId = req.params.vacancyId;
             let company = await companyService.findByVacancyId(vacancyId);
             await employeeService.attachVacancy(req.user.employee, vacancyId);
-            // не может это асунуть в employee сервис так как используем его в message сервиск
-            await messageService.sendToCompany(req.user.employee, company.id, 'Вам постучались на вакансию');
             return res.send({ data: 'success' });
         }
         catch (err) {

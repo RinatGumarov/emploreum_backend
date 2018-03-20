@@ -25,9 +25,6 @@ module.exports = (sequelize, DataTypes) => {
         companies.belongsTo(models.users, {
             foreignKey: 'userId',
         });
-        companies.hasMany(models.chats, {
-            foreignKey: 'companyId',
-        });
         companies.hasMany(models.vacancies, {
             foreignKey: 'companyId',
         });

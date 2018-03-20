@@ -2,14 +2,6 @@ module.exports = (sequelize, DataTypes) => {
     
     let messages = sequelize.define('messages', {
         text: DataTypes.TEXT,
-        isEmployeeMessage: {
-            type: DataTypes.BOOLEAN,
-            field: "is_employee_message"
-        },
-        isCompanyMessage: {
-            type: DataTypes.BOOLEAN,
-            field: "is_company_message"
-        },
         isView: {
             type: DataTypes.BOOLEAN,
             field: "is_view"
@@ -17,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
         chatId: {
             type: DataTypes.BIGINT,
             field: "chat_id"
+        },
+        userId: {
+            type: DataTypes.BIGINT,
+            field: "user_id"
         },
         createdAt:{
             type: DataTypes.DATE,
@@ -29,6 +25,9 @@ module.exports = (sequelize, DataTypes) => {
     messages.associate = function (models) {
         messages.belongsTo(models.chats, {
             foreignKey: 'chatId',
+        });
+        messages.belongsTo(models.users, {
+            foreignKey: 'userId',
         });
     };
     
