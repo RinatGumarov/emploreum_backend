@@ -16,14 +16,12 @@ class ChatService {
      */
     async findOrCreate(userIdArray) {
         
-        let chat = await Chats.find({
-            include: [{
-                required: true,
-                model: models.users,
-                where: {
-                    id: {[Op.or]: userIdArray}
-                }
-            }]
+        let queryStr = queryScanner.message.chat_by_users;
+        let chat = await queryScanner.query(queryStr, {
+            model: models.chats,
+            replacements: {
+                usersIds: userIdArray.join()
+            },
         });
         
         if (!chat) {
