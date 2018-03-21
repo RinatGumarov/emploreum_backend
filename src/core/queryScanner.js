@@ -34,7 +34,7 @@ class QueryScanner {
      * @returns {Promise<*>}
      */
     async query(query, options) {
-        if (options.model) {
+        if (options.include && options.model) {
             options.hasJoin = true;
             options.model._validateIncludedElements(options);
         }

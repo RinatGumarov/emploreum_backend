@@ -17,6 +17,7 @@ class ChatService {
     async findOrCreate(userIdArray) {
         
         let queryStr = queryScanner.message.chat_by_users;
+        
         let chat = await queryScanner.query(queryStr, {
             model: models.chats,
             replacements: {
