@@ -10,7 +10,7 @@ module.exports.func = (router) => {
     });
     
     router.post('/create', async (req, res) => {
-        let userFrom = userService.getUserById(req.body.userId);
+        let userFrom = userService.getUserById(req.body.fromId);
         let message = await messageService.sendMessage(req.user, userFrom, req.body.text);
         res.json(message)
         
