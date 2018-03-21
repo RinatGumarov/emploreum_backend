@@ -19,8 +19,8 @@ module.exports = {
         return queryInterface.sequelize.transaction(() => {
             return Promise.all([
                 queryInterface.sequelize.query('TRUNCATE chats CASCADE;'),
-                queryInterface.removeColumn('chats', 'company_id', {}),
-                queryInterface.addColumn('chats', 'status', {
+                queryInterface.removeColumn('chats', 'status', {}),
+                queryInterface.addColumn('chats', 'employee_id', {
                     allowNull: false,
                     type: Sequelize.BIGINT,
                     references: {
