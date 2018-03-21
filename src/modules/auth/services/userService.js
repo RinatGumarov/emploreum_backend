@@ -96,11 +96,11 @@ class UsersService {
         let user = await this.getUserById(id);
         let name = null;
         if (user.role = "EMPLOYEE") {
-            let employee = employeeService.getByUserId(id);
+            let employee = await employeeService.getByUserId(id);
             return employee.name;
         }
         if (user.role = "COMPANY") {
-            let company = companyService.findByUserId(id);
+            let company = await companyService.findByUserId(id);
             return company.name;
         }
     }
