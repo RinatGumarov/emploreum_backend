@@ -34,7 +34,19 @@ class ChatService {
 
         return chat;
     }
-
+    
+    /**
+     *
+     * @param chatId
+     * @returns {Promise<Model>}
+     */
+    async findById(chatId) {
+        return await Chats.findOne({
+            where: {
+                id: {[Op.eq]: chatId}
+            },
+        });
+    }
 
     /**
      * получить все чаты где есть этот юзер
