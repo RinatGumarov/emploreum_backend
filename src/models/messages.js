@@ -2,10 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     
     let messages = sequelize.define('messages', {
         text: DataTypes.TEXT,
-        isView: {
-            type: DataTypes.BOOLEAN,
-            field: "is_view"
-        },
+        status: DataTypes.STRING,
         chatId: {
             type: DataTypes.BIGINT,
             field: "chat_id"
@@ -14,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BIGINT,
             field: "user_id"
         },
-        createdAt:{
+        createdAt: {
             type: DataTypes.DATE,
             field: "created_at"
         }
