@@ -6,17 +6,17 @@ module.exports = {
             return Promise.all([
                 
                 queryInterface.sequelize.query('TRUNCATE messages CASCADE;'),
-                queryInterface.removeColumn('messages', 'is_employee_message', {}),
-                queryInterface.removeColumn('messages', 'is_company_message', {}),
-                queryInterface.addColumn("messages", "user_id", {
-                    primaryKey: true,
-                    allowNull: false,
-                    type: Sequelize.BIGINT,
-                    references: {
-                        model: "users",
-                        key: "id"
-                    }
-                })
+                // queryInterface.removeColumn('messages', 'is_employee_message', {}),
+                // queryInterface.removeColumn('messages', 'is_company_message', {}),
+                // queryInterface.addColumn("messages", "user_id", {
+                //     primaryKey: true,
+                //     allowNull: false,
+                //     type: Sequelize.BIGINT,
+                //     references: {
+                //         model: "users",
+                //         key: "id"
+                //     }
+                // })
                 
             ]);
         });
