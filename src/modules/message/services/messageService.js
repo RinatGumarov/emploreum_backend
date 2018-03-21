@@ -58,7 +58,6 @@ class MessageService {
                 ['createdAt', 'DESC']
             ]
         };
-        await Messages.update({status: "viewed"}, options);
         return await Messages.findAll(options);
     }
     
