@@ -1,4 +1,5 @@
 const messageService = require('../services/messageService');
+const userService = require('../../auth/services/userService');
 
 module.exports.func = (router) => {
     
@@ -7,6 +8,15 @@ module.exports.func = (router) => {
         res.json(messages)
         
     });
+    
+    router.post('/create', async (req, res) => {
+        let userFrom = userService.getUserById(req.body.userId);
+        let message = await messageService.sendMessage(req.user, userFrom, req.body.text);
+        res.json(message)
+        
+    });
+    
+    
     return router;
     
 };

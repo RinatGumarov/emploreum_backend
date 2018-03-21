@@ -21,6 +21,14 @@ class MessageService {
      */
     async getAllMessageByChatId(chatId, user) {
         let options = {
+            attributes: [
+                "id",
+                "text",
+                "createdAt",
+                "chatId",
+                "userId",
+                "status"
+            ],
             // проверка на то что только авторизированный пользователь
             // может просматривать/обновлять сообшения
             include: [{
@@ -48,7 +56,7 @@ class MessageService {
                 ['createdAt', 'DESC']
             ]
         };
-        await Messages.update({isView: true}, options);
+        await Messages.update({status: "viewed"}, options);
         return await Messages.findAll(options);
     }
     
@@ -93,7 +101,7 @@ class MessageService {
             chatId: chat.id
         });
         let ownerName = userService.getNameByUserId(userOwner.id);
-        notificationService.sendNotification(userOwner.id, `ваш пришло новое сообшение от ${ownerName}`);
+        notificationService.sendNotification(userOwner.id, `вам пришло новое сообшение от ${ownerName}`);
         return message;
     }
     
