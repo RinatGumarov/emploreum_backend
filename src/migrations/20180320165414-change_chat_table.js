@@ -6,6 +6,11 @@ module.exports = {
             return Promise.all([
                 queryInterface.removeColumn('chats', 'employee_id', {}),
                 queryInterface.removeColumn('chats', 'company_id', {}),
+                queryInterface.addColumn('chats', 'status', {
+                    allowNull: false,
+                    type: Sequelize.BIGINT,
+                    defaultValue:1
+                }),
             ]);
         });
     },
@@ -14,7 +19,8 @@ module.exports = {
         return queryInterface.sequelize.transaction(() => {
             return Promise.all([
                 queryInterface.sequelize.query('TRUNCATE chats CASCADE;'),
-                queryInterface.addColumn('chats', 'employee_id', {
+                queryInterface.removeColumn('chats', 'company_id', {}),
+                queryInterface.addColumn('chats', 'status', {
                     allowNull: false,
                     type: Sequelize.BIGINT,
                     references: {
