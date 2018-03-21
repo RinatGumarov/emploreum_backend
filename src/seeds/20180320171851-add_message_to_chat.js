@@ -5,14 +5,12 @@ module.exports = {
         return queryInterface.bulkInsert('messages', [
             {
                 text: "test",
-                is_employee_message: true,
-                is_company_message: false,
+                user_id: "1",
                 chat_id: 1
             },
             {
                 text: "test",
-                is_employee_message: true,
-                is_company_message: false,
+                user_id: "2",
                 chat_id: 1
             }
         ], {});

@@ -9,7 +9,6 @@ const companyService = require('../../company/services/companyService');
 const vacancyService = require('../../company/services/vacancyService');
 const skillsService = require('../../specialisation/services/skillService');
 const balanceService = require('../services/balanceService');
-const messageService = require('../../message/services/messageService');
 const employeeService = require('../../employee/services/employeeService');
 
 const Web3InitError = require('../utils/Web3Error');
@@ -196,7 +195,6 @@ class WorkService {
 
         let savedTransaction = await this.createContractTransaction(transaction);
 
-        await messageService.sendToCompany(work.employee, work.company.id, 'New transaction for employee');
         await socketSender.sendSocketMessage(`${work.company.userId}:transactions`, {
             transaction: savedTransaction
         });

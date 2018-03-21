@@ -4,6 +4,8 @@ const Users = models.users;
 const Roles = models.roles;
 
 const rolesService = require('./roleService');
+const employeeService = require('../../employee/services/employeeService');
+const companyService = require('../../company/services/companyService');
 
 let instance;
 
@@ -82,6 +84,25 @@ class UsersService {
         });
         
         return this.changeUserRole(user);
+    }
+    
+    /**
+     * toDo переделать на всю обшую информацию из разных таблиц
+     * получить информацию о юзере по id
+     * @param id
+     * @returns {Promise<void>}
+     */
+    async getNameByUserId(id) {
+        let user = await this.getUserById(id);
+        let name = null;
+        if (user.role = "EMPLOYEE") {
+            let employee = employeeService.getByUserId(id);
+            return employee.name;
+        }
+        if (user.role = "COMPANY") {
+            let company = companyService.findByUserId(id);
+            return company.name;
+        }
     }
     
     /**

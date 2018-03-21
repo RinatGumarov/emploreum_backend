@@ -143,7 +143,6 @@ class VacanciesService {
             }
         });
         let company = await companyService.findByVacancyId(vacancyId);
-        await messageService.sendToEmployee(company, employee.id, 'вам отклонили в вакансии');
         socketSender.sendSocketMessage(`${userId}:vacancy`, {
             type: 'DELETE',
             id: vacancyId
@@ -210,12 +209,19 @@ class VacanciesService {
     }
     
     async sendInvitationToEmployee(company, vacancy, employeeUserId) {
+        
         let employee = await employeeService.getByUserId(employeeUserId);
         if (vacancy.companyId !== company.id) {
             return false;
         }
-        await messageService.sendToEmployee(company, employee.id, "You have new invitation to vacancy");
         await socketSender.sendSocketMessage(`${employee.userId}:invitation`, vacancy);
+        let userOwnerForSendMessage = await company.getUser();
+        let userFromForSendMessage = await employee.getUser();
+        await messageService.sendMessage(
+            userOwnerForSendMessage,
+            userFromForSendMessage,
+            "мы бы хотели вас пригласить на вакансию"
+        );
         return true;
     }
     

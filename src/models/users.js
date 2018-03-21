@@ -56,6 +56,11 @@ module.exports = (sequelize, DataTypes) => {
         users.hasMany(models.notifications, {
             foreignKey: 'userId'
         });
+        users.belongsToMany(models.chats, {
+            through: 'user_chats',
+            foreignKey: 'user_id',
+            timestamps: false
+        });
     };
     
     return users;
