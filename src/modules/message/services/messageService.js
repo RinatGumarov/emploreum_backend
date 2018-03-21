@@ -54,7 +54,7 @@ class MessageService {
                 }
             },
             order: [
-                ['createdAt', 'DESC']
+                ['createdAt', 'ASC']
             ]
         };
         return await Messages.findAll(options);
