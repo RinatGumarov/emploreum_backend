@@ -3,9 +3,9 @@ const Messages = models.messages;
 const Op = models.sequelize.Op;
 
 const mailSender = require('../utils/mailSender');
-const chatService = require('../services/chatService');
-const userService = require('../../auth/services/userService');
 const notificationService = require('../../message/services/notificationService');
+const chatService = require('./chatService');
+const userService = require('../../auth/services/userService');
 const config = require('../../../utils/config');
 const logger = require('../../../utils/logger');
 
@@ -14,87 +14,44 @@ let instance;
 class MessageService {
     
     /**
-     * рутовый метод для создания сообщений
-     * используется в sendToEmployee и
-     * sendToCompany
-     * @param companyId
-     * @param employeeId
-     * @param text
-     * @param isEmployeeMessage
-     * @param isCompanyCessage
+     * все сообшения по чату и авторизированному юзеру
+     * @param chatId
+     * @param user
      * @returns {Promise<*>}
      */
-    async save(companyId, employeeId, text, isEmployeeMessage, isCompanyCessage) {
-        
-        let chat = await chatService.getChatBetweenEmployeeAndCompany(employeeId, companyId);
-        
-        let message = await Messages.create({
-            chatId: chat.id,
-            text: text,
-            isEmployeeMessage: isEmployeeMessage,
-            isCompanyMessage: isCompanyCessage
-        });
-        
-        return message;
-    }
-    
-    /**
-     * Создание соощение
-     * от пользователя компании к сотруднику
-     */
-    async sendToEmployee(company, employeeId, text) {
-        let user = await userService.getUserByEmployeeId(employeeId);
-        notificationService.sendNotification(user.id, "компания отправила вам сообщение");
-        let message = await this.save(company.id, employeeId, text, false, true);
-        return message;
-    }
-    
-    /**
-     * Создание соощение
-     * от сотрудника к компании
-     */
-    async sendToCompany(employee, companyId, text) {
-        let user = await userService.getUserByCompanyId(companyId);
-        notificationService.sendNotification(user.id, "работник отправил вам сообщение");
-        let message = await this.save(companyId, employee.id, text, true, false);
-        return message;
-    }
-    
-    
-    async getAllMessageByChatId(chatId, company, employee) {
-        let includedModel = {
-            required: true,
-            attributes: [],
+    async getAllMessageByChatId(chatId, user) {
+        let options = {
+            // проверка на то что только авторизированный пользователь
+            // может просматривать/обновлять сообшения
+            include: [{
+                attributes: [],
+                include: [{
+                    attributes: [],
+                    required: true,
+                    model: models.users,
+                    where: {
+                        id: {[Op.eq]: user.id}
+                    }
+                }],
+                required: true,
+                model: models.chats,
+                where: {
+                    id: {[Op.eq]: chatId}
+                }
+            }],
             where: {
-                id: {[Op.eq]: chatId}
+                chatId: {
+                    [Op.eq]: chatId
+                }
             },
-            model: models.chats
-        };
-        if (company) {
-            includedModel.where.companyId = {[Op.eq]: company.id};
-        }
-        if (employee) {
-            includedModel.where.companyId = {[Op.eq]: employee.id};
-        }
-        let messages = await Messages.findAll({
-            include: [includedModel],
             order: [
-                ['createdAt', 'ASC']
+                ['createdAt', 'DESC']
             ]
-        });
-        
-        return messages;
+        };
+        await Messages.update({isView: true}, options);
+        return await Messages.findAll(options);
     }
     
-    async getAllMessageByChatIdAndCompany(chatId, company) {
-        let messages = await this.getAllMessageByChatId(chatId, company, null);
-        return messages;
-    }
-    
-    async getAllMessageByChatIdAndEmployee(chatId, employee) {
-        let messages = await this.getAllMessageByChatId(chatId, null, employee);
-        return messages;
-    }
     
     /**
      * @param email
@@ -118,6 +75,26 @@ class MessageService {
             }
         });
         return code;
+    }
+    
+    /**
+     * послать сообшение от юзера к юзеру с текстом
+     * @param userOwner
+     * @param userFrom
+     * @param text
+     * @returns {Promise<*>}
+     */
+    async sendMessage(userOwner, userFrom, text) {
+        
+        let chat = await chatService.findOrCreate([userOwner.id, userFrom.id]);
+        let message = await Messages.create({
+            userId: userOwner.id,
+            text: text,
+            chatId: chat.id
+        });
+        let ownerName = userService.getNameByUserId(userOwner.id);
+        notificationService.sendNotification(userOwner.id, `ваш пришло новое сообшение от ${ownerName}`);
+        return message;
     }
     
     /**

@@ -31,11 +31,14 @@ class QueryScanner {
      * метод для парсинга моделей в нативных запросах
      * @param query
      * @param options
+     * @param model
      * @returns {Promise<*>}
      */
     async query(query, options) {
-        options.hasJoin = true;
-        models.vacancies._validateIncludedElements(options);
+        if (options.model) {
+            options.hasJoin = true;
+            options.model._validateIncludedElements(options);
+        }
         return await models.sequelize.query(query, options)
     };
     
