@@ -1,6 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
     
-    let chats = sequelize.define('chats', {}, {
+    let chats = sequelize.define('chats', {
+        // костыль sequlize create() метод см chatService сервис findOrCreate метод
+        status: DataTypes.BIGINT,
+    }, {
         timestamps: false
     });
     
