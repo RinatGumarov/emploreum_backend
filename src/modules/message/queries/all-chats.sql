@@ -1,8 +1,8 @@
 SELECT
   ch.id,
-  STRING_AGG(COALESCE(e.name, c2.name), ' ')         AS "name",
-  STRING_AGG(COALESCE(e.photo_path, c2.logo), ' ')   AS "logo",
-  STRING_AGG(COALESCE(cast(u.id AS CHARACTER)), ' ') AS "fromId"
+  STRING_AGG(COALESCE(e.name, c2.name), ' ')       AS "name",
+  STRING_AGG(COALESCE(e.photo_path, c2.logo), ' ') AS "logo",
+  STRING_AGG(COALESCE(u.id :: TEXT), ' ')          AS "fromId"
 FROM (
        SELECT chats.id
        FROM chats
