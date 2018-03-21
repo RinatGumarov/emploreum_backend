@@ -5,6 +5,7 @@ const Op = models.sequelize.Op;
 const mailSender = require('../utils/mailSender');
 const notificationService = require('../../message/services/notificationService');
 const chatService = require('./chatService');
+const userService = require('../../auth/services/userService');
 const socketSender = require('../../../core/socketSender');
 
 const config = require('../../../utils/config');
