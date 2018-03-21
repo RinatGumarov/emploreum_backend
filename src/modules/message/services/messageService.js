@@ -5,7 +5,6 @@ const Op = models.sequelize.Op;
 const mailSender = require('../utils/mailSender');
 const notificationService = require('../../message/services/notificationService');
 const chatService = require('./chatService');
-const userService = require('../../auth/services/userService');
 const socketSender = require('../../../core/socketSender');
 
 const config = require('../../../utils/config');
@@ -101,8 +100,7 @@ class MessageService {
             text: text,
             chatId: chat.id
         });
-        let ownerName = await userService.getNameByUserId(userOwner.id);
-        await notificationService.sendNotification(userFrom.id, `вам пришло новое сообшение от ${ownerName}`);
+        await notificationService.sendNotification(userFrom.id, `вам пришло новое сообшение`);
         await socketSender.sendSocketMessage(`${userFrom.id}:${chat.id}:messages`, message);
         return message;
     }
