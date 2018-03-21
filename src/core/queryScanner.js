@@ -31,7 +31,6 @@ class QueryScanner {
      * метод для парсинга моделей в нативных запросах
      * @param query
      * @param options
-     * @param model
      * @returns {Promise<*>}
      */
     async query(query, options) {
