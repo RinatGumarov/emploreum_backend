@@ -101,7 +101,7 @@ class MessageService {
             text: text,
             chatId: chat.id
         });
-        let ownerName = userService.getNameByUserId(userOwner.id);
+        let ownerName = await userService.getNameByUserId(userOwner.id);
         await notificationService.sendNotification(userFrom.id, `вам пришло новое сообшение от ${ownerName}`);
         await socketSender.sendSocketMessage(userFrom.id, message);
         return message;
