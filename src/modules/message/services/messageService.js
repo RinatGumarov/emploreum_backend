@@ -6,6 +6,8 @@ const mailSender = require('../utils/mailSender');
 const notificationService = require('../../message/services/notificationService');
 const chatService = require('./chatService');
 const userService = require('../../auth/services/userService');
+const socketSender = require('../../../core/socketSender');
+
 const config = require('../../../utils/config');
 const logger = require('../../../utils/logger');
 
@@ -101,7 +103,8 @@ class MessageService {
             chatId: chat.id
         });
         let ownerName = userService.getNameByUserId(userOwner.id);
-        notificationService.sendNotification(userOwner.id, `вам пришло новое сообшение от ${ownerName}`);
+        await notificationService.sendNotification(userOwner.id, `вам пришло новое сообшение от ${ownerName}`);
+        await socketSender.sendSocketMessage(userFrom.id, message);
         return message;
     }
     
