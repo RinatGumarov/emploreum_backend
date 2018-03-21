@@ -103,7 +103,7 @@ class MessageService {
             chatId: chat.id
         });
         let ownerName = userService.getNameByUserId(userOwner.id);
-        await notificationService.sendNotification(userOwner.id, `вам пришло новое сообшение от ${ownerName}`);
+        await notificationService.sendNotification(userFrom.id, `вам пришло новое сообшение от ${ownerName}`);
         await socketSender.sendSocketMessage(userFrom.id, message);
         return message;
     }
