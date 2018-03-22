@@ -120,15 +120,17 @@ class MessageService {
             chatId: chatId
         });
         
-        for(let i =0; i< chatUsers.length; ++i){
-            await notificationService.sendNotification(chatUsers[i].id, `вам пришло новое сообшение`);
-            await socketSender.sendSocketMessage(`${chatUsers[i].id}:${chatId}:messages`, message);
+        for (let i = 0; i < chatUsers.length; ++i) {
+            if (chatUsers[i].id !== user.id) {
+                await notificationService.sendNotification(chatUsers[i].id, `вам пришло новое сообшение`);
+                await socketSender.sendSocketMessage(`${chatUsers[i].id}:${chatId}:messages`, message);
+            }
         }
         return message;
     }
-
-        
-        /**
+    
+    
+    /**
      * @returns {number}
      */
     generateCode() {
