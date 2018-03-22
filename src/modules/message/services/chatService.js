@@ -47,7 +47,20 @@ class ChatService {
             },
         });
     }
-
+    
+    /**
+     * получить всех пользователей по чату
+     * @param chatId
+     * @returns {Promise<*>}
+     */
+    async getChatUsers(chatId){
+        let chat = await this.findById(chatId);
+        if(!chat){
+            throw new Error("chat not found");
+        }
+        let users = await chat.getUsers();
+        return users;
+    }
     /**
      * получить все чаты где есть этот юзер
      * @param user
