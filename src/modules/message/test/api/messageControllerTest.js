@@ -26,7 +26,7 @@ describe('messageController', () => {
             .post("/message/create")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
-            .send({userId: 2,text:"text"})
+            .send({chatId: 1,text:"text"})
             .end(function (err, res) {
                 res.should.have.status(200);
                 res.body.should.be.a('object');

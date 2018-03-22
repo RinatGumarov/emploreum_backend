@@ -4,6 +4,7 @@ module.exports = {
     up: (queryInterface, Sequelize) => {
         return queryInterface.sequelize.transaction(() => {
             return Promise.all([
+                queryInterface.sequelize.query('TRUNCATE chats CASCADE;'),
                 queryInterface.removeColumn('chats', 'employee_id', {}),
                 queryInterface.removeColumn('chats', 'company_id', {}),
                 queryInterface.addColumn('chats', 'status', {

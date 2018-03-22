@@ -106,6 +106,29 @@ class MessageService {
     }
     
     /**
+     * отправит юзером сообшение в чат
+     * @param user
+     * @param chatId
+     * @param text
+     * @returns {Promise<void>}
+     */
+    async sendMessageToChat(user, chatId, text) {
+        let chatUsers = await chatService.getChatUsers(chatId);
+        let message = await Messages.create({
+            userId: user.id,
+            text: text,
+            chatId: chatId
+        });
+        
+        for(let i =0; i< chatUsers.length; ++i){
+            await notificationService.sendNotification(chatUsers[i].id, `вам пришло новое сообшение`);
+            await socketSender.sendSocketMessage(`${chatUsers[i].id}:${chatId}:messages`, message);
+        }
+        return message;
+    }
+
+        
+        /**
      * @returns {number}
      */
     generateCode() {
