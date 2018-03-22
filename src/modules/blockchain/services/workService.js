@@ -270,7 +270,7 @@ class WorkService {
 
     async generateCodes(vacancyId) {
         let skillCodes = [];
-        let profiles = await vacancyService.getVacancyProfiles(vacancyId);
+        let profiles = await vacancyService.getVacancySpecification(vacancyId);
         for (let profile of profiles) {
             for (let skill of profile.skills) {
                 let code = ((profile.id - 1) << 12) + (skill.id - 1);
