@@ -31,64 +31,6 @@ describe('employeeController', () => {
             });
     });
     
-    it('employee info', (done) => {
-        testIniter.getChaiRequest()
-            .get("/employee/info/2")
-            .set("Content-Type", "application/json")
-            .set('Cookie', testIniter.getCookie())
-            .end(function (err, res) {
-                res.should.have.status(200);
-                res.body.should.be.a('object');
-                res.body.should.have.property('name');
-                done();
-            });
-    });
-    
-    it('employee skills', (done) => {
-        testIniter.getChaiRequest()
-            .get("/employee/skills/2")
-            .set("Content-Type", "application/json")
-            .set('Cookie', testIniter.getCookie())
-            .end(function (err, res) {
-                res.should.have.status(200);
-                res.body.should.be.a('array');
-                res.body[0].should.be.a('object');
-                res.body[0].should.have.property('skills');
-                res.body[0].skills.should.be.a('array');
-                res.body[0].skills[0].should.have.property('name');
-                done();
-            });
-    });
-    
-    it('employee skills', (done) => {
-        testIniter.getChaiRequest()
-            .get("/employee/skills/2")
-            .set("Content-Type", "application/json")
-            .set('Cookie', testIniter.getCookie())
-            .end(function (err, res) {
-                res.should.have.status(200);
-                res.body.should.be.a('array');
-                res.body[0].should.be.a('object');
-                res.body[0].should.have.property('skills');
-                res.body[0].skills.should.be.a('array');
-                res.body[0].skills[0].should.have.property('name');
-                done();
-            });
-    });
-    
-    it('employee awaited contracts', (done) => {
-        testIniter.getChaiRequest()
-            .get("/employee/contracts/awaited")
-            .set("Content-Type", "application/json")
-            .set('Cookie', testIniter.getCookie())
-            .end(function (err, res) {
-                res.should.have.status(200);
-                res.body.should.be.a('array');
-                res.body[0].should.be.a('object');
-                done();
-            });
-    });
-    
     it('all employee', (done) => {
         testIniter.getChaiRequest()
             .get("/employee/all")

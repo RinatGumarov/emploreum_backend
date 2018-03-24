@@ -175,6 +175,7 @@ describe('regController', () => {
                     .set('Cookie', cookies)
                     .set("Content-Type", "application/json")
                     .send({
+                        languages: [1],
                         name: "test"
                     })
                     .end(function (err, res) {
@@ -330,6 +331,7 @@ describe('regController', () => {
                     .set('Cookie', cookies)
                     .set("Content-Type", "application/json")
                     .send({
+                        languages: [1],
                         name: "test"
                     })
                     .end(function (err, res) {

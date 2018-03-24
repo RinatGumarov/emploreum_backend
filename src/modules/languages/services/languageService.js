@@ -8,13 +8,9 @@ class LanguagesService {
     
     async findAll() {
         let languages = await Languages.findAll({
-            attributes: ["name"],
+            attributes: ["id","name"],
         });
         return languages;
-    }
-
-    async addLanguages(user, languages){
-        await user.addLanguages(languages);
     }
     
 }
