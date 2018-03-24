@@ -24,11 +24,6 @@ module.exports = (sequelize, DataTypes) => {
         employees.belongsTo(models.gradationEnums, {
             foreignKey: 'gradation'
         });
-        employees.belongsToMany(models.languages, {
-            through: 'employee_languages',
-            timestamps: false,
-            foreignKey: 'employee_id'
-        });
         employees.hasMany(models.achievements, {
             foreignKey: 'employeeId'
         });
