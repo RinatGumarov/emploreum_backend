@@ -5,7 +5,7 @@ const uploadIniter = require('../util/uploadIniter');
 module.exports.func = (router) => {
 
     router.post('/upload', uploadIniter.getMiddleware().single('file'), function (req, res, next) {
-        res.send(req.file.filename);
+        res.json('/upload/'+req.file.filename);
     });
 
     return router;

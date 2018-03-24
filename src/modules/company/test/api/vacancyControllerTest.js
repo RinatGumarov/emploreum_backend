@@ -1,6 +1,5 @@
 let testIniter = require('../../../../core/tests/testIniter');
 let testHelpers = require('../../../../core/tests/testHelpers');
-var cookies;
 
 describe('vacancyController', () => {
     
@@ -11,7 +10,6 @@ describe('vacancyController', () => {
             .get("/company/vacancy/1/available")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
-            .send({})
             .end(function (err, res) {
                 res.should.have.status(200);
                 done();

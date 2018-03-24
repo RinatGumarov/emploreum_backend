@@ -1,24 +1,20 @@
 let testIniter = require('../../../../core/tests/testIniter');
 let testHelpers = require('../../../../core/tests/testHelpers');
+let filename = __dirname+'/file/test.png';
 
-describe('chatController', () => {
+describe('uploadMiddlewareTest', () => {
     
     testHelpers.authTestEmployee();
     
-    it('get all chats for user', (done) => {
+    it('send file', (done) => {
         testIniter.getChaiRequest()
-            .get("/message/chats/all")
-            .set("Content-Type", "application/json")
-            .set('Cookie', testIniter.getCookie())
+            .post("/file/upload")
+            .attach('file', filename)
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body[0].should.have.property("name");
-                res.body[0].should.have.property("logo");
                 done();
             });
     });
     
     testHelpers.logout();
-    
-    
 });
