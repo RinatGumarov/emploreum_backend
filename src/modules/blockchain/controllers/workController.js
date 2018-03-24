@@ -46,6 +46,7 @@ module.exports.func = (router) => {
      */
     router.get('/run/salary/:token', async (req, res) => {
         let config = configUtils.get('server');
+        req.connection.setTimeout(1000 * 60 * 10);
         let token = process.env.SALARY_TOKEN || config.token;
         if (req.params.token === token) {
             try {
