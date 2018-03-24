@@ -8,7 +8,7 @@ describe('languageController', () => {
     
     it('all languages', (done) => {
         testIniter.getChaiRequest()
-            .get("/specialisation/languages")
+            .get("/language/all")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
