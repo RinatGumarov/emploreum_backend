@@ -1,7 +1,7 @@
 const usersService = require('../services/userService');
 const cvService = require('../../employee/services/cvService');
 const employeesService = require('../../employee/services/employeeService');
-const languageService = require('../../languages/services/languageService');
+const userService = require('../../user/services/userService');
 const companiesService = require('../../company/services/companyService');
 const messageService = require('../../message/services/messageService');
 
@@ -145,10 +145,10 @@ module.exports.func = (router) => {
                     await employeesService.update(req.user.employee, req.body);
                     break;
                 case 'COMPANY':
-                    await companiesService.update(req.user.id, req.body);
+                    await companiesService.update(req.user, req.body);
                     break;
             }
-            await languageService.addLanguages(user, req.body.languages);
+            await userService.addLanguages(req.user, req.body.languages);
             await incrementStatusAndReturnResponse(req, res, SECOND_STATE);
         } catch (err) {
             logger.error(err.stack);
@@ -161,7 +161,7 @@ module.exports.func = (router) => {
     /**
      * пропустить шаг
      */
-    router.post('/signup/skip', async (req, res) => {
+    router.get('/signup/skip', async (req, res) => {
         try {
             await incrementStatusAndReturnResponse(req, res, SECOND_STATE);
         } catch (err) {

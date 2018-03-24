@@ -9,5 +9,9 @@ module.exports.func = (router) => {
     router.get('/address', checkIsEmployee);
     router.get('/contracts/awaited', checkIsEmployee);
     router.get('/contracts/current', checkIsEmployee);
+    router.get('/skills', checkIsEmployee);
+    router.post('/skills/add', checkIsEmployee);
+    router.get('/info', checkIsEmployee);
+    router.post('/info/update ', checkIsEmployee);
     return router;
 };
