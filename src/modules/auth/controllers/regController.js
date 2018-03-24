@@ -155,6 +155,22 @@ module.exports.func = (router) => {
             });
         }
     });
+    
+    /**
+     * пропустить шаг
+     */
+    router.post('/signup/skip', async (req, res) => {
+        try {
+            await incrementStatusAndReturnResponse(req, res, SECOND_STATE);
+        } catch (err) {
+            logger.error(err.stack);
+            res.status(500).json({
+                error: err.message
+            });
+        }
+    });
+    
+    
 
     /**
      * метод удаления пользователя из системы
