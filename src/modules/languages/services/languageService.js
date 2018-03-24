@@ -12,10 +12,6 @@ class LanguagesService {
         });
         return languages;
     }
-
-    async addLanguages(user, languages){
-        await user.addLanguages(languages);
-    }
     
 }
 
