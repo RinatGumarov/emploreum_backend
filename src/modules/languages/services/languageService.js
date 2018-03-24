@@ -8,7 +8,7 @@ class LanguagesService {
     
     async findAll() {
         let languages = await Languages.findAll({
-            attributes: ["name"],
+            attributes: ["id","name"],
         });
         return languages;
     }

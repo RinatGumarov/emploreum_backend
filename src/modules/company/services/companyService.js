@@ -40,10 +40,10 @@ class CompaniesService {
         }))[0];
     }
     
-    async update(userId, params) {
+    async update(user, params) {
         return await Companies.update(params, {
             where: {
-                userId: {[Op.eq]: userId}
+                userId: {[Op.eq]: user.id}
             }
         });
     }

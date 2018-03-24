@@ -145,7 +145,7 @@ module.exports.func = (router) => {
                     await employeesService.update(req.user.employee, req.body);
                     break;
                 case 'COMPANY':
-                    await companiesService.update(req.user.id, req.body);
+                    await companiesService.update(req.user, req.body);
                     break;
             }
             await userService.addLanguages(req.user, req.body.languages);
@@ -161,7 +161,7 @@ module.exports.func = (router) => {
     /**
      * пропустить шаг
      */
-    router.post('/signup/skip', async (req, res) => {
+    router.get('/signup/skip', async (req, res) => {
         try {
             await incrementStatusAndReturnResponse(req, res, SECOND_STATE);
         } catch (err) {
