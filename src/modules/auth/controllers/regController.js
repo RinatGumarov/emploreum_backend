@@ -80,7 +80,7 @@ module.exports.func = (router) => {
                     accountAddress
                 );
                 
-                switch (req.user.role) {
+                switch (req.session.role) {
                     case 'EMPLOYEE':
                         await employeesService.save(user.id);
                         break;
