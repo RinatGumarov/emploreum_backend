@@ -1,5 +1,4 @@
 let testIniter = require('../../../../core/tests/testIniter');
-var cookies;
 
 describe('authController', () => {
     
