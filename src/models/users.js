@@ -61,6 +61,11 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'user_id',
             timestamps: false
         });
+        users.belongsToMany(models.languages, {
+            through: 'user_languages',
+            timestamps: false,
+            foreignKey: 'user_id'
+        });
     };
     
     return users;

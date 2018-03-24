@@ -4,5 +4,14 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         timestamps: false
     });
+
+    languages.associate = function (models) {
+        languages.belongsToMany(models.users, {
+            through: 'user_languages',
+            timestamps: false,
+            foreignKey: 'language_id'
+        });
+    };
+
     return languages;
 };
