@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
         userId: {
             type: DataTypes.BIGINT,
             field: "user_id"
+        },
+        createdAt: {
+            type: DataTypes.BIGINT,
+            field: "created_at"
         }
     }, {
         timestamps: false

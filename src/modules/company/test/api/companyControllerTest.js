@@ -50,6 +50,7 @@ describe('companyController', () => {
                 res.body.should.have.property('name');
                 res.body.should.have.property('city');
                 res.body.should.have.property('userId');
+                res.body.should.have.property('createdAt');
                 res.body.should.have.property('responseText');
                 res.body.should.have.property('logo');
                 res.body.should.have.property('contract');
@@ -112,4 +113,38 @@ describe('companyController', () => {
     });
     
     testHelpers.logout();
+    
+    it('get company vacancies', (done) => {
+        testIniter.getChaiRequest()
+            .get("/company/1/vacancies")
+            .set("Content-Type", "application/json")
+            .set('Cookie', testIniter.getCookie())
+            .end(function (err, res) {
+                res.should.have.status(200);
+                res.body.should.be.a('array');
+                done();
+            });
+    });
+    
+    it('get company info by id', (done) => {
+        testIniter.getChaiRequest()
+            .get("/company/info/1")
+            .set("Content-Type", "application/json")
+            .set('Cookie', testIniter.getCookie())
+            .end(function (err, res) {
+                res.should.have.status(200);
+                res.body.should.be.a('object');
+                res.body.should.have.property('id');
+                res.body.should.have.property('about');
+                res.body.should.have.property('name');
+                res.body.should.have.property('city');
+                res.body.should.have.property('userId');
+                res.body.should.have.property('createdAt');
+                res.body.should.have.property('vacancies');
+                res.body.should.have.property('responseText');
+                res.body.should.have.property('logo');
+                res.body.should.have.property('contract');
+                done();
+            });
+    });
 });

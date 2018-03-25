@@ -4,19 +4,16 @@ const checkIsCompany = require('./checkIsCompanyMiddleware');
 
 module.exports.func = (router) => {
     
-    router.all('*', authMiddleware);
+    router.get('/', authMiddleware, checkIsCompany);
+    router.post('/update', authMiddleware, checkIsCompany);
+    router.get('/indicators', authMiddleware, checkIsCompany);
+    router.get('/employees', authMiddleware, checkIsCompany);
+    router.get('/tests', authMiddleware, checkIsCompany);
+    router.get('/transactions', authMiddleware, checkIsCompany);
+    router.get('/vacancy/:vacancyId([0-9]+)/candidate/:candidatesId([0-9]+)/reject', authMiddleware, checkIsCompany);
     
-    router.get('/', checkIsCompany);
-    router.post('/update', checkIsCompany);
-    router.get('/indicators', checkIsCompany);
-    router.get('/employees', checkIsCompany);
-    router.get('/tests', checkIsCompany);
-    router.get('/transactions', checkIsCompany);
-    router.get('/vacancy', checkIsCompany);
-    router.get('/vacancy/:vacancyId([0-9]+)/candidate/:candidatesId([0-9]+)/reject', checkIsCompany);
-    
-    router.post('/vacancy/create', checkIsCompany);
-    router.get('/vacancy/:vacancyId([0-9]+)/available', checkIsEmployee);
+    router.post('/vacancy/create', authMiddleware, checkIsCompany);
+    router.get('/vacancy/:vacancyId([0-9]+)/available', authMiddleware, checkIsEmployee);
     
     return router;
 };

@@ -1,5 +1,7 @@
 const companyService = require('../services/companyService');
 const balanceService = require('../../blockchain/services/balanceService');
+const vacancyService = require('../services/vacancyService');
+
 const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
@@ -48,6 +50,19 @@ module.exports.func = (router) => {
         }
     });
     
+    /**
+     * получить все вакансии по компании
+     */
+    router.get('/:companyId([0-9]+)/vacancies', async (req, res) => {
+        try {
+            let company = await companyService.findByUserId(req.params.companyId);
+            let vacancies = await vacancyService.findAllOpenVacancies(company);
+            res.json(vacancies);
+        } catch (err) {
+            logger.error(err.stack);
+            return res.status(500).json({error: err.message});
+        }
+    });
     
     /**
      * получить инфу по коипании
@@ -55,6 +70,8 @@ module.exports.func = (router) => {
     router.get('/info/:id([0-9]+)', async (req, res) => {
         try {
             let company = await companyService.findByUserId(req.params.id);
+            let openVacancies = await  vacancyService.findAllOpenVacancies(company);
+            company.dataValues.vacancies = openVacancies.length;
             res.status(200).json(company);
         } catch (err) {
             logger.error(err.stack);

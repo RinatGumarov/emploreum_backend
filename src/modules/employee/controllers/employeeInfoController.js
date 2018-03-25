@@ -6,21 +6,6 @@ const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
     
-    /**
-     * получитть всю  инфу по аунтифицированному employee
-     */
-    router.get('/', async (req, res) => {
-        try {
-            let info = req.user.employee;
-            let languages = await userService.allLanguages(req.user);
-            info.dataValues.languages = languages;
-            res.json(info);
-        } catch (err) {
-            logger.error(err.stack);
-            return res.status(500).send({error: 'Could not get info by auth employee'});
-        }
-    });
-    
     router.get('/info/:employeeUserId([0-9]+)', async (req, res) => {
         try {
             let employee = await employeeService.getByUserId(req.params.employeeUserId);
