@@ -29,7 +29,7 @@ class VacanciesService {
         return await VacancyProfileSkills.create(options)
     }
     
-    async findAllVacanciesByCompany(company) {
+    async findAllOpenVacancies(company) {
         let vacancies = await Vacancies.findAll({
             where: {
                 companyId: {

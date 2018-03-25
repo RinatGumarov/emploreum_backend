@@ -19,21 +19,6 @@ describe('employeeController', () => {
             });
     });
     
-    it('auth employee info', (done) => {
-        testIniter.getChaiRequest()
-            .get("/employee/info")
-            .set("Content-Type", "application/json")
-            .set('Cookie', testIniter.getCookie())
-            .end(function (err, res) {
-                console.log(res.body);
-                res.should.have.status(200);
-                res.body.should.be.a('object');
-                res.body.should.have.property('name');
-                res.body.should.have.property('languages');
-                done();
-            });
-    });
-    
     it('employee auth info update', (done) => {
         testIniter.getChaiRequest()
             .post("/employee/info/update")

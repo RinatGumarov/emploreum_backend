@@ -65,23 +65,6 @@ describe('vacancyController', () => {
     
     testHelpers.authTestCompany();
     
-    it('get company vacancies', (done) => {
-        testIniter.getChaiRequest()
-            .get("/company/vacancy")
-            .set("Content-Type", "application/json")
-            .set('Cookie', testIniter.getCookie())
-            .end(function (err, res) {
-                res.should.have.status(200);
-                res.body.should.be.a('array');
-                res.body[0].should.be.a('object');
-                res.body[0].should.have.property('info');
-                res.body[0].should.have.property('name');
-                res.body[0].should.have.property('duration');
-                res.body[0].should.have.property('opened');
-                done();
-            });
-    });
-    
     
     it('get vacancy info', (done) => {
         testIniter.getChaiRequest()
