@@ -5,7 +5,7 @@ describe('testController', () => {
     
     testHelpers.authTestCompany();
     
-    it('create test for vacancy by company', (done) => {
+    it('/test/company/create', (done) => {
         testIniter.getChaiRequest()
             .post("/test/company/create")
             .set("Content-Type", "application/json")
@@ -29,13 +29,12 @@ describe('testController', () => {
             })
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a('string');
                 testIniter.setRequestSession("testId", res.body);
                 done();
             });
     });
     
-    it('create question for test', (done) => {
+    it('/test/:id([0-9]+)/question/create', (done) => {
         testIniter.getChaiRequest()
             .post(`/test/${testIniter.getRequestSession("testId")}/question/create`)
             .set("Content-Type", "application/json")
@@ -59,24 +58,17 @@ describe('testController', () => {
             })
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.have.property('data');
-                res.body.data.should.equal('success');
                 done();
             });
     });
     
-    it('get info about test for owner company', (done) => {
+    it('/test/:testId([0-9]+)', (done) => {
         testIniter.getChaiRequest()
             .get(`/test/${testIniter.getRequestSession("testId")}`)
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a("object");
-                res.body.should.have.property("specifications");
-                res.body.should.have.property("questions");
-                res.body.specifications.should.be.a("array");
-                res.body.questions.should.be.a("array");
                 done();
             });
     });
@@ -108,20 +100,18 @@ describe('testController', () => {
     
     testHelpers.authTestEmployee();
     
-    it('get vacancy test', (done) => {
+    it('/test/vacancy/:id([0-9]+)', (done) => {
         testIniter.getChaiRequest()
             .get(`/test/vacancy/${testIniter.getRequestSession("vacancyId")}`)
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a("object");
-                res.body.should.have.property("questions");
                 done();
             });
     });
     
-    it('start vacancy test', (done) => {
+    it('/test/:vacancyId([0-9]+)/submit', (done) => {
         testIniter.getChaiRequest()
             .get(`/test/${testIniter.getRequestSession("vacancyId")}/start`)
             .set("Content-Type", "application/json")
@@ -131,24 +121,20 @@ describe('testController', () => {
             });
     });
     
-    it('get test questions for employee', (done) => {
+    it('/test/:id([0-9]+)/questions', (done) => {
         testIniter.getChaiRequest()
             .get(`/test/${testIniter.getRequestSession("testId")}/questions`)
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a("array");
-                res.body[0].should.be.a("object");
-                res.body[0].should.have.property("answers");
-                res.body[0].answers.should.be.a("array");
                 testIniter.setRequestSession("questionId", res.body[0].id);
                 done();
             });
     });
     
     
-    it('pass questions answers', (done) => {
+    it('/test/question/:questionId([0-9]+)/answer', (done) => {
         testIniter.getChaiRequest()
             .post(`/test/question/${testIniter.getRequestSession("questionId")}/answer`)
             .set("Content-Type", "application/json")
@@ -156,23 +142,17 @@ describe('testController', () => {
             .send([3,4])
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a("object");
-                res.body.should.have.property("data");
-                res.body.data.should.equal('success');
                 done();
             });
     });
     
-    it('end test for employee', (done) => {
+    it('/test/:vacancyId([0-9]+)/submit', (done) => {
         testIniter.getChaiRequest()
             .get(`/test/${testIniter.getRequestSession("vacancyId")}/submit`)
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a("object");
-                res.body.should.have.property("data");
-                res.body.data.should.equal('success');
                 done();
             });
     });
