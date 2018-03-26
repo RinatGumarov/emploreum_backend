@@ -5,7 +5,7 @@ describe('skillController', () => {
     
     testHelpers.authTestEmployee();
     
-    it('all skill by profile', (done) => {
+    it('/specialisation/skills/:profileId([0-9]+)', (done) => {
         testIniter.getChaiRequest()
             .get("/specialisation/skills/1")
             .set("Content-Type", "application/json")

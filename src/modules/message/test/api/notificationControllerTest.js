@@ -5,23 +5,18 @@ describe('notificationController', () => {
     
     testHelpers.authTestEmployee();
     
-    it('get all new notifications for employee', (done) => {
+    it('/message/notifications', (done) => {
         testIniter.getChaiRequest()
             .get("/message/notifications")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
-                res.body[0].should.be.a('object');
-                res.body[0].should.have.property('text');
-                res.body[0].should.have.property('isView');
-                res.body[0].isView.should.equal(false);
                 done();
             });
     });
     
-    it('reed all notifications', (done) => {
+    it('/message/notifications/read', (done) => {
         testIniter.getChaiRequest()
             .get("/message/notifications/read")
             .set("Content-Type", "application/json")

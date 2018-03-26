@@ -6,20 +6,18 @@ describe('employeeController', () => {
     testHelpers.authTestEmployee();
     
     
-    it('employee info', (done) => {
+    it('/employee/info/:employeeUserId([0-9]+)', (done) => {
         testIniter.getChaiRequest()
             .get("/employee/info/2")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a('object');
-                res.body.should.have.property('name');
                 done();
             });
     });
     
-    it('employee auth info update', (done) => {
+    it('/employee/info/update', (done) => {
         testIniter.getChaiRequest()
             .post("/employee/info/update")
             .set("Content-Type", "application/json")
@@ -34,35 +32,18 @@ describe('employeeController', () => {
             });
     });
     
-    it('employee skills', (done) => {
+    it('/employee/skills/:employeeUserId([0-9]+)', (done) => {
         testIniter.getChaiRequest()
             .get("/employee/skills/2")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
-                res.body[0].should.be.a('object');
-                res.body[0].should.have.property('skills');
-                res.body[0].skills.should.be.a('array');
-                res.body[0].skills[0].should.have.property('name');
                 done();
             });
     });
     
-    it('employee auth specifications', (done) => {
-        testIniter.getChaiRequest()
-            .get("/employee/skills")
-            .set("Content-Type", "application/json")
-            .set('Cookie', testIniter.getCookie())
-            .end(function (err, res) {
-                res.should.have.status(200);
-                done();
-            });
-    });
-    
-    
-    it('employee auth specifications update', (done) => {
+    it('/employee/skills/update', (done) => {
         testIniter.getChaiRequest()
             .post("/employee/skills/update")
             .set("Content-Type", "application/json")
@@ -86,28 +67,25 @@ describe('employeeController', () => {
             });
     });
     
-    it('employee awaited contracts', (done) => {
+    it('/employee/contracts/awaited', (done) => {
         testIniter.getChaiRequest()
             .get("/employee/contracts/awaited")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
-                res.body[0].should.be.a('object');
                 done();
             });
     });
     
     
-    it('employee current contracts', (done) => {
+    it('/employee/contracts/current', (done) => {
         testIniter.getChaiRequest()
             .get("/employee/contracts/current")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
                 done();
             });
     });

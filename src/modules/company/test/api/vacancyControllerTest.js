@@ -5,7 +5,7 @@ describe('vacancyController', () => {
     
     testHelpers.authTestEmployee();
     
-    it(' is allowed vacancy to employee', (done) => {
+    it('/company/vacancy/:vacancyId([0-9]+)/available', (done) => {
         testIniter.getChaiRequest()
             .get("/company/vacancy/1/available")
             .set("Content-Type", "application/json")
@@ -18,119 +18,61 @@ describe('vacancyController', () => {
     
     testHelpers.logout();
     
-    describe('create vacancy', () => {
-        
-        testHelpers.authTestCompany();
-        
-        it(' send not valid json', (done) => {
-            testIniter.getChaiRequest()
-                .post("/company/vacancy/create")
-                .set("Content-Type", "application/json")
-                .set('Cookie', testIniter.getCookie())
-                .send({})
-                .end(function (err, res) {
-                    res.should.have.status(500);
-                    done();
-                });
-        });
-        
-        
-        it('send valid json', (done) => {
-            testIniter.getChaiRequest()
-                .post("/company/vacancy/create")
-                .set("Content-Type", "application/json")
-                .set('Cookie', testIniter.getCookie())
-                .send({
-                    name: "test_vacancy",
-                    specifications: [{
-                        id: 1,
-                        skills: [{
-                            id: 1
-                        }]
-                    }]
-                })
-                .end(function (err, res) {
-                    res.should.have.status(200);
-                    res.body.should.be.a('object');
-                    res.body.should.have.property('info');
-                    res.body.should.have.property('name');
-                    res.body.should.have.property('duration');
-                    res.body.should.have.property('opened');
-                    done();
-                });
-        });
-        
-        testHelpers.logout();
-    });
     
     testHelpers.authTestCompany();
-    
-    
-    it('get vacancy info', (done) => {
+    it('/company/vacancy/create', (done) => {
+        testIniter.getChaiRequest()
+            .post("/company/vacancy/create")
+            .set("Content-Type", "application/json")
+            .set('Cookie', testIniter.getCookie())
+            .send({
+                name: "test_vacancy",
+                specifications: [{
+                    id: 1,
+                    skills: [{
+                        id: 1
+                    }]
+                }]
+            })
+            .end(function (err, res) {
+                res.should.have.status(200);
+                done();
+            });
+    });
+    it('/company/vacancy/info/:id([0-9]+)', (done) => {
         testIniter.getChaiRequest()
             .get("/company/vacancy/info/1")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a('object');
-                res.body.should.have.property('info');
-                res.body.should.have.property('name');
-                res.body.should.have.property('duration');
-                res.body.should.have.property('opened');
                 done();
             });
     });
     
-    it('get vacancy specification', (done) => {
+    it('/company/vacancy/:id([0-9]+)/specification', (done) => {
         testIniter.getChaiRequest()
             .get("/company/vacancy/1/specification")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
-                res.body[0].should.be.a('object');
-                res.body[0].should.have.property('name');
-                res.body[0].should.have.property('skills');
-                res.body[0].skills.should.be.a('array');
-                res.body[0].skills[0].should.be.a('object');
-                res.body[0].skills[0].should.have.property('name');
                 done();
             });
     });
     
-    it('get vacancy candidates', (done) => {
+    it('/company/vacancy/:id([0-9]+)/candidates', (done) => {
         testIniter.getChaiRequest()
             .get("/company/vacancy/1/candidates")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
                 res.should.have.status(200);
-                res.body.should.be.a('array');
-                res.body[0].should.be.a('object');
-                res.body[0].should.have.property('name');
-                res.body[0].should.have.property('user');
                 done();
             });
     });
     
-    it('get vacancy candidates', (done) => {
-        testIniter.getChaiRequest()
-            .get("/company/vacancy/1/candidates")
-            .set("Content-Type", "application/json")
-            .set('Cookie', testIniter.getCookie())
-            .end(function (err, res) {
-                res.should.have.status(200);
-                res.body.should.be.a('array');
-                res.body[0].should.be.a('object');
-                res.body[0].should.have.property('name');
-                res.body[0].should.have.property('user');
-                done();
-            });
-    });
-    
-    it('reject candidates', (done) => {
+    it('/vacancy/:vacancyId([0-9]+)/candidate/:candidatesId([0-9]+)/reject', (done) => {
         testIniter.getChaiRequest()
             .post("/company/vacancy/1/candidate/2/reject")
             .set("Content-Type", "application/json")
@@ -141,7 +83,7 @@ describe('vacancyController', () => {
             });
     });
     
-    it('invite candidates', (done) => {
+    it('/vacancy/:id([0-9]+)/invite', (done) => {
         testIniter.getChaiRequest()
             .post("/company/vacancy/1/invite")
             .set("Content-Type", "application/json")
