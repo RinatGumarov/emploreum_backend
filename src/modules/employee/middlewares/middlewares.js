@@ -2,16 +2,15 @@ const authMiddleware = require('../../auth/middlewares/authMiddleware');
 const checkIsEmployee = require('./checkIsEmployeeMiddleware');
 
 module.exports.func = (router) => {
-    router.all('*', authMiddleware);
-    router.get('/vacancy/enroll/:vacancyId([0-9]+)', checkIsEmployee);
-    router.get('/vacancy/recommended', checkIsEmployee);
-    router.get('/indicators', checkIsEmployee);
-    router.get('/address', checkIsEmployee);
-    router.get('/contracts/awaited', checkIsEmployee);
-    router.get('/contracts/current', checkIsEmployee);
-    router.get('/skills', checkIsEmployee);
-    router.post('/skills/add', checkIsEmployee);
-    router.get('/info', checkIsEmployee);
-    router.post('/info/update ', checkIsEmployee);
+    router.get('/vacancy/enroll/:vacancyId([0-9]+)', authMiddleware, checkIsEmployee);
+    router.get('/vacancy/recommended', authMiddleware, checkIsEmployee);
+    router.get('/indicators', authMiddleware, checkIsEmployee);
+    router.get('/address', authMiddleware, checkIsEmployee);
+    router.get('/contracts/awaited', authMiddleware, checkIsEmployee);
+    router.get('/contracts/current', authMiddleware, checkIsEmployee);
+    router.get('/skills', authMiddleware, checkIsEmployee);
+    router.post('/skills/add', authMiddleware, checkIsEmployee);
+    router.get('/info', authMiddleware, checkIsEmployee);
+    router.post('/info/update ', authMiddleware, checkIsEmployee);
     return router;
 };
