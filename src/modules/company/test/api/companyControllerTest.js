@@ -5,7 +5,7 @@ describe('companyController', () => {
     
     testHelpers.authTestCompany();
     
-    it('/company', (done) => {
+    it('/', (done) => {
         testIniter.getChaiRequest()
             .get("/company")
             .set("Content-Type", "application/json")
@@ -16,7 +16,7 @@ describe('companyController', () => {
             });
     });
     
-    it('/company/update', (done) => {
+    it('/update', (done) => {
         testIniter.getChaiRequest()
             .post("/company/update")
             .set("Content-Type", "application/json")
@@ -28,7 +28,7 @@ describe('companyController', () => {
             });
     });
     
-    it('/company/info/vacancy/:id([0-9]+)', (done) => {
+    it('/info/vacancy/:id([0-9]+)', (done) => {
         testIniter.getChaiRequest()
             .get("/company/info/vacancy/1")
             .set("Content-Type", "application/json")
@@ -41,7 +41,7 @@ describe('companyController', () => {
    
     testHelpers.logout();
     
-    it('/company/:companyId([0-9]+)/vacancies', (done) => {
+    it('/:companyId([0-9]+)/vacancies', (done) => {
         testIniter.getChaiRequest()
             .get("/company/1/vacancies")
             .set("Content-Type", "application/json")
@@ -53,7 +53,7 @@ describe('companyController', () => {
             });
     });
     
-    it('/company/info/:id([0-9]+)', (done) => {
+    it('/info/:id([0-9]+)', (done) => {
         testIniter.getChaiRequest()
             .get("/company/info/1")
             .set("Content-Type", "application/json")

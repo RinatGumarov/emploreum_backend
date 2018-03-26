@@ -5,7 +5,7 @@ describe('vacancyController', () => {
     
     testHelpers.authTestEmployee();
     
-    it('/company/vacancy/:vacancyId([0-9]+)/available', (done) => {
+    it('/vacancy/:vacancyId([0-9]+)/available', (done) => {
         testIniter.getChaiRequest()
             .get("/company/vacancy/1/available")
             .set("Content-Type", "application/json")
@@ -20,7 +20,7 @@ describe('vacancyController', () => {
     
     
     testHelpers.authTestCompany();
-    it('/company/vacancy/create', (done) => {
+    it('/vacancy/create', (done) => {
         testIniter.getChaiRequest()
             .post("/company/vacancy/create")
             .set("Content-Type", "application/json")
@@ -39,7 +39,7 @@ describe('vacancyController', () => {
                 done();
             });
     });
-    it('/company/vacancy/info/:id([0-9]+)', (done) => {
+    it('/vacancy/info/:id([0-9]+)', (done) => {
         testIniter.getChaiRequest()
             .get("/company/vacancy/info/1")
             .set("Content-Type", "application/json")
@@ -50,7 +50,7 @@ describe('vacancyController', () => {
             });
     });
     
-    it('/company/vacancy/:id([0-9]+)/specification', (done) => {
+    it('/vacancy/:id([0-9]+)/specification', (done) => {
         testIniter.getChaiRequest()
             .get("/company/vacancy/1/specification")
             .set("Content-Type", "application/json")
@@ -61,7 +61,7 @@ describe('vacancyController', () => {
             });
     });
     
-    it('/company/vacancy/:id([0-9]+)/candidates', (done) => {
+    it('/vacancy/:id([0-9]+)/candidates', (done) => {
         testIniter.getChaiRequest()
             .get("/company/vacancy/1/candidates")
             .set("Content-Type", "application/json")
@@ -72,7 +72,7 @@ describe('vacancyController', () => {
             });
     });
     
-    it('/vacancy/:vacancyId([0-9]+)/candidate/:candidatesId([0-9]+)/reject', (done) => {
+    it('/:vacancyId([0-9]+)/candidate/:candidatesId([0-9]+)/reject', (done) => {
         testIniter.getChaiRequest()
             .post("/company/vacancy/1/candidate/2/reject")
             .set("Content-Type", "application/json")
@@ -83,7 +83,7 @@ describe('vacancyController', () => {
             });
     });
     
-    it('/vacancy/:id([0-9]+)/invite', (done) => {
+    it('/:id([0-9]+)/invite', (done) => {
         testIniter.getChaiRequest()
             .post("/company/vacancy/1/invite")
             .set("Content-Type", "application/json")

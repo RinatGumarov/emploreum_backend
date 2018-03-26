@@ -1,6 +1,5 @@
 const models = require("../../../core/models");
 const Tests = models.tests;
-const PassedQuestions = models.passedQuestions;
 const TestEnds = models.testEnds;
 
 const Op = models.sequelize.Op;
@@ -64,78 +63,6 @@ class TestService {
         return test;
     }
 
-    async findAllQuestionsByTestId(testId) {
-        let questions = await models.questions.findAll({
-            where: {
-                testId: {
-                    [Op.eq]: testId,
-                }
-            },
-            attributes: ["id", "name", "type"],
-            include: [{
-                model: models.answers,
-            }],
-        });
-        return questions;
-    }
-
-    async findQuestionById(id) {
-        return await models.questions.findOne({
-            include: {
-                model: models.answers,
-                attributes: ["id", "name"],
-            },
-            where: {
-                id: {
-                    [Op.eq]: id,
-                }
-            }
-        });
-    }
-
-    async findPassedQuestions(employee, test) {
-        return await PassedQuestions.findAll({
-            where: {
-                [Op.and]: {
-                    testId: {
-                        [Op.eq]: test.id,
-                    },
-                    employeeId: {
-                        [Op.eq]: employee.id
-                    }
-                }
-            },
-        })
-    }
-
-    async saveQuestion(question) {
-        return await models.questions.create(question)
-    }
-
-    async saveAnswer(answer) {
-        return await models.answers.create(answer);
-    }
-
-    async savePassedQuestion(passedQuestion) {
-        return await PassedQuestions.create(passedQuestion);
-    }
-
-    async getCorrectAnswers(questionId) {
-        let answers = await models.answers.findAll({
-            where: {
-                [Op.and]: {
-                    questionId: {
-                        [Op.eq]: questionId,
-                    },
-                    isTrue: {
-                        [Op.eq]: true,
-                    },
-                }
-            }
-        });
-        return answers;
-    }
-
     async startTest(employee, test) {
         let ends = new Date();
         logger.log(ends);
@@ -176,32 +103,7 @@ class TestService {
         testEnds.ends = new Date();
         return await testEnds.save();
     }
-
-    async questionsAvailable(employee, test) {
-        if (!test.duration)
-            return true;
-        let started = await this.findTestEnds(employee.id, test.id);
-        if (!started)
-            return false;
-        return (started.ends === null || started.ends > new Date());
-    }
-
-    countValueOfQuestion(question, questions) {
-        let sumOfDifficulties = questions.reduce((sum, current) => {
-            return sum + (current.difficulty ? current.difficulty : 1)
-        }, 0);
-        return (question.difficulty || 1) / sumOfDifficulties;
-    }
-
-    countValueOfAnswer(isTrue, answers, correctAnswers, type) {
-        if (type === 'input')
-            return isTrue ? 1 : 0;
-        return (isTrue ? 1 : -1) * (1 / (isTrue ? correctAnswers.length : answers.length));
-    }
 }
 
-if (typeof instance !== TestService) {
-    instance = new TestService();
-}
-
+instance = new TestService();
 module.exports = instance;

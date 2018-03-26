@@ -6,7 +6,7 @@ describe('employeeController', () => {
     testHelpers.authTestEmployee();
     
     
-    it('/employee/info/:employeeUserId([0-9]+)', (done) => {
+    it('/info/:employeeUserId([0-9]+)', (done) => {
         testIniter.getChaiRequest()
             .get("/employee/info/2")
             .set("Content-Type", "application/json")
@@ -17,7 +17,7 @@ describe('employeeController', () => {
             });
     });
     
-    it('/employee/info/update', (done) => {
+    it('/info/update', (done) => {
         testIniter.getChaiRequest()
             .post("/employee/info/update")
             .set("Content-Type", "application/json")
@@ -32,7 +32,7 @@ describe('employeeController', () => {
             });
     });
     
-    it('/employee/skills/:employeeUserId([0-9]+)', (done) => {
+    it('/skills/:employeeUserId([0-9]+)', (done) => {
         testIniter.getChaiRequest()
             .get("/employee/skills/2")
             .set("Content-Type", "application/json")
@@ -43,7 +43,7 @@ describe('employeeController', () => {
             });
     });
     
-    it('/employee/skills/update', (done) => {
+    it('/update', (done) => {
         testIniter.getChaiRequest()
             .post("/employee/skills/update")
             .set("Content-Type", "application/json")
@@ -67,7 +67,7 @@ describe('employeeController', () => {
             });
     });
     
-    it('/employee/contracts/awaited', (done) => {
+    it('/contracts/awaited', (done) => {
         testIniter.getChaiRequest()
             .get("/employee/contracts/awaited")
             .set("Content-Type", "application/json")
@@ -79,7 +79,7 @@ describe('employeeController', () => {
     });
     
     
-    it('/employee/contracts/current', (done) => {
+    it('/contracts/current', (done) => {
         testIniter.getChaiRequest()
             .get("/employee/contracts/current")
             .set("Content-Type", "application/json")

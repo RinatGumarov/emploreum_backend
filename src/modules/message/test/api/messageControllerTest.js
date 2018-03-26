@@ -4,7 +4,7 @@ let testHelpers = require('../../../../core/tests/testHelpers');
 describe('messageController', () => {
     
     testHelpers.authTestEmployee();
-    it('/message/chat/:chatId([0-9]+)/all', (done) => {
+    it('/chat/:chatId([0-9]+)/all', (done) => {
         testIniter.getChaiRequest()
             .get("/message/chat/1/all")
             .set("Content-Type", "application/json")
@@ -14,7 +14,7 @@ describe('messageController', () => {
                 done();
             });
     });
-    it('/message/create', (done) => {
+    it('/create', (done) => {
         testIniter.getChaiRequest()
             .post("/message/create")
             .set("Content-Type", "application/json")

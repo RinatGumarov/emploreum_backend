@@ -6,7 +6,7 @@ describe('uploadMiddlewareTest', () => {
     
     testHelpers.authTestEmployee();
     
-    it('/file/upload', (done) => {
+    it('/upload', (done) => {
         testIniter.getChaiRequest()
             .post("/file/upload")
             .attach('file', filename)
