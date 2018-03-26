@@ -10,23 +10,32 @@ class sessionStoreIniter {
     
     
     constructor() {
-        let configDb;
-        let dbUser;
-        let dbPassword;
-        let dbName;
-        let dbHost;
-        let dbPort;
-        if (configUtil.get("database") && process.env.NODE_ENV !== "test") {
-            configDb = configUtil.get("database").production;
+        let urlPath;
+        if (configUtil.get("database")) {
+            let configDb;
+            let dbUser;
+            let dbPassword;
+            let dbName;
+            let dbHost;
+            let dbPort;
+            
+            if (process.env.NODE_ENV !== "test") {
+                configDb = configUtil.get("database").production;
+            } else {
+                configDb = configUtil.get("database").test;
+            }
+            dbUser = configDb.username;
+            dbPassword = configDb.password;
+            dbName = configDb.database;
+            dbHost = configDb.host;
+            dbPort = configDb.port;
+            urlPath = `postgresql://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`;
+        } else if (process.env.DATABASE_URL) {
+            urlPath = process.env.DATABASE_URL;
         } else {
-            configDb = configUtil.get("database").test;
+            throw Error("session store initer error");
         }
-        dbUser = configDb.username;
-        dbPassword = configDb.password;
-        dbName = configDb.database;
-        dbHost = configDb.host;
-        dbPort = configDb.port;
-        let urlPath = process.env.DATABASE_URL || `postgresql://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`;
+        
         this.store = new pgSession({
             conString: urlPath
         });
