@@ -3,7 +3,7 @@ let testIniter = require('../../../../core/tests/testIniter');
 describe('authController', () => {
     
     
-    it('/auth/login', (done) => {
+    it('/login', (done) => {
         testIniter.getChaiRequest()
             .post("/auth/login")
             .set("Content-Type", "application/json")
@@ -17,7 +17,7 @@ describe('authController', () => {
             });
     });
     
-    it('/auth/logout', (done) => {
+    it('/logout', (done) => {
         testIniter.getChaiRequest()
             .get("/auth/logout")
             .set("Content-Type", "application/json")

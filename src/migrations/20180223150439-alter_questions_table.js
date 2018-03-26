@@ -34,7 +34,7 @@ module.exports = {
                 queryInterface.removeColumn("questions", "test_id"),
                 queryInterface.removeColumn("questions", "type"),
                 queryInterface.renameColumn("questions", "name", "question"),
-                queryInterface.sequelize.query('DROP TYPE "enum_questions_type";')
+                queryInterface.sequelize.query('DROP TYPE "enum_questions_type" CASCADE;')
             ]);
         });
     }

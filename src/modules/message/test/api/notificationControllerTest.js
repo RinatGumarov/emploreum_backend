@@ -5,7 +5,7 @@ describe('notificationController', () => {
     
     testHelpers.authTestEmployee();
     
-    it('/message/notifications', (done) => {
+    it('/notifications', (done) => {
         testIniter.getChaiRequest()
             .get("/message/notifications")
             .set("Content-Type", "application/json")
@@ -16,7 +16,7 @@ describe('notificationController', () => {
             });
     });
     
-    it('/message/notifications/read', (done) => {
+    it('/notifications/read', (done) => {
         testIniter.getChaiRequest()
             .get("/message/notifications/read")
             .set("Content-Type", "application/json")

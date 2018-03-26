@@ -4,7 +4,6 @@ const TestScores = models.testScores;
 const PassedQuestions = models.passedQuestions;
 
 const Op = models.sequelize.Op;
-const logger = require('../../../utils/logger');
 const _ = require('lodash');
 
 let instance;

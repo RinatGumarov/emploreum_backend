@@ -5,7 +5,7 @@ describe('languageController', () => {
     
     testHelpers.authTestEmployee();
     
-    it('/language/all', (done) => {
+    it('/all', (done) => {
         testIniter.getChaiRequest()
             .get("/language/all")
             .set("Content-Type", "application/json")

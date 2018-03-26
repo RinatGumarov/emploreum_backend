@@ -6,7 +6,7 @@ describe('regController', () => {
      * test regitration company flow
      */
     describe('company flow', () => {
-        it('/auth/signup/email', (done) => {
+        it('/signup/email', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/email")
                 .set("Content-Type", "application/json")
@@ -23,7 +23,7 @@ describe('regController', () => {
                     done();
                 });
         });
-        it('/auth/signup/verification', (done) => {
+        it('/signup/verification', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/verification")
                 .set('Cookie', cookies)
@@ -35,7 +35,7 @@ describe('regController', () => {
                 });
         });
         
-        it('/auth/signup/specification', (done) => {
+        it('/signup/specification', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/specification")
                 .set('Cookie', cookies)
@@ -54,7 +54,7 @@ describe('regController', () => {
                     done()
                 });
         });
-        it('/auth/signup/info', (done) => {
+        it('/signup/info', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/info")
                 .set('Cookie', cookies)
@@ -75,7 +75,7 @@ describe('regController', () => {
      */
     describe('employee flow', () => {
         
-        it('/auth/signup/email', (done) => {
+        it('/signup/email', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/email")
                 .set("Content-Type", "application/json")
@@ -94,7 +94,7 @@ describe('regController', () => {
             
         });
         
-        it('/auth/signup/verification', (done) => {
+        it('/signup/verification', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/verification")
                 .set('Cookie', cookies)
@@ -106,7 +106,7 @@ describe('regController', () => {
                 });
         });
         
-        it('/auth/signup/specification', (done) => {
+        it('/signup/specification', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/specification")
                 .set('Cookie', cookies)
@@ -132,7 +132,7 @@ describe('regController', () => {
                 });
         });
         
-        it('/auth/signup/info', (done) => {
+        it('/signup/info', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/info")
                 .set('Cookie', cookies)

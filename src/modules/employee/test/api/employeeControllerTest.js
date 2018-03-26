@@ -5,7 +5,7 @@ describe('employeeController', () => {
     
     testHelpers.authTestEmployee();
     
-    it('/employee/vacancy/enroll/:vacancyId([0-9]+)', (done) => {
+    it('/vacancy/enroll/:vacancyId([0-9]+)', (done) => {
         testIniter.getChaiRequest()
             .get("/employee/vacancy/enroll/1")
             .set("Content-Type", "application/json")
@@ -16,7 +16,7 @@ describe('employeeController', () => {
             });
     });
     
-    it('/employee/vacancy/recommended', (done) => {
+    it('/vacancy/recommended', (done) => {
         testIniter.getChaiRequest()
             .get("/employee/vacancy/recommended")
             .set("Content-Type", "application/json")
@@ -27,7 +27,7 @@ describe('employeeController', () => {
             });
     });
     
-    it('/employee/all', (done) => {
+    it('/all', (done) => {
         testIniter.getChaiRequest()
             .get("/employee/all")
             .set("Content-Type", "application/json")
