@@ -5,7 +5,7 @@ describe('profileController', () => {
     
     testHelpers.authTestEmployee();
     
-    it('all profiles', (done) => {
+    it('/specialisation/profiles', (done) => {
         testIniter.getChaiRequest()
             .get("/specialisation/profiles")
             .set("Content-Type", "application/json")

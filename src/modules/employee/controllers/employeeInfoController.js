@@ -41,19 +41,6 @@ module.exports.func = (router) => {
         }
     });
     
-    /**
-     * получить все скилы по аунтифицированому employee
-     */
-    router.get('/skills', async (req, res) => {
-        try {
-            let employeeSkills = await cvService.getEmployeeSpecification(req.user.employee.id);
-            res.json(employeeSkills);
-        } catch (err) {
-            logger.error(err.stack);
-            return res.status(500).send({error: 'Could not get skills by auth employee'});
-        }
-    });
-    
     router.post('/skills/update', async (req, res) => {
         try {
             let profiles = req.body;
