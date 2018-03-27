@@ -1,7 +1,7 @@
 let testIniter = require('../../../../core/tests/testIniter');
 let testHelpers = require('../../../../core/tests/testHelpers');
 
-describe('employeeController', () => {
+describe('employeeInfoController', () => {
     
     testHelpers.authTestEmployee();
     
