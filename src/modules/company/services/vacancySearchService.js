@@ -3,56 +3,42 @@ const queryScanner = require('../../../core/queryScanner');
 
 let instance;
 
-/**
- * класс работника
- */
-class EmployeesSearchService {
+class VacancySearchService {
     
     async search(params) {
         
-        let where = "WHERE ";
-        let withAnd = false;
+        let whereQuery = "";
         
         if (params.profileSkills && params.profileSkills.length > 0) {
-            where += this.getProfileSkillQueryFilter(params.profileSkills);
-            withAnd = true;
+            whereQuery += this.getProfileSkillQueryFilter(params.profileSkills);
         }
         
         if (params.languages && params.languages.length > 0) {
-            where += this.getLanguagesQueryFilter(params.languages, withAnd);
-            if (withAnd) {
-                withAnd = true;
-            }
+            whereQuery += this.getLanguagesQueryFilter(params.languages);
         }
         
         if (params.city) {
-            where += this.getCityQueryFilter(params.city, withAnd);
-            if (withAnd) {
-                withAnd = true;
-            }
+            whereQuery += this.getCityQueryFilter(params.city);
         }
         
         if (params.keywords && params.keywords.length > 0) {
-            where += this.getKeywordQueryFilter(params.keywords, withAnd);
-            if (withAnd) {
-                withAnd = true;
-            }
+            whereQuery += this.getKeywordQueryFilter(params.keywords);
         }
         
-        let queryStr = queryScanner.employee.search;
-        queryStr = queryStr.replace(':whereQuery', where);
-        let employees = await queryScanner.query(queryStr, {
-            model: models.employees
+        let queryStr = queryScanner.company.search;
+        queryStr = queryStr.replace(':whereQuery', whereQuery);
+        let vacancies = await queryScanner.query(queryStr, {
+            model: models.vacancies
         });
-        return employees;
+        return vacancies;
     }
     
     getProfileSkillQueryFilter(profileSkills) {
         //добавить начинающие скобки
-        let result = "(";
+        let result = "AND (";
         for (let i = 0; i < profileSkills.length; ++i) {
             let profileSkill = profileSkills[i];
-            result += `(cvs.profile_id = ${profileSkill.profileId} AND cv_skills.skill_id = ${profileSkill.skillId})`;
+            result += `(profile_skills.profile_id = ${profileSkill.profileId} AND profile_skills.skill_id = ${profileSkill.skillId})`;
             if (i !== profileSkills.length - 1) {
                 result += " OR ";
             }
@@ -62,10 +48,10 @@ class EmployeesSearchService {
         return result;
     }
     
-    getLanguagesQueryFilter(languages, withAnd) {
+    getLanguagesQueryFilter(languages) {
         
         //добавить начинающие скобки
-        let result = `${withAnd ? ' AND' : ''}  (`;
+        let result = 'AND (';
         
         for (let i = 0; i < languages.length; ++i) {
             let language = languages[i];
@@ -79,18 +65,18 @@ class EmployeesSearchService {
         return result;
     }
     
-    getCityQueryFilter(city, withAnd) {
-        return `${withAnd ? ' AND' : ''} (employees.city LIKE '%${city}%')`;
+    getCityQueryFilter(city) {
+        return `AND(companies.city LIKE '%${city}%')`;
     }
     
     getKeywordQueryFilter(keywords, withAnd) {
         
         //добавить начинающие скобки
-        let result = `${withAnd ? ' AND' : ''}  (`;
+        let result = 'AND (';
         
         for (let i = 0; i < keywords.length; ++i) {
             let keyword = keywords[i];
-            result += `((skills.name LIKE '%${keyword}%') OR (employees.about LIKE '%${keyword}%') OR (profiles.name LIKE '%${keyword}%'))`;
+            result += `((skills.name LIKE '%${keyword}%') OR (profiles.name LIKE '%${keyword}%'))`;
             if (i !== keywords.length - 1) {
                 result += " OR ";
             }
@@ -100,7 +86,8 @@ class EmployeesSearchService {
         return result;
     }
     
+    
 }
 
-instance = new EmployeesSearchService();
+instance = new VacancySearchService();
 module.exports = instance;
