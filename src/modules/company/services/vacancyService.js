@@ -19,7 +19,7 @@ const Op = models.sequelize.Op;
 
 let instance;
 
-class VacanciesService {
+class VacancyService {
     
     async save(params) {
         return await Vacancies.create(params);
@@ -228,5 +228,5 @@ class VacanciesService {
     
 }
 
-instance = new VacanciesService();
+instance = new VacancyService();
 module.exports = instance;
