@@ -8,3 +8,4 @@ require("./modules/message/module");
 require("./modules/blockchain/module");
 require("./modules/test/module");
 require("./modules/languages/module");
+require("./modules/user/module");

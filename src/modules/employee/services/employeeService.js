@@ -1,18 +1,22 @@
 const models = require('../../../core/models');
+
 const Vacancies = models.vacancies;
+const ProfileSkills = models.profileSkills;
+
 const Account = require('../../blockchain/utils/account');
 const employeeUtil = require('../../blockchain/utils/employee');
 
 const Employees = models.employees;
 const Works = models.works;
 const blockchainInfo = require('../../blockchain/services/blockchainEventService');
-const _ = require('lodash');
 const socketSender = require('../../../core/socketSender');
 const logger = require('../../../utils/logger');
 
 const Web3InitError = require('../../blockchain/utils/Web3Error');
 const web3 = require('../../blockchain/utils/web3');
 const Op = models.sequelize.Op;
+const _ = require('lodash');
+
 
 let instance;
 
@@ -36,7 +40,7 @@ class EmployeesService {
                 userId: userId
             }
         });
-
+        
         return savedEmployees[0];
     }
     
@@ -74,7 +78,7 @@ class EmployeesService {
     async attachVacancy(employee, vacancyId) {
         await employee.addVacancy(vacancyId);
     }
-
+    
     /**
      * получить все вакансии на которые откликнулся чувак
      * @returns {Promise<void>}
@@ -93,9 +97,9 @@ class EmployeesService {
             }]
         });
         return vacancies;
-
+        
     }
-
+    
     /**
      * создание контракта работника в блокчейна
      * @param employee
@@ -108,18 +112,18 @@ class EmployeesService {
             email: employee.user.email,
             address: employee.user.accountAddress
         };
-
+        
         return Account.registerEmployee(blockchainEmployee).then(contract => {
             if (!contract)
                 throw new Web3InitError('Could not register employee in blockchain');
-
+            
             employee.contract = contract.address;
             employee.save();
             return contract;
         });
     }
-
-
+    
+    
     async findAllEmployees() {
         let employees = await Employees.findAll({
             include: [{
@@ -148,7 +152,7 @@ class EmployeesService {
             }],
             attributes: ['userId', 'name', 'surname', 'photoPath', 'city', 'birthday']
         });
-
+        
         employees = await employees.map((employee) => {
             if (employee.birthday)
                 employee.age = new Date().getFullYear() - employee.birthday.getFullYear();
@@ -167,7 +171,7 @@ class EmployeesService {
         });
         return employees;
     }
-
+    
     async countEndedWorks(employee) {
         return await Works.count({
             where: {
@@ -185,7 +189,7 @@ class EmployeesService {
             }
         });
     }
-
+    
     async countCurrentWorks(employee) {
         return await Works.count({
             where: {
@@ -203,7 +207,7 @@ class EmployeesService {
             }
         });
     }
-
+    
     async findCurrentWorksWithVacancies(employee) {
         return await Works.findAll({
             where: {
@@ -224,7 +228,7 @@ class EmployeesService {
             }]
         });
     }
-
+    
     async getIncome(employee) {
         let currentContracts = await this.findCurrentWorksWithVacancies(employee);
         let result = 0;
@@ -233,12 +237,13 @@ class EmployeesService {
         }
         return parseFloat(result.toFixed(10));
     }
-
+    
     async getRating(id) {
         let address = await this.getByUserId(id);
-
+        
         return await employeeUtil.calculateRating(address.contract);
     }
+    
 }
 
 instance = new EmployeesService();
