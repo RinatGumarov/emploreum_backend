@@ -16,8 +16,8 @@ module.exports.func = (router) => {
     router.get('/search', async (req, res) => {
         try {
             let params = JSON.parse(decodeURIComponent(req.query.filters));
-            let result;
-            if (params.type = "employees") {
+            let result = [];
+            if (params.type === "employees") {
                 result = await employeeSearchService.search(params);
             }
             res.json(result);
