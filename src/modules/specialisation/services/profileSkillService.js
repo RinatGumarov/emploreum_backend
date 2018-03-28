@@ -1,7 +1,10 @@
 const models = require('../../../core/models');
 const ProfileSkills = models.profileSkills;
-let instance;
+
+const queryScanner = require('../../../core/queryScanner');
 const Op = models.sequelize.Op;
+
+let instance;
 
 class ProfileSkillService {
     
@@ -22,6 +25,11 @@ class ProfileSkillService {
         return profileSkill;
     }
     
+    async getAllForSearch() {
+        let queryStr = queryScanner.specialisation.profile_skills;
+        let profileSkills = await queryScanner.query(queryStr, {});
+        return profileSkills[0];
+    }
 }
 
 instance = new ProfileSkillService();
