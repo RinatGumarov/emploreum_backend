@@ -15,11 +15,11 @@ module.exports.func = (router) => {
         }
         catch (err) {
             logger.error(err.stack);
-            return res.status(500).send({ error: 'Could not attach vacancy' });
+            return res.status(500)
+                .send({ error: 'Could not attach vacancy' });
         }
     });
-    
-    
+
     router.get('/vacancy/recommended', async (req, res) => {
         let recommendedVacancies = await vacancyService.getRecommendedVacancies(req.user.employee);
         res.json(recommendedVacancies);
@@ -37,11 +37,6 @@ module.exports.func = (router) => {
             balance,
             address: req.user.accountAddress
         });
-    });
-    
-    router.get('/rating/:employeeUserId([0-9]+)', async (req, res) => {
-        let rating = await employeeService.getRating(req.params.employeeUserId);
-        return res.send({ rating });
     });
 
     return router;

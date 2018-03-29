@@ -1,19 +1,15 @@
 const models = require('../../../core/models');
 
 const Vacancies = models.vacancies;
-const ProfileSkills = models.profileSkills;
 
 const Account = require('../../blockchain/utils/account');
 const employeeUtil = require('../../blockchain/utils/employee');
 
 const Employees = models.employees;
 const Works = models.works;
-const blockchainInfo = require('../../blockchain/services/blockchainEventService');
-const socketSender = require('../../../core/socketSender');
-const logger = require('../../../utils/logger');
 
 const Web3InitError = require('../../blockchain/utils/Web3Error');
-const web3 = require('../../blockchain/utils/web3');
+const blockchainEmployeeUtil = require('../../blockchain/utils/employee');
 const Op = models.sequelize.Op;
 const _ = require('lodash');
 
@@ -112,17 +108,18 @@ class EmployeesService {
             email: employee.user.email,
             address: employee.user.accountAddress
         };
-        
-        return Account.registerEmployee(blockchainEmployee).then(contract => {
-            if (!contract)
-                throw new Web3InitError('Could not register employee in blockchain');
-            
-            employee.contract = contract.address;
-            employee.save();
-            return contract;
-        });
+
+        return Account.registerEmployee(blockchainEmployee)
+            .then(contract => {
+                if (!contract)
+                    throw new Web3InitError('Could not register employee in blockchain');
+
+                employee.contract = contract.address;
+                employee.save();
+                return contract;
+            });
     }
-    
+
     async countEndedWorks(employee) {
         return await Works.count({
             where: {
@@ -188,11 +185,24 @@ class EmployeesService {
         }
         return parseFloat(result.toFixed(10));
     }
-    
-    async getRating(id) {
-        let address = await this.getByUserId(id);
-        
-        return await employeeUtil.calculateRating(address.contract);
+
+    async addRatingToSkills(employeeUserId, employeeSkills) {
+        const address = (await this.getByUserId(employeeUserId)).contract;
+
+        for (let profile of employeeSkills) {
+            const promises = profile.skills.map(skill => {
+                skill.dataValues.rating = 0;
+                if (address) {
+                    const skillCode = skillUtil.generateSkillCode(profile.profileId, skill.id);
+                    return blockchainEmployeeUtil.getSkillRatingBySkillCode(address, skillCode)
+                        .then(rating => {
+                            skill.dataValues.rating = rating;
+                            return skill;
+                        });
+                } else Promise.resolve(skill);
+            });
+            profile.skills = await Promise.all(promises);
+        }
     }
     
 }
