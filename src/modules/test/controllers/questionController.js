@@ -52,7 +52,7 @@ module.exports.func = (router) => {
         let test = await testService.findById(question.testId);
         let passed = await testService.findTestEnds(employee.id, question.testId);
         
-        if (!(await question.questionsAvailable(employee, test))) {
+        if (!(await questionService.questionsAvailable(employee, test))) {
             if (passed)
                 logger.error(passed.ends);
             return res.status(405).json({error: 'Not Allowed'});
