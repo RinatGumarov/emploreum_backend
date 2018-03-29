@@ -25,5 +25,8 @@ FROM "employees" AS "employees"
   LEFT OUTER JOIN "works" AS "works" ON "employees"."id" = "works"."employee_id"
   LEFT OUTER JOIN "companies" AS "works->company" ON "works"."company_id" = "works->company"."id"
   LEFT OUTER JOIN "vacancies" AS "works->vacancy" ON "works"."vacancy_id" = "works->vacancy"."id"
-  LEFT OUTER JOIN "users" AS "employees->user" ON "employees"."user_id" = "employees->user"."id"
-  :whereQuery
+  LEFT OUTER JOIN "users" AS "user" ON "employees"."user_id" = "user"."id"
+  LEFT OUTER JOIN ("user_languages" AS "user->languages->user_languages" INNER JOIN "languages" AS "user->languages"
+      ON "user->languages"."id" = "user->languages->user_languages"."language_id")
+    ON "user"."id" = "user->languages->user_languages"."user_id"
+:whereQuery
