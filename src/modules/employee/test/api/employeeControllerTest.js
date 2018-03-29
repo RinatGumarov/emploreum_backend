@@ -27,15 +27,5 @@ describe('employeeController', () => {
             });
     });
     
-    it('/all', (done) => {
-        testIniter.getChaiRequest()
-            .get("/employee/all")
-            .set("Content-Type", "application/json")
-            .set('Cookie', testIniter.getCookie())
-            .end(function (err, res) {
-                res.should.have.status(200);
-                done();
-            });
-    });
     
 });

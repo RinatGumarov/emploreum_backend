@@ -1,6 +1,8 @@
 const models = require('../../../core/models');
 const queryScanner = require('../../../core/queryScanner');
 
+const _ = require('lodash');
+
 let instance;
 
 /**
@@ -72,6 +74,7 @@ class EmployeesSearchService {
                 }]
             }]
         });
+        employees = await this.changeEmployee(employees);
         return employees;
     }
     
@@ -128,6 +131,25 @@ class EmployeesSearchService {
         return result;
     }
     
+    async changeEmployee(employees ){
+        employees = await employees.map((employee) => {
+            if (employee.birthday)
+                employee.age = new Date().getFullYear() - employee.birthday.getFullYear();
+            let skills = [];
+            let specifications = [];
+            for (let i = 0; i < employee.cvs.length; ++i) {
+                for (let j = 0; j < employee.cvs[i].skills.length; ++j) {
+                    skills.push(employee.cvs[i].skills[j].name);
+                }
+                specifications.push(employee.cvs[i].profile.name);
+            }
+            employee.dataValues.skills = _.uniq(skills);
+            employee.dataValues.specifications = _.uniq(specifications);
+            delete employee.dataValues.cvs;
+            return employee;
+        });
+        return employees;
+    }
 }
 
 instance = new EmployeesSearchService();

@@ -38,17 +38,7 @@ module.exports.func = (router) => {
             address: req.user.accountAddress
         });
     });
-
-    router.get('/all', async (req, res) => {
-        try {
-            let employees = await employeeService.findAllEmployees();
-            return res.send(employees);
-        } catch (err) {
-            logger.error(err.stack);
-            return res.status(500).send({ error: 'Could not get all employees' });
-        }
-    });
-
+    
     router.get('/rating/:employeeUserId([0-9]+)', async (req, res) => {
         let rating = await employeeService.getRating(req.params.employeeUserId);
         return res.send({ rating });
