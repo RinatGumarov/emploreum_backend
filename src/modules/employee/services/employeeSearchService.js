@@ -83,7 +83,7 @@ class EmployeesSearchService {
         let result = "(";
         for (let i = 0; i < profileSkills.length; ++i) {
             let profileSkill = profileSkills[i];
-            result += `("cvs"."profile_id" = ${profileSkill.profileId} AND "cvs->skills->cv_skills"."skill_id"= ${profileSkill.skillId})`;
+            result += `("cvs"."profile_id" = ${profileSkill.profileId} AND "cvs"."profile_id" = "cvs->skills->cv_skills"."profile_id" AND "cvs->skills->cv_skills"."skill_id"= ${profileSkill.skillId})`;
             if (i !== profileSkills.length - 1) {
                 result += " OR ";
             }
