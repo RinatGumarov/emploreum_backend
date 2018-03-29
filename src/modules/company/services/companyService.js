@@ -7,6 +7,7 @@ const Tests = models.tests;
 const balanceService = require('../../blockchain/services/balanceService');
 
 const Account = require('../../blockchain/utils/account');
+const comapanyUtil = require('../../blockchain/utils/company');
 const _ = require('lodash');
 
 const Op = models.sequelize.Op;
@@ -77,14 +78,15 @@ class CompaniesService {
             name: companyUser.company.name,
             address: companyUser.accountAddress
         };
-        return Account.registerCompany(blockchainCompany).then(async (contract) => {
-            if (!contract)
-                throw new Web3InitError('Could not register company in blockchain');
+        return Account.registerCompany(blockchainCompany)
+            .then(async (contract) => {
+                if (!contract)
+                    throw new Web3InitError('Could not register company in blockchain');
 
-            companyUser.company.contract = contract.address;
-            companyUser.company.save();
-            return contract;
-        });
+                companyUser.company.contract = contract.address;
+                companyUser.company.save();
+                return contract;
+            });
     }
 
     async findByVacancyId(vacancyId) {
@@ -224,6 +226,12 @@ class CompaniesService {
             }
         });
         return transactions;
+    }
+
+
+    async getRating(company) {
+        let rating = await comapanyUtil.getRating(company.contract);
+        return rating;
     }
 }
 

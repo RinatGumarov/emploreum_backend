@@ -3,6 +3,8 @@ const employeeService = require('../../employee/services/employeeService');
 const configUtils = require('../../../utils/config');
 const logger = require('../../../utils/logger');
 const mutex = require('../utils/mutex');
+const employeeUtil = require('../utils/employee');
+const workUtil = require('../utils/work');
 
 module.exports.func = (router) => {
 
@@ -14,7 +16,8 @@ module.exports.func = (router) => {
         };
 
         if (!mutex.addMutex(object))
-            return res.status(500).json({ data: 'Multiple approve request.' });
+            return res.status(500)
+                .json({ data: 'Multiple approve request.' });
 
         req.connection.setTimeout(1000 * 60 * 10);
 
@@ -31,7 +34,8 @@ module.exports.func = (router) => {
         return result ?
             res.json({ data: 'success' })
             :
-            res.status(500).json({ data: 'fail' });
+            res.status(500)
+                .json({ data: 'fail' });
 
     });
 
@@ -54,13 +58,29 @@ module.exports.func = (router) => {
                 res.send({ data: 'successful' });
             } catch (err) {
                 logger.error(err.stack);
-                res.status(500).send({ error: err });
+                res.status(500)
+                    .send({ error: err });
             }
         } else {
-            res.status(500).send({ error: 'token not found' });
+            res.status(500)
+                .send({ error: 'token not found' });
         }
     });
 
+    router.get('/test', async (req, res) => {
+        const works = await employeeUtil.getWorks('0x3A11D7fD9c2A1C7949B3A1b94547fde031A750f4');
+        res.json({ works });
+    });
+
+    router.get('/test/skills', async (req, res) => {
+        const works = await employeeUtil.getSkills('0x3A11D7fD9c2A1C7949B3A1b94547fde031A750f4');
+        res.json({ works });
+    });
+
+    router.get('/workTest', async (req, res) => {
+        const data = await workUtil.getWorkData('0xe7FbF67bbAF7c74E4BE011b0795264ebdeb4904E');
+        res.json({ data });
+    });
     return router;
 
 };

@@ -5,29 +5,33 @@ const vacancyService = require('../services/vacancyService');
 const logger = require('../../../utils/logger');
 
 module.exports.func = (router) => {
-    
+
     /**
      *  получить компанию, зная сессию.
      */
     router.get('/', async (req, res) => {
         try {
-            res.status(200).json(req.user.company);
+            res.status(200)
+                .json(req.user.company);
         } catch (err) {
             logger.error(err.stack);
-            res.status(500).json({error: err});
+            res.status(500)
+                .json({ error: err });
         }
     });
-    
+
     router.post('/update', async (req, res) => {
         try {
             let company = await companyService.update(req.user.id, req.body);
-            res.status(200).json({success: true});
+            res.status(200)
+                .json({ success: true });
         } catch (err) {
             logger.error(err.stack);
-            res.status(500).json({error: err});
+            res.status(500)
+                .json({ error: err });
         }
     });
-    
+
     router.get('/indicators', async (req, res) => {
         try {
             let company = req.user.company;
@@ -46,10 +50,11 @@ module.exports.func = (router) => {
             });
         } catch (err) {
             logger.error(err.stack);
-            res.status(500).json({error: err});
+            res.status(500)
+                .json({ error: err });
         }
     });
-    
+
     /**
      * получить все вакансии по компании
      */
@@ -60,10 +65,11 @@ module.exports.func = (router) => {
             res.json(vacancies);
         } catch (err) {
             logger.error(err.stack);
-            return res.status(500).json({error: err.message});
+            return res.status(500)
+                .json({ error: err.message });
         }
     });
-    
+
     /**
      * получить инфу по коипании
      */
@@ -72,37 +78,42 @@ module.exports.func = (router) => {
             let company = await companyService.findByUserId(req.params.id);
             let openVacancies = await  vacancyService.findAllOpenVacancies(company);
             company.dataValues.vacancies = openVacancies.length;
-            res.status(200).json(company);
+            res.status(200)
+                .json(company);
         } catch (err) {
             logger.error(err.stack);
-            res.status(500).json({error: err});
+            res.status(500)
+                .json({ error: err });
         }
     });
-    
+
     /**
      * получить инфу о компании по вокансии
      */
     router.get('/info/vacancy/:id([0-9]+)', async (req, res) => {
         try {
             let company = await companyService.findByVacancyId(req.params.id);
-            res.status(200).json(company);
+            res.status(200)
+                .json(company);
         } catch (err) {
             logger.error(err.stack);
-            res.status(500).json({error: err});
+            res.status(500)
+                .json({ error: err });
         }
     });
-    
-    
+
+
     router.get('/employees', async (req, res) => {
         try {
             let company = req.user.company;
             res.json(await companyService.findAllEmployees(company));
         } catch (err) {
             logger.error(err.stack);
-            res.status(500).json('error');
+            res.status(500)
+                .json('error');
         }
     });
-    
+
     router.get('/tests', async (req, res) => {
         try {
             let company = req.user.company;
@@ -110,10 +121,11 @@ module.exports.func = (router) => {
             res.json(tests);
         } catch (err) {
             logger.error(err.stack);
-            res.status(500).json({error: err});
+            res.status(500)
+                .json({ error: err });
         }
     });
-    
+
     router.get('/transactions', async (req, res) => {
         try {
             let company = req.user.company;
@@ -121,10 +133,23 @@ module.exports.func = (router) => {
             return res.json(transactions);
         } catch (err) {
             logger.error(err.stack);
-            res.status(500).json({error: err});
+            res.status(500)
+                .json({ error: err });
         }
     });
-    
+
+    router.get('/rating', async (req, res) => {
+        try {
+            let company = req.user.company;
+            let rating = await companyService.getRating(company);
+            return res.json(rating);
+        } catch (err) {
+            logger.error(err.stack);
+            res.status(500)
+                .json({ error: err });
+        }
+    });
+
     return router;
-    
+
 };

@@ -15,16 +15,17 @@ module.exports.func = (router) => {
         }
         catch (err) {
             logger.error(err.stack);
-            return res.status(500).send({ error: 'Could not attach vacancy' });
+            return res.status(500)
+                .send({ error: 'Could not attach vacancy' });
         }
     });
-    
-    
+
+
     router.get('/vacancy/recommended', async (req, res) => {
         let recommendedVacancies = await vacancyService.getRecommendedVacancies(req.user.employee);
         res.json(recommendedVacancies);
     });
-    
+
     router.get('/indicators', async (req, res) => {
         let endedContractsCount = await employeeService.countEndedWorks(req.user.employee);
         let currentContractsCount = await employeeService.countCurrentWorks(req.user.employee);
@@ -45,13 +46,9 @@ module.exports.func = (router) => {
             return res.send(employees);
         } catch (err) {
             logger.error(err.stack);
-            return res.status(500).send({ error: 'Could not get all employees' });
+            return res.status(500)
+                .send({ error: 'Could not get all employees' });
         }
-    });
-
-    router.get('/rating/:employeeUserId([0-9]+)', async (req, res) => {
-        let rating = await employeeService.getRating(req.params.employeeUserId);
-        return res.send({ rating });
     });
 
     return router;

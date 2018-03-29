@@ -14,8 +14,8 @@ class Employee {
         return contractUtil.readContractFromAddress(contractInfo, address);
     }
 
-    changeBonusRating = (address, newRating) =>
-        this.readEmployeeContract(address)
+    changeBonusRating(address, newRating) {
+        return this.readEmployeeContract(address)
             .then(instance => instance.changeBonusRating(newRating))
             .then(data => {
                 logger.log(`Employee ${address} bonus rating is changed!`);
@@ -26,10 +26,10 @@ class Employee {
                 logger.error(err);
                 return false;
             });
+    }
 
-
-    changeTestRating = (address, testCode, newRating, skillCode) =>
-        this.readEmployeeContract(address)
+    changeTestRating(address, testCode, newRating, skillCode) {
+        return this.readEmployeeContract(address)
             .then(instance => instance.changeTestRating(testCode, newRating, skillCode))
             .then(data => {
                 logger.log(`Employee ${address} test rating is changed!`);
@@ -40,7 +40,7 @@ class Employee {
                 logger.error(err);
                 return false;
             });
-
+    }
 
     dispute(address, work) { }
 
@@ -48,8 +48,8 @@ class Employee {
 
     finishWork(address, work) {}
 
-    getSkills = (address) =>
-        this.readEmployeeContract(address)
+    getSkills(address) {
+        return this.readEmployeeContract(address)
             .then(instance => instance.getSkills())
             .then(data => {
                 data = data.filter(obj => obj);
@@ -60,23 +60,23 @@ class Employee {
                 logger.error(err);
                 return false;
             });
+    }
 
-
-    getSkillRatingBySkillCode = (address, skillCode) =>
-        this.readEmployeeContract(address)
+    getSkillRatingBySkillCode(address, skillCode) {
+        return this.readEmployeeContract(address)
             .then(instance => instance.getSkillRatingBySkillCode(skillCode))
             .then(data => {
                 logger.log(`Employee ${address} skill ${skillCode} rating: ${data}`);
-                return data;
+                return data.div(1000000).toString();
             })
             .catch(err => {
-                logger.error(err);
-                return false;
+                logger.log(`Employee ${address} hasn't got skill ${skillCode} in blockchain`);
+                return 0;
             });
+    }
 
-
-    getSkillHistory = (address, skillCode) =>
-        this.readEmployeeContract(address)
+    getSkillHistory(address, skillCode) {
+        return this.readEmployeeContract(address)
             .then(instance => instance.getSkillHistory(skillCode))
             .then(history =>
                 Promise.all(
@@ -97,10 +97,10 @@ class Employee {
                 logger.error(err);
                 return false;
             });
+    }
 
-
-    getWorks = (address) =>
-        this.readEmployeeContract(address)
+    getWorks(address) {
+        return this.readEmployeeContract(address)
             .then(instance => instance.getWorks())
             .then(data => {
                 data = data.filter(obj => obj);
@@ -111,7 +111,7 @@ class Employee {
                 logger.error(err);
                 return false;
             });
-
+    }
 
 }
 
