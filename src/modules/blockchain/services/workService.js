@@ -57,7 +57,7 @@ class WorkService {
                 message = ` employee ${employee.name}`;
             }
             if (!company.contract) {
-                let promise = companyService.createBlockchainAccountForCompany(companyUser, 10);
+                let promise = companyService.createBlockchainAccountForCompany(companyUser);
                 promises.push(promise);
                 if (message) {
                     message += ' and';
@@ -112,8 +112,9 @@ class WorkService {
         let blockchainWorkData = {
             skillCodes,
             duration: vacancy.duration,
-            employee: employee.user.accountAddress,
+            employee: employee.contract,
             company: companyUser.accountAddress,
+            companyContractAddress: companyUser.company.contract,
             weekPayment: web3.utils.toWei(String(vacancy.weekPayment), 'ether')
         };
 
@@ -169,21 +170,24 @@ class WorkService {
         let privateKey = await Account.decryptAccount(work.company.user.encryptedKey,
             work.company.user.keyPassword).privateKey;
 
+        //TODO hours that employee had worked during week
+        let workedHours = 35;
         // передаем callback функцию так как web3 принимает собственные promise
 
-        let result = await blockchainWork.sendWeekSalary(work.contract, amount, privateKey, async (data) => {
+        let result = await blockchainWork.sendWeekSalary(work.contract, workedHours, amount, privateKey,
+            async (data) => {
 
-            let employeeBalance = await balanceService.getBalance(work.employee.user.accountAddress);
-            let companyBalance = await balanceService.getBalance(work.company.user.accountAddress);
-            await socketSender.sendSocketMessage(`${work.employee.userId}:balance`, {
-                balance: employeeBalance
-            });
-            await socketSender.sendSocketMessage(`${work.company.userId}:balance`, {
-                balance: companyBalance
-            });
+                let employeeBalance = await balanceService.getBalance(work.employee.user.accountAddress);
+                let companyBalance = await balanceService.getBalance(work.company.user.accountAddress);
+                await socketSender.sendSocketMessage(`${work.employee.userId}:balance`, {
+                    balance: employeeBalance
+                });
+                await socketSender.sendSocketMessage(`${work.company.userId}:balance`, {
+                    balance: companyBalance
+                });
 
-            return data;
-        });
+                return data;
+            });
 
         let transaction = {
             currency: 'eth',

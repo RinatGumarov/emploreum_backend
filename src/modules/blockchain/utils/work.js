@@ -20,7 +20,7 @@ class Work {
         var contractInfo = require('./abi/Work.json');
 
         return contractUtil.createContract(contractInfo, gas, work.skillCodes,
-            work.duration, work.employee, work.company, work.weekPayment
+            work.duration, work.employee, work.company, work.companyContractAddress, work.weekPayment
         ).then(contract => {
             logger.log(`Work contract created: ${contract}`);
             return contract;
@@ -67,12 +67,12 @@ class Work {
         });
     }
 
-    sendWeekSalary(workAddress, value, privateKey, callback) {
+    sendWeekSalary(workAddress, hours, value, privateKey, callback) {
         let gas = config.send_week_salary_gas_amount;
         let contractInfo = require('./abi/Work.json');
 
         let contract = new web3.eth.Contract(contractInfo.abi, workAddress);
-        let data = contract.methods.sendWeekSalary().encodeABI();
+        let data = contract.methods.sendWeekSalary(hours).encodeABI();
 
         return account.sendTransaction(value, workAddress, privateKey, callback, { gas, data }).then(data => {
             logger.log(`Week payment send to ${workAddress} contract!`);

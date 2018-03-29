@@ -95,9 +95,7 @@ class RegistrationUtil {
         let gas = config.company_create_gas_amount;
         var contractInfo = require('./abi/Company.json');
 
-        return contractUtil.createContract(contractInfo, gas, company.name, company.raiting,
-            company.address
-        ).then(contract => {
+        return contractUtil.createContract(contractInfo, gas, company.name, company.address).then(contract => {
             logger.log(`Company contract created: ${contract}`);
             return contract;
         }).catch(err => {
