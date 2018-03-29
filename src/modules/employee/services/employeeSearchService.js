@@ -46,7 +46,31 @@ class EmployeesSearchService {
         }
         
         let employees = await queryScanner.query(queryStr, {
-            model: models.employees
+            model: models.employees,
+            include: [{
+                model: models.cvs,
+                attributes: ['id'],
+                include: [
+                    {
+                        model: models.profiles,
+                        attributes: ['name']
+                    },
+                    {
+                        model: models.skills,
+                        attributes: ['name']
+                    }
+                ]
+            }, {
+                model: models.works,
+                attributes: ['id'],
+                include: [{
+                    model: models.companies,
+                    attributes: ['name']
+                }, {
+                    model: models.vacancies,
+                    attributes: ['name']
+                }]
+            }]
         });
         return employees;
     }
@@ -56,7 +80,7 @@ class EmployeesSearchService {
         let result = "(";
         for (let i = 0; i < profileSkills.length; ++i) {
             let profileSkill = profileSkills[i];
-            result += `(cvs.profile_id = ${profileSkill.profileId} AND cv_skills.skill_id = ${profileSkill.skillId})`;
+            result += `("cvs"."profile_id" = ${profileSkill.profileId} AND "cvs->skills->cv_skills"."skill_id"= ${profileSkill.skillId})`;
             if (i !== profileSkills.length - 1) {
                 result += " OR ";
             }
@@ -73,7 +97,7 @@ class EmployeesSearchService {
         
         for (let i = 0; i < languages.length; ++i) {
             let language = languages[i];
-            result += `(user_languages.language_id = ${language.id})`;
+            result += `("user->languages->user_languages"."language_id" = ${language.id})`;
             if (i !== languages.length - 1) {
                 result += " OR ";
             }
@@ -84,7 +108,7 @@ class EmployeesSearchService {
     }
     
     getCityQueryFilter(city, withAnd) {
-        return `${withAnd ? ' AND' : ''} (employees.city LIKE '%${city}%')`;
+        return `${withAnd ? ' AND' : ''} ("employees"."city" LIKE '%${city}%')`;
     }
     
     getKeywordQueryFilter(keywords, withAnd) {
@@ -94,7 +118,7 @@ class EmployeesSearchService {
         
         for (let i = 0; i < keywords.length; ++i) {
             let keyword = keywords[i];
-            result += `((skills.name LIKE '%${keyword}%') OR (employees.about LIKE '%${keyword}%') OR (profiles.name LIKE '%${keyword}%'))`;
+            result += `(("cvs->skills"."name" LIKE '%${keyword}%') OR ("employees"."about" LIKE '%${keyword}%') OR ("cvs->profile"."name" LIKE '%${keyword}%'))`;
             if (i !== keywords.length - 1) {
                 result += " OR ";
             }
