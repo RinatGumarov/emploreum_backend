@@ -22,6 +22,10 @@ FROM "employees" AS "employees"
   LEFT OUTER JOIN "profiles" AS "cvs->profile" ON "cvs"."profile_id" = "cvs->profile"."id"
   LEFT OUTER JOIN ("cv_skills" AS "cvs->skills->cv_skills" INNER JOIN "skills" AS "cvs->skills"
       ON "cvs->skills"."id" = "cvs->skills->cv_skills"."skill_id") ON "cvs"."id" = "cvs->skills->cv_skills"."cv_id"
+  LEFT OUTER JOIN
+  ("profile_skills" AS "cvs->skills->profiles->profileSkills" INNER JOIN "profiles" AS "cvs->skills->profiles"
+      ON "cvs->skills->profiles"."id" = "cvs->skills->profiles->profileSkills"."profile_id")
+    ON "cvs->skills"."id" = "cvs->skills->profiles->profileSkills"."skill_id"
   LEFT OUTER JOIN "works" AS "works" ON "employees"."id" = "works"."employee_id"
   LEFT OUTER JOIN "companies" AS "works->company" ON "works"."company_id" = "works->company"."id"
   LEFT OUTER JOIN "vacancies" AS "works->vacancy" ON "works"."vacancy_id" = "works->vacancy"."id"
@@ -29,4 +33,4 @@ FROM "employees" AS "employees"
   LEFT OUTER JOIN ("user_languages" AS "user->languages->user_languages" INNER JOIN "languages" AS "user->languages"
       ON "user->languages"."id" = "user->languages->user_languages"."language_id")
     ON "user"."id" = "user->languages->user_languages"."user_id"
-:whereQuery
+  :whereQuery
