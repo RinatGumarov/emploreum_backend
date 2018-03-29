@@ -131,6 +131,7 @@ class EmployeesSearchService {
         return result;
     }
     
+    //toDo переделать на уровне sql
     async changeEmployee(employees ){
         employees = await employees.map((employee) => {
             if (employee.birthday)
