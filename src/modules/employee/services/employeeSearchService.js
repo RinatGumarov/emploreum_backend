@@ -12,35 +12,39 @@ class EmployeesSearchService {
         
         let where = "WHERE ";
         let withAnd = false;
+        let withWhereParams = false;
         
         if (params.profileSkills && params.profileSkills.length > 0) {
             where += this.getProfileSkillQueryFilter(params.profileSkills);
             withAnd = true;
+            withWhereParams = true;
         }
         
         if (params.languages && params.languages.length > 0) {
             where += this.getLanguagesQueryFilter(params.languages, withAnd);
-            if (withAnd) {
-                withAnd = true;
-            }
+            withAnd = true;
+            withWhereParams = true;
         }
         
         if (params.city) {
             where += this.getCityQueryFilter(params.city, withAnd);
-            if (withAnd) {
-                withAnd = true;
-            }
+            withAnd = true;
+            withWhereParams = true;
         }
         
         if (params.keywords && params.keywords.length > 0) {
             where += this.getKeywordQueryFilter(params.keywords, withAnd);
-            if (withAnd) {
-                withAnd = true;
-            }
+            withAnd = true;
+            withWhereParams = true;
         }
         
         let queryStr = queryScanner.employee.search;
-        queryStr = queryStr.replace(':whereQuery', where);
+        if (withWhereParams === true) {
+            queryStr = queryStr.replace(':whereQuery', where);
+        } else {
+            queryStr = queryStr.replace(':whereQuery', "");
+        }
+        
         let employees = await queryScanner.query(queryStr, {
             model: models.employees
         });
