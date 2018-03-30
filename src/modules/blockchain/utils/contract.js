@@ -34,9 +34,10 @@ class ContractUtil {
      * @returns {Promise.<TResult>} with contract instance
      */
     readContract(contractInfo) {
-        return initContract(contractInfo).then(contract => {
-            return contract.deployed();
-        });
+        return initContract(contractInfo)
+            .then(contract => {
+                return contract.deployed();
+            });
     };
 
 
@@ -48,9 +49,10 @@ class ContractUtil {
      * @returns {Promise.<TResult>} with contract instance
      */
     readContractFromAddress(contractInfo, address) {
-        return initContract(contractInfo).then(contract => {
-            return contract.at(address);
-        });
+        return initContract(contractInfo)
+            .then(contract => {
+                return contract.at(address);
+            });
     };
 
     /**
@@ -65,12 +67,15 @@ class ContractUtil {
         let gasPrice = config.gas_price;
         args.push({ gas, gasPrice });
 
-        return initContract(contractInfo).then(contract => {
-            return contract.new.apply(null, args).then(contract => {
-                logger.log(`Created new contract: ${contract.address}. Transaction hash: ${contract.transactionHash}`);
-                return contract;
+        return initContract(contractInfo)
+            .then(contract => {
+                return contract.new.apply(null, args)
+                    .then(contract => {
+                        logger.log(
+                            `Created new contract: ${contract.address}. Transaction hash: ${contract.transactionHash}`);
+                        return contract;
+                    });
             });
-        });
     };
 }
 
