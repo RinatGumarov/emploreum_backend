@@ -4,6 +4,7 @@ const Vacancies = models.vacancies;
 
 const Account = require('../../blockchain/utils/account');
 const employeeUtil = require('../../blockchain/utils/employee');
+const skillUtil = require('../../specialisation/utils/skillUtil');
 
 const Employees = models.employees;
 const Works = models.works;
@@ -20,26 +21,26 @@ let instance;
  * класс работника
  */
 class EmployeesService {
-    
+
     /**
      * сохранение работника и создание для него
      * резюме с определенными специализациями
      * @param userId
      */
     async save(userId) {
-        
+
         let savedEmployees = await Employees.findOrCreate({
             where: {
-                userId: {[Op.eq]: userId}
+                userId: { [Op.eq]: userId }
             },
             defaults: {
                 userId: userId
             }
         });
-        
+
         return savedEmployees[0];
     }
-    
+
     /**
      * обновить работника
      * @param userId
@@ -49,7 +50,7 @@ class EmployeesService {
     async update(employee, params) {
         return await employee.update(params);
     }
-    
+
     /**
      * получить работника по юзеру
      * @param userId
@@ -58,13 +59,13 @@ class EmployeesService {
     async getByUserId(userId) {
         let employee = await Employees.findOne({
             where: {
-                userId: {[Op.eq]: userId}
+                userId: { [Op.eq]: userId }
             },
             include: [models.users]
         });
         return employee;
     }
-    
+
     /**
      * Прикрепить работника к вакансии по нажатию "Откликнуться".
      * @param userId
@@ -74,7 +75,7 @@ class EmployeesService {
     async attachVacancy(employee, vacancyId) {
         await employee.addVacancy(vacancyId);
     }
-    
+
     /**
      * получить все вакансии на которые откликнулся чувак
      * @returns {Promise<void>}
@@ -88,14 +89,14 @@ class EmployeesService {
                 required: true,
                 model: models.employees,
                 where: {
-                    id: {[Op.eq]: employee.id},
+                    id: { [Op.eq]: employee.id }
                 }
             }]
         });
         return vacancies;
-        
+
     }
-    
+
     /**
      * создание контракта работника в блокчейна
      * @param employee
@@ -125,7 +126,7 @@ class EmployeesService {
             where: {
                 [Op.and]: {
                     employeeId: {
-                        [Op.eq]: employee.id,
+                        [Op.eq]: employee.id
                     },
                     status: {
                         [Op.or]: {
@@ -137,13 +138,13 @@ class EmployeesService {
             }
         });
     }
-    
+
     async countCurrentWorks(employee) {
         return await Works.count({
             where: {
                 [Op.and]: {
                     employeeId: {
-                        [Op.eq]: employee.id,
+                        [Op.eq]: employee.id
                     },
                     status: {
                         [Op.and]: {
@@ -155,13 +156,13 @@ class EmployeesService {
             }
         });
     }
-    
+
     async findCurrentWorksWithVacancies(employee) {
         return await Works.findAll({
             where: {
                 [Op.and]: {
                     employeeId: {
-                        [Op.eq]: employee.id,
+                        [Op.eq]: employee.id
                     },
                     status: {
                         [Op.and]: {
@@ -176,7 +177,7 @@ class EmployeesService {
             }]
         });
     }
-    
+
     async getIncome(employee) {
         let currentContracts = await this.findCurrentWorksWithVacancies(employee);
         let result = 0;
@@ -204,7 +205,7 @@ class EmployeesService {
             profile.skills = await Promise.all(promises);
         }
     }
-    
+
 }
 
 instance = new EmployeesService();
