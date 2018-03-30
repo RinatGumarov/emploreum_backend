@@ -85,7 +85,16 @@ class VacancyService {
     
     
     async findById(id) {
-        return await Vacancies.findById(id);
+        return await Vacancies.findById({
+            where: {
+                id: {
+                    [Op.eq]: id
+                }
+            },
+            include: [{
+                model: models.companies
+            }]
+        });
     }
     
     /**
