@@ -138,9 +138,9 @@ module.exports.func = (router) => {
         }
     });
 
-    router.get('/rating', async (req, res) => {
+    router.get('/rating/:companyId([0-9]+)', async (req, res) => {
         try {
-            let company = req.user.company;
+            let company = await companyService.findByUserId(req.params.companyId);
             let rating = await companyService.getRating(company);
             return res.json(rating);
         } catch (err) {
