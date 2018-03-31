@@ -65,6 +65,9 @@ class ContractUtil {
      */
     createContract(contractInfo, gas, gasCoefficient) {
         let self = this;
+        if(gasCoefficient > 10){
+            return;
+        }
         let args = Array.prototype.slice.call(arguments, 3);
         let gasPrice = config.gas_price;
         gasPrice = gasPrice * gasCoefficient;
