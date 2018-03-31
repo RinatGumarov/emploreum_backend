@@ -24,9 +24,6 @@ class Work {
         ).then(contract => {
             logger.log(`Work contract created: ${contract}`);
             return contract;
-        }).catch(err => {
-            logger.error(err);
-            return false;
         });
     }
 
@@ -41,9 +38,6 @@ class Work {
             logger.log(`Contract ${workAddress} starting work now!`);
             logger.log(`'Transaction hash: ', ${data.transactionHash}`);
             return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
         });
     }
 
@@ -61,10 +55,7 @@ class Work {
             logger.log(data);
             logger.log(`'transaction hash: ', ${data.transactionHash}`);
             return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
-        });
+        })
     }
 
     sendWeekSalary(workAddress, value, privateKey, callback) {
@@ -78,10 +69,7 @@ class Work {
             logger.log(`Week payment send to ${workAddress} contract!`);
             logger.log(`'transaction hash: ', ${data.transactionHash}`);
             return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
-        });
+        })
     }
 
     solveFrizzing(workAddress, value, privateKey, callback = logger.log) {
@@ -97,9 +85,6 @@ class Work {
             logger.log(data);
             logger.log(`'transaction hash: ', ${data.transactionHash}`);
             return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
         });
     }
 
@@ -115,9 +100,6 @@ class Work {
             logger.log(data);
             logger.log(`'transaction hash: ', ${data.transactionHash}`);
             return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
         });
     }
 
@@ -133,9 +115,6 @@ class Work {
             logger.log(data);
             logger.log(`'transaction hash: ', ${data.transactionHash}`);
             return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
         });
     }
 
@@ -150,9 +129,6 @@ class Work {
             logger.log(`Data from work with address: ${workAddress}!`);
             logger.log(data);
             return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
         });
     }
 }

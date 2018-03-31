@@ -16,9 +16,6 @@ class Employee {
             logger.log(`Employee ${address} bonus rating is changed!`);
             logger.log(`'transaction hash: ', ${data.transactionHash}`);
             return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
         });
     }
 
@@ -29,9 +26,6 @@ class Employee {
             logger.log(`Employee ${address} skill rating is changed!`);
             logger.log(`'transaction hash: ', ${data.transactionHash}`);
             return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
         });
     }
 
@@ -42,9 +36,6 @@ class Employee {
             logger.log(`Employee ${address} test rating is changed!`);
             logger.log(`'transaction hash: ', ${data.transactionHash}`);
             return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
         });
     }
 
@@ -54,9 +45,6 @@ class Employee {
         }).then(data => {
             logger.log(`Employee ${address} rating: ${data}`);
             return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
         });
     }
 
