@@ -8,6 +8,10 @@ let instance;
 
 class Work {
     
+    readWorkContract(address) {
+        let contractInfo = require('./abi/Work.json');
+        return contractUtil.readContractFromAddress(contractInfo, address);
+    }
     /**
      *  Create contract in blockchain by main contract.
      *
@@ -19,11 +23,12 @@ class Work {
         let gas = config.create_work_gas_amount;
         var contractInfo = require('./abi/Work.json');
         
-        return contractUtil.createContract(contractInfo, gas, work.skillCodes,
+        return contractUtil.createContract(contractInfo, gas, 1, work.skillCodes,
             work.duration, work.employee, work.employeeContractAddress, work.company, work.companyContractAddress,
             work.weekPayment
         )
             .then(contract => {
+                this.contractListener(contract)
                 logger.log(`Work contract created: ${contract}`);
                 return contract;
             });
@@ -37,7 +42,7 @@ class Work {
         let data = contract.methods.start()
             .encodeABI();
         
-        return account.sendTransaction(value, workAddress, privateKey, callback, { gas, data })
+        return account.sendTransaction(value, workAddress, privateKey, callback, 1, {gas, data})
             .then(data => {
                 logger.log(`Contract ${workAddress} starting work now!`);
                 logger.log(`'Transaction hash: ', ${data.transactionHash}`);
@@ -55,7 +60,7 @@ class Work {
         let data = contract.methods.deposit()
             .encodeABI();
         
-        return account.sendTransaction(value, workAddress, privateKey, callback, { gas, data })
+        return account.sendTransaction(value, workAddress, privateKey, callback, 1, {gas, data})
             .then(data => {
                 logger.log(`Send deposite to ${workAddress} contract!`);
                 logger.log(data);
@@ -72,7 +77,7 @@ class Work {
         let data = contract.methods.sendWeekSalary(hours)
             .encodeABI();
         
-        return account.sendTransaction(value, workAddress, privateKey, callback, { gas, data })
+        return account.sendTransaction(value, workAddress, privateKey, callback, 1, {gas, data})
             .then(data => {
                 logger.log(`Week payment send to ${workAddress} contract!`);
                 logger.log(`'transaction hash: ', ${data.transactionHash}`);
@@ -89,7 +94,7 @@ class Work {
         let data = contract.methods.solveFrizzing()
             .encodeABI();
         
-        return account.sendTransaction(value, workAddress, privateKey, callback, { gas, data })
+        return account.sendTransaction(value, workAddress, privateKey, callback, 1, {gas, data})
             .then(data => {
                 logger.log(`Contract ${workAddress} start working!`);
                 logger.log(data);
@@ -146,6 +151,13 @@ class Work {
                 logger.log(data);
                 return data;
             });
+    }
+    
+    async contractListener(address, contractType) {
+        let events = (await this.getWorkData(address)).allEvents();
+        events.watch((err,data) =>{
+            console.log(`employee date ${data.event}: ${data.args.index} ${data.args.data}`);
+        });
     }
 }
 

@@ -63,9 +63,9 @@ class ContractUtil {
      * @param gasCoefficient
      * @returns {Promise.<TResult>} with contract instance
      */
-    createContract(contractInfo, gas, gasCoefficient = 1) {
+    createContract(contractInfo, gas, gasCoefficient) {
         let self = this;
-        let args = Array.prototype.slice.call(arguments, 2);
+        let args = Array.prototype.slice.call(arguments, 3);
         let gasPrice = config.gas_price;
         gasPrice = gasPrice * gasCoefficient;
         args.push({gas, gasPrice});
@@ -74,11 +74,13 @@ class ContractUtil {
             return contract.new.apply(null, args).then(contract => {
                 logger.log(`Created new contract: ${contract.address}. Transaction hash: ${contract.transactionHash}`);
                 return contract;
-            }).catch(() => {
-                return self.createContract(contractInfo, gas, gasCoefficient * 1.5);
+            }).catch((error) => {
+                logger.error(error.stack);
+                return self.createContract.apply(self, [gas, gasCoefficient * 1.5].concat(args));
             });
         });
     };
+    
 }
 
 instance = new ContractUtil();

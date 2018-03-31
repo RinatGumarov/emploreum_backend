@@ -8,8 +8,8 @@ class Company {
         let contractInfo = require('./abi/Company.json');
         return contractUtil.readContractFromAddress(contractInfo, address);
     }
-
-
+    
+    
     getRating(address) {
         return this.readCompanyContract(address)
             .then(instance => instance.getRating())
@@ -23,7 +23,15 @@ class Company {
                 return 0;
             });
     }
-
+    
+    getWorks(address) {
+        return this.readCompanyContract(address)
+            .then(instance => instance.getWorks())
+            .then(data => {
+                logger.log(`Company ${address} rating: ${data}`);
+                return data;
+            });
+    }
 }
 
 instance = new Company();

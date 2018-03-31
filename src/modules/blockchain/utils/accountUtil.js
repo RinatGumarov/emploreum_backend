@@ -24,7 +24,7 @@ class Util {
             let unlock_time = process.env.UNLOCK_TIME || config.unlock_time;
 
             contract.defaults({ from: accounts[defaultAccount] });
-
+            return Promise.resolve(true);
             return web3.eth.personal.unlockAccount(accounts[defaultAccount], account_password,
                 web3.utils.toHex(unlock_time));
         }).then(status => {
