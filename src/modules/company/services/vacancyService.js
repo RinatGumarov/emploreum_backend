@@ -85,7 +85,7 @@ class VacancyService {
     
     
     async findById(id) {
-        return await Vacancies.findById({
+        return await Vacancies.findOne({
             where: {
                 id: {
                     [Op.eq]: id

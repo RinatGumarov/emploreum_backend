@@ -3,23 +3,25 @@ const web3 = require('./web3');
 const config = require('../../../../public_configs/gas_amounts');
 const logger = require('../../../utils/logger');
 
+const Web3Error = require('./Web3Error');
+
 let instance;
 
 class RegistrationUtil {
-
+    
     /**
      * Create new address in blockchain.
      *
      * @param password: String
      * @returns {PrivateKey} encrypted private key
      */
-
+    
     generateAccount(password) {
         let account = web3.eth.accounts.create();
         logger.log(`address: ${account.address} generated for user`);
         return account.encrypt(password);
     }
-
+    
     /**
      * Decrypt account with password
      *
@@ -30,7 +32,7 @@ class RegistrationUtil {
     decryptAccount(key, password) {
         return web3.eth.accounts.decrypt(key, password);
     }
-
+    
     /**
      *  Send transaction to address
      *
@@ -38,18 +40,27 @@ class RegistrationUtil {
      * @param to: String address
      * @param privateKey: String start with 0x
      * @param callback
+     * @param gasCoefficient
      * @returns {Promise.<TResult>}
      */
-
-    sendTransaction(value, to, privateKey, callback) {
+    
+    sendTransaction(value, to, privateKey, callback, gasCoefficient = 1) {
+        
+        let self = this;
+        
+        if (gasCoefficient > 10) {
+            throw new Web3Error("gas coefficient is to large")
+        }
+        
         let lastArgument = arguments[4];
-
+        
         let gas = lastArgument.gas || config.send_transaction_gas_amount;
         let data = lastArgument.data;
         let gasPrice = lastArgument.gasPrice || process.env.GAS_PRICE || config.gas_price;
-
-        let tx = { to, value, gas, data, gasPrice };
-
+        gasPrice = gasPrice * gasCoefficient;
+        
+        let tx = {to, value, gas, data, gasPrice};
+        
         return web3.eth.accounts.signTransaction(tx, privateKey)
             .then(data => {
                 return web3.eth.sendSignedTransaction(data.rawTransaction)
@@ -58,12 +69,12 @@ class RegistrationUtil {
                     })
                     // .on("confirmation", console.log)
                     .on('error', (error) => {
-                        logger.log(error);
+                        return self.sendTransaction(value, to, privateKey, callback, gasCoefficient * 1.5);
                     }).once('receipt', callback);
             });
-
+        
     }
-
+    
     /**
      * Register employee in blockchain.
      *
@@ -73,18 +84,15 @@ class RegistrationUtil {
     registerEmployee(employee) {
         let gas = config.employee_create_gas_amount;
         var contractInfo = require('./abi/Employee.json');
-
+        
         return contractUtil.createContract(contractInfo, gas, employee.firstName, employee.lastName,
             employee.email, employee.address
         ).then(contract => {
             logger.log(`Employee contract created: ${contract}`);
             return contract;
-        }).catch(err => {
-            logger.error(err);
-            return false;
         });
     }
-
+    
     /**
      * Register company in blockchain.
      *
@@ -94,13 +102,12 @@ class RegistrationUtil {
     registerCompany(company) {
         let gas = config.company_create_gas_amount;
         var contractInfo = require('./abi/Company.json');
-
-        return contractUtil.createContract(contractInfo, gas, company.name, company.address).then(contract => {
+        
+        return contractUtil.createContract(contractInfo, gas, company.name, company.raiting,
+            company.address
+        ).then(contract => {
             logger.log(`Company contract created: ${contract}`);
             return contract;
-        }).catch(err => {
-            logger.error(err);
-            return false;
         });
     }
 }

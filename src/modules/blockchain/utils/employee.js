@@ -8,12 +8,12 @@ class Employee {
         let contractInfo = require('./abi/Employee.json');
         return contractUtil.readContractFromAddress(contractInfo, address);
     }
-
+    
     readWorkContract(address) {
         let contractInfo = require('./abi/Work.json');
         return contractUtil.readContractFromAddress(contractInfo, address);
     }
-
+    
     changeBonusRating(address, newRating) {
         return this.readEmployeeContract(address)
             .then(instance => instance.changeBonusRating(newRating))
@@ -21,13 +21,9 @@ class Employee {
                 logger.log(`Employee ${address} bonus rating is changed!`);
                 logger.log(`'transaction hash: ', ${data.transactionHash}`);
                 return data;
-            })
-            .catch(err => {
-                logger.error(err);
-                return false;
             });
     }
-
+    
     changeTestRating(address, testCode, newRating, skillCode) {
         return this.readEmployeeContract(address)
             .then(instance => instance.changeTestRating(testCode, newRating, skillCode))
@@ -35,19 +31,15 @@ class Employee {
                 logger.log(`Employee ${address} test rating is changed!`);
                 logger.log(`'transaction hash: ', ${data.transactionHash}`);
                 return data;
-            })
-            .catch(err => {
-                logger.error(err);
-                return false;
             });
     }
-
+    
     dispute(address, work) { }
-
+    
     changeEmployeeAddress(address, employeeAddress) {}
-
+    
     finishWork(address, work) {}
-
+    
     getSkills(address) {
         return this.readEmployeeContract(address)
             .then(instance => instance.getSkills())
@@ -55,26 +47,18 @@ class Employee {
                 data = data.filter(obj => obj);
                 logger.log(`Employee ${address} skills: ${data}`);
                 return data;
-            })
-            .catch(err => {
-                logger.error(err);
-                return false;
             });
     }
-
+    
     getSkillRatingBySkillCode(address, skillCode) {
         return this.readEmployeeContract(address)
             .then(instance => instance.getSkillRatingBySkillCode(skillCode))
             .then(data => {
                 logger.log(`Employee ${address} skill ${skillCode} rating: ${data}`);
                 return data.div(1000000).toString();
-            })
-            .catch(err => {
-                logger.log(`Employee ${address} hasn't got skill ${skillCode} in blockchain`);
-                return 0;
             });
     }
-
+    
     getSkillHistory(address, skillCode) {
         return this.readEmployeeContract(address)
             .then(instance => instance.getSkillHistory(skillCode))
@@ -92,13 +76,9 @@ class Employee {
             .then(data => {
                 logger.log(`Employee ${address} skill ${skillCode} history: ${data}`);
                 return data;
-            })
-            .catch(err => {
-                logger.error(err);
-                return false;
             });
     }
-
+    
     getWorks(address) {
         return this.readEmployeeContract(address)
             .then(instance => instance.getWorks())
@@ -106,13 +86,9 @@ class Employee {
                 data = data.filter(obj => obj);
                 logger.log(`Employee ${address} works: ${data}`);
                 return data;
-            })
-            .catch(err => {
-                logger.error(err);
-                return false;
             });
     }
-
+    
 }
 
 instance = new Employee();
