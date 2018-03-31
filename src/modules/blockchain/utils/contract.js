@@ -10,10 +10,10 @@ let instance;
 const initContract = function (contractInfo) {
     if (!web3)
         throw new Web3InitError();
-    
+
     let contract = contractService(contractInfo);
     contract.setProvider(web3.currentProvider);
-    
+
     // truffle node module bug
     if (typeof contract.currentProvider.sendAsync !== 'function') {
         contract.currentProvider.sendAsync = function () {
@@ -22,7 +22,7 @@ const initContract = function (contractInfo) {
             );
         };
     }
-    
+
     return accountUtil.unlockMainAccount(contract);
 };
 
@@ -39,8 +39,8 @@ class ContractUtil {
                 return contract.deployed();
             });
     };
-    
-    
+
+
     /**
      * Read contract from blockchain that located at address
      *
@@ -54,7 +54,7 @@ class ContractUtil {
                 return contract.at(address);
             });
     };
-    
+
     /**
      * Create contract in blockchain
      *
@@ -65,25 +65,29 @@ class ContractUtil {
      */
     createContract(contractInfo, gas, gasCoefficient) {
         let self = this;
-        if(gasCoefficient > 10){
+        if (gasCoefficient > 10) {
             return;
         }
         let args = Array.prototype.slice.call(arguments, 3);
         let gasPrice = config.gas_price;
         gasPrice = gasPrice * gasCoefficient;
-        args.push({gas, gasPrice});
-        
-        return initContract(contractInfo).then(contract => {
-            return contract.new.apply(null, args).then(contract => {
-                logger.log(`Created new contract: ${contract.address}. Transaction hash: ${contract.transactionHash}`);
-                return contract;
-            }).catch((error) => {
-                logger.error(error.stack);
-                return self.createContract.apply(self, [gas, gasCoefficient * 1.5].concat(args));
+        args.push({ gas, gasPrice });
+
+        return initContract(contractInfo)
+            .then(contract => {
+                return contract.new.apply(null, args)
+                    .then(contract => {
+                        logger.log(
+                            `Created new contract: ${contract.address}. Transaction hash: ${contract.transactionHash}`);
+                        return contract;
+                    })
+                    .catch((error) => {
+                        logger.error(error.stack);
+                        return self.createContract.apply(self, [contractInfo, gas, gasCoefficient * 1.5].concat(args));
+                    });
             });
-        });
     };
-    
+
 }
 
 instance = new ContractUtil();
