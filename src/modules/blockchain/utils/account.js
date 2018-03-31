@@ -3,8 +3,6 @@ const web3 = require('./web3');
 const config = require('../../../../public_configs/gas_amounts');
 const logger = require('../../../utils/logger');
 
-const Web3Error = require('./Web3Error');
-
 let instance;
 
 class RegistrationUtil {
@@ -44,15 +42,15 @@ class RegistrationUtil {
      * @returns {Promise.<TResult>}
      */
     
-    sendTransaction(value, to, privateKey, callback, gasCoefficient = 1) {
+    sendTransaction(value, to, privateKey, callback, gasCoefficient) {
         
         let self = this;
         
         if (gasCoefficient > 10) {
-            throw new Web3Error("gas coefficient is to large")
+            return;
         }
         
-        let lastArgument = arguments[4];
+        let lastArgument = arguments[5];
         
         let gas = lastArgument.gas || config.send_transaction_gas_amount;
         let data = lastArgument.data;
@@ -69,7 +67,8 @@ class RegistrationUtil {
                     })
                     // .on("confirmation", console.log)
                     .on('error', (error) => {
-                        return self.sendTransaction(value, to, privateKey, callback, gasCoefficient * 1.5);
+                        logger.error(error.stack);
+                        return self.sendTransaction(value, to, privateKey, callback, gasCoefficient * 1.5, lastArgument);
                     }).once('receipt', callback);
             });
         
@@ -85,7 +84,7 @@ class RegistrationUtil {
         let gas = config.employee_create_gas_amount;
         var contractInfo = require('./abi/Employee.json');
         
-        return contractUtil.createContract(contractInfo, gas, employee.firstName, employee.lastName,
+        return contractUtil.createContract(contractInfo, gas, 1, employee.firstName, employee.lastName,
             employee.email, employee.address
         ).then(contract => {
             logger.log(`Employee contract created: ${contract}`);
@@ -103,11 +102,18 @@ class RegistrationUtil {
         let gas = config.company_create_gas_amount;
         var contractInfo = require('./abi/Company.json');
         
-        return contractUtil.createContract(contractInfo, gas, company.name, company.raiting,
-            company.address
-        ).then(contract => {
-            logger.log(`Company contract created: ${contract}`);
-            return contract;
+        return contractUtil.createContract(contractInfo, gas, 1, company.name, company.address)
+            .then(contract => {
+                this.contractListener(contract);
+                logger.log(`Company contract created: ${contract}`);
+                return contract;
+            });
+    }
+    
+    async contractListener(contract) {
+        let events = contract.allEvents();
+        events.watch((err, data) => {
+            console.log(`contract date ${data.event}: ${data.args.index} ${data.args.data}`);
         });
     }
 }
