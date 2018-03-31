@@ -1,20 +1,19 @@
 const models = require('../../../core/models');
 const Works = models.works;
-const blockchainWork = require('../utils/work');
-
 const socketSender = require('../../../core/socketSender');
 
 const blockchainInfo = require('./blockchainEventService');
+
 const companyService = require('../../company/services/companyService');
 const vacancyService = require('../../company/services/vacancyService');
-const skillsService = require('../../specialisation/services/skillService');
 const balanceService = require('../services/balanceService');
 const employeeService = require('../../employee/services/employeeService');
+const skillService = require('../../specialisation/services/skillService');
 
-const Web3InitError = require('../utils/Web3Error');
-const employeeBlockchainUtil = require('../utils/employee');
+const blockchainWork = require('../utils/work');
 const Account = require('../utils/account');
 const web3 = require('../utils/web3');
+const Web3InitError = require('../utils/Web3Error');
 const logger = require('../../../utils/logger');
 const Op = models.sequelize.Op;
 
@@ -57,7 +56,7 @@ class WorkService {
                 message = ` employee ${employee.name}`;
             }
             if (!company.contract) {
-                let promise = companyService.createBlockchainAccountForCompany(companyUser, 10);
+                let promise = companyService.createBlockchainAccountForCompany(companyUser);
                 promises.push(promise);
                 if (message) {
                     message += ' and';
@@ -107,28 +106,31 @@ class WorkService {
             status: 0
         };
 
-        let skillCodes = await this.generateCodes(vacancyId);
+        let skillCodes = await skillService.generateSkillCodesByVacancy(vacancyId);
 
         let blockchainWorkData = {
             skillCodes,
             duration: vacancy.duration,
             employee: employee.user.accountAddress,
+            employeeContractAddress: employee.contract,
             company: companyUser.accountAddress,
+            companyContractAddress: companyUser.company.contract,
             weekPayment: web3.utils.toWei(String(vacancy.weekPayment), 'ether')
         };
 
-        let contract = await blockchainWork.createWork(blockchainWorkData).then(async (result) => {
-            if (!result)
-                throw new Web3InitError('Could not register company in blockchain');
+        let contract = await blockchainWork.createWork(blockchainWorkData)
+            .then(async (result) => {
+                if (!result)
+                    throw new Web3InitError('Could not register company in blockchain');
 
-            await vacancyService.deleteAwaitedContractByVacancyId(vacancy.id, employee.userId);
-            await socketSender.sendSocketMessage(`${employee.userId}:vacancy`, {
-                type: 'ADD',
-                vacancy: result.address
+                await vacancyService.deleteAwaitedContractByVacancyId(vacancy.id, employee.userId);
+                await socketSender.sendSocketMessage(`${employee.userId}:vacancy`, {
+                    type: 'ADD',
+                    vacancy: result.address
+                });
+
+                return result;
             });
-
-            return result;
-        });
 
         workData.contract = contract.address;
         await this.save(workData);
@@ -169,21 +171,24 @@ class WorkService {
         let privateKey = await Account.decryptAccount(work.company.user.encryptedKey,
             work.company.user.keyPassword).privateKey;
 
+        //TODO hours that employee had worked during week
+        let workedHours = 35;
         // передаем callback функцию так как web3 принимает собственные promise
 
-        let result = await blockchainWork.sendWeekSalary(work.contract, amount, privateKey, async (data) => {
+        let result = await blockchainWork.sendWeekSalary(work.contract, workedHours, amount, privateKey,
+            async (data) => {
 
-            let employeeBalance = await balanceService.getBalance(work.employee.user.accountAddress);
-            let companyBalance = await balanceService.getBalance(work.company.user.accountAddress);
-            await socketSender.sendSocketMessage(`${work.employee.userId}:balance`, {
-                balance: employeeBalance
-            });
-            await socketSender.sendSocketMessage(`${work.company.userId}:balance`, {
-                balance: companyBalance
-            });
+                let employeeBalance = await balanceService.getBalance(work.employee.user.accountAddress);
+                let companyBalance = await balanceService.getBalance(work.company.user.accountAddress);
+                await socketSender.sendSocketMessage(`${work.employee.userId}:balance`, {
+                    balance: employeeBalance
+                });
+                await socketSender.sendSocketMessage(`${work.company.userId}:balance`, {
+                    balance: companyBalance
+                });
 
-            return data;
-        });
+                return data;
+            });
 
         let transaction = {
             currency: 'eth',
@@ -204,18 +209,12 @@ class WorkService {
     }
 
     async addRatingToEmployee(work) {
-        let workAddress = work.contract;
-        let employeeContractAddress = work.employee.contract;
         let skillCodes = await this.generateCodes(work.vacancyId);
 
-        let promises = [];
 
         skillCodes.forEach(async code => {
-            let rating = this.calculateRating(workAddress, employeeContractAddress);
-            promises.push(employeeBlockchainUtil.changeSkillRating(employeeContractAddress, code, rating));
         });
 
-        await Promise.all(promises);
     }
 
     async createContractTransaction(transaction) {
@@ -252,33 +251,12 @@ class WorkService {
                 await blockchainInfo.set(companies[i].userId, `salary:${allWorks[j].contract}`, 'Send salary');
                 try {
                     await this.sendWeekSalary(allWorks[j]);
-                    await this.addRatingToEmployee(allWorks[j]);
                 } catch (e) {
                     logger.error(e.stack);
                 }
                 await blockchainInfo.unset(companies[i].userId, `salary:${allWorks[j].contract}`);
             }
-
         }
-    }
-
-    // TODO raiting calculation for employee on paying week salary
-
-    calculateRating(workAddress, employeeContractAddress) {
-        return 1;
-    }
-
-    async generateCodes(vacancyId) {
-        let skillCodes = [];
-        let profiles = await vacancyService.getVacancySpecification(vacancyId);
-        for (let profile of profiles) {
-            for (let skill of profile.skills) {
-                let code = ((profile.id - 1) << 12) + (skill.id - 1);
-                skillCodes.push(code);
-            }
-        }
-
-        return skillCodes;
     }
 }
 

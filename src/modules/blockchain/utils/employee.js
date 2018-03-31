@@ -4,60 +4,42 @@ const contractUtil = require('./contract');
 
 
 class Employee {
-    readWorkContract(address) {
+    readEmployeeContract(address) {
         let contractInfo = require('./abi/Employee.json');
         return contractUtil.readContractFromAddress(contractInfo, address);
     }
 
+    readWorkContract(address) {
+        let contractInfo = require('./abi/Work.json');
+        return contractUtil.readContractFromAddress(contractInfo, address);
+    }
+
     changeBonusRating(address, newRating) {
-        return this.readWorkContract(address).then(instance => {
-            return instance.changeBonusRating(newRating);
-        }).then(data => {
-            logger.log(`Employee ${address} bonus rating is changed!`);
-            logger.log(`'transaction hash: ', ${data.transactionHash}`);
-            return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
-        });
+        return this.readEmployeeContract(address)
+            .then(instance => instance.changeBonusRating(newRating))
+            .then(data => {
+                logger.log(`Employee ${address} bonus rating is changed!`);
+                logger.log(`'transaction hash: ', ${data.transactionHash}`);
+                return data;
+            })
+            .catch(err => {
+                logger.error(err);
+                return false;
+            });
     }
 
-    changeSkillRating(address, skillCode, newRating) {
-        return this.readWorkContract(address).then(instance => {
-            return instance.changeSkillRating(skillCode, newRating);
-        }).then(data => {
-            logger.log(`Employee ${address} skill rating is changed!`);
-            logger.log(`'transaction hash: ', ${data.transactionHash}`);
-            return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
-        });
-    }
-
-    changeTestRating(address, testCode, newRating) {
-        return this.readWorkContract(address).then(instance => {
-            return instance.changeTestRating(testCode, newRating);
-        }).then(data => {
-            logger.log(`Employee ${address} test rating is changed!`);
-            logger.log(`'transaction hash: ', ${data.transactionHash}`);
-            return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
-        });
-    }
-
-    calculateRating(address) {
-        return this.readWorkContract(address).then(instance => {
-            return instance.calculateRating();
-        }).then(data => {
-            logger.log(`Employee ${address} rating: ${data}`);
-            return data;
-        }).catch(err => {
-            logger.error(err);
-            return false;
-        });
+    changeTestRating(address, testCode, newRating, skillCode) {
+        return this.readEmployeeContract(address)
+            .then(instance => instance.changeTestRating(testCode, newRating, skillCode))
+            .then(data => {
+                logger.log(`Employee ${address} test rating is changed!`);
+                logger.log(`'transaction hash: ', ${data.transactionHash}`);
+                return data;
+            })
+            .catch(err => {
+                logger.error(err);
+                return false;
+            });
     }
 
     dispute(address, work) { }
@@ -66,7 +48,71 @@ class Employee {
 
     finishWork(address, work) {}
 
-    addWork(address, work, company) {}
+    getSkills(address) {
+        return this.readEmployeeContract(address)
+            .then(instance => instance.getSkills())
+            .then(data => {
+                data = data.filter(obj => obj);
+                logger.log(`Employee ${address} skills: ${data}`);
+                return data;
+            })
+            .catch(err => {
+                logger.error(err);
+                return false;
+            });
+    }
+
+    getSkillRatingBySkillCode(address, skillCode) {
+        return this.readEmployeeContract(address)
+            .then(instance => instance.getSkillRatingBySkillCode(skillCode))
+            .then(data => {
+                logger.log(`Employee ${address} skill ${skillCode} rating: ${data}`);
+                return data.div(1000000).toString();
+            })
+            .catch(err => {
+                logger.log(`Employee ${address} hasn't got skill ${skillCode} in blockchain`);
+                return 0;
+            });
+    }
+
+    getSkillHistory(address, skillCode) {
+        return this.readEmployeeContract(address)
+            .then(instance => instance.getSkillHistory(skillCode))
+            .then(history =>
+                Promise.all(
+                    history
+                        .filter(obj => obj)
+                        .map(workAddress => this.readWorkContract(workAddress))
+                )
+            )
+            .then(workIncenses => {
+                const promises = workIncenses.map(work => work.getWorkData());
+                return Promise.all(promises);
+            })
+            .then(data => {
+                logger.log(`Employee ${address} skill ${skillCode} history: ${data}`);
+                return data;
+            })
+            .catch(err => {
+                logger.error(err);
+                return false;
+            });
+    }
+
+    getWorks(address) {
+        return this.readEmployeeContract(address)
+            .then(instance => instance.getWorks())
+            .then(data => {
+                data = data.filter(obj => obj);
+                logger.log(`Employee ${address} works: ${data}`);
+                return data;
+            })
+            .catch(err => {
+                logger.error(err);
+                return false;
+            });
+    }
+
 }
 
 instance = new Employee();
