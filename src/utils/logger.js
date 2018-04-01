@@ -9,7 +9,7 @@ class Logger {
     
     constructor() {
         console.log("Logger init " + chalk.green('✓'));
-        let dir = '../../logs/';
+        let dir = '../../logs';
         let access = fs.createWriteStream(dir + '/log.txt', { flags: 'a' })
               , error = fs.createWriteStream(dir + '/error.txt', { flags: 'a' });
 
