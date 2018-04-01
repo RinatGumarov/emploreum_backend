@@ -1,6 +1,8 @@
 "use strict";
 
 const chalk = require('chalk');
+const fs = require('fs');
+
 let loggerInstance;
 
 class Logger {
