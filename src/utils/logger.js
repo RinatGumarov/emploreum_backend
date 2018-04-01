@@ -14,8 +14,9 @@ class Logger {
               , error = fs.createWriteStream(dir + '/error.txt', { flags: 'a' });
 
         // redirect stdout / stderr
-        proc.stdout.pipe(access);
-        proc.stderr.pipe(error);
+        process.stdout.pipe(access);
+        process.stderr.pipe(error);
+        
     }
     
     /**
