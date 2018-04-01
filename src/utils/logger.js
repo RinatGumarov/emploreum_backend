@@ -9,8 +9,8 @@ let loggerInstance;
 class Logger {
     
     constructor() {
-        let logsDir = process.env.log_file || config.get("file").log_file;
-        let errorDir = process.env.log_error_file || config.get("file").log_error_file;
+        let logsDir = process.env.LOG_FILE || config.get("file").log_file;
+        let errorDir = process.env.LOG_ERROR_FILE || config.get("file").log_error_file;
         
         let access = fs.createWriteStream(logsDir, {flags: 'a'});
         let error = fs.createWriteStream(errorDir, {flags: 'a'});
