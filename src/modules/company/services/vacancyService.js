@@ -204,7 +204,7 @@ class VacancyService {
         await messageService.sendMessage(
             userOwnerForSendMessage,
             userFromForSendMessage,
-            "мы бы хотели вас пригласить на вакансию"
+            "We'd like to invite you for a job"
         );
         return true;
     }
