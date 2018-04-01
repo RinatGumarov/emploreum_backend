@@ -8,14 +8,18 @@ let instance;
 class FileSystem {
     
     constructor() {
-        this.uploadDir = process.env.upload_dir || config.get("file").upload_dir;
+        this.folders = [];
+        this.folders.push(process.env.log_dir || config.get("file").log_dir);
+        this.folders.push(process.env.upload_dir || config.get("file").upload_dir);
     }
     
     init() {
-        if (!fs.existsSync(this.uploadDir)) {
-            mkdirp(this.uploadDir, function () {
-                logger.log("файловая система инициализирована");
-            });
+        this.folders.forEach(directory => {
+            if (!fs.existsSync(directory)) {
+                mkdirp(directory, function () {
+                    logger.log("Filse system is initilized.");
+                });
+            }
         }
     }
 }
