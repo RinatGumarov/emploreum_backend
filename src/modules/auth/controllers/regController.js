@@ -83,7 +83,9 @@ module.exports.func = (router) => {
                         await employeesService.save(user.id);
                         break;
                     case 'COMPANY':
-                        await companiesService.save(user.id);
+                        //TODO delete after investors review
+                        let company = await companiesService.save(user.id);
+
                         break;
                 }
 
