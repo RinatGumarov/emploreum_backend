@@ -51,7 +51,7 @@ module.exports.func = (router) => {
         } catch (err) {
             logger.error(err.stack);
             res.status(500)
-                .json({ error: err });
+                .json({ error: err.msg });
         }
     });
 
