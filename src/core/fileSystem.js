@@ -23,7 +23,7 @@ class FileSystem {
 
         for (let i = 0; i < this.files.length; i++) {
             if (!fs.existsSync(this.folders[i])) {
-                // fs.appendFile(this.files[i]);
+                fs.appendFile(this.files[i]);
             }
         }
     }
