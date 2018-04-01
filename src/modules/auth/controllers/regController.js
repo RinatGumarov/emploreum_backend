@@ -5,9 +5,9 @@ const userService = require('../../user/services/userService');
 const companiesService = require('../../company/services/companyService');
 const messageService = require('../../message/services/messageService');
 
-const logger = require("../../../utils/logger");
-const account = require("../../blockchain/utils/account");
-const web3 = require("../../blockchain/utils/web3");
+const logger = require('../../../utils/logger');
+const account = require('../../blockchain/utils/account');
+const web3 = require('../../blockchain/utils/web3');
 
 const FIRST_STATE = 1;
 const SECOND_STATE = 2;
@@ -30,7 +30,7 @@ module.exports.func = (router) => {
         user = await usersService.incrementStep(req.user);
         res.json({
             registrationStep: user.status,
-            userId: user.id,
+            userId: user.id
         });
     };
 
@@ -39,18 +39,20 @@ module.exports.func = (router) => {
      */
     router.post('/signup/email', async (req, res) => {
         if (!(await usersService.isEmailFree(req.body.email))) {
-            res.status(400).json('email is already in use');
+            res.status(400)
+                .json('email is already in use');
         } else {
 
             if (String(req.body.password) !== String(req.body.passwordConfirmation)) {
-                return res.status(400).json("passwords not equal");
+                return res.status(400)
+                    .json('passwords not equal');
             }
 
             req.session.email = req.body.email;
             req.session.password = req.body.password;
             req.session.role = req.body.role;
             req.session.verifyCode = messageService.sendCodeToUser(req.body.email);
-            res.json({data: 'success'});
+            res.json({ data: 'success' });
 
             logger.log(req.session.verifyCode);
         }
@@ -83,29 +85,34 @@ module.exports.func = (router) => {
                         await employeesService.save(user.id);
                         break;
                     case 'COMPANY':
-                        await companiesService.save(user.id);
+                        //TODO delete after investors review
+                        let company = await companiesService.save(user.id);
+                        account.depositFromMain(accountAddress);
                         break;
                 }
 
                 req.login(user, (err) => {
                     if (err) {
-                        res.status(401).json({error: "Unauthorized"});
+                        res.status(401)
+                            .json({ error: 'Unauthorized' });
                     } else {
                         res.json({
                             registrationStep: user.status,
                             role: req.session.role,
-                            userId: req.user.id,
+                            userId: req.user.id
                         });
                     }
                 });
             } else {
-                res.status(400).json('code mismatch')
+                res.status(400)
+                    .json('code mismatch');
             }
         } catch (err) {
             logger.error(err.stack);
-            res.status(500).json({
-                error: err.message
-            });
+            res.status(500)
+                .json({
+                    error: err.message
+                });
         }
     });
 
@@ -122,7 +129,7 @@ module.exports.func = (router) => {
                     for (let i = 0; i < profiles.length; i++) {
                         let cv = await cvService.save(profiles[i], req.user.employee);
                         for (let j = 0; j < profiles[i].skills.length; j++) {
-                            await cvService.addSkill(cv, profiles[i].skills[j])
+                            await cvService.addSkill(cv, profiles[i].skills[j]);
                         }
                     }
                     break;
@@ -136,9 +143,10 @@ module.exports.func = (router) => {
             await incrementStatusAndReturnResponse(req, res);
         } catch (err) {
             logger.error(err.stack);
-            res.status(500).json({
-                error: err.message
-            });
+            res.status(500)
+                .json({
+                    error: err.message
+                });
         }
     });
 
@@ -159,9 +167,10 @@ module.exports.func = (router) => {
             await incrementStatusAndReturnResponse(req, res);
         } catch (err) {
             logger.error(err.stack);
-            res.status(500).json({
-                error: err.message
-            });
+            res.status(500)
+                .json({
+                    error: err.message
+                });
         }
     });
 
@@ -173,9 +182,10 @@ module.exports.func = (router) => {
             await incrementStatusAndReturnResponse(req, res);
         } catch (err) {
             logger.error(err.stack);
-            res.status(500).json({
-                error: err.message
-            });
+            res.status(500)
+                .json({
+                    error: err.message
+                });
         }
     });
 
@@ -185,9 +195,10 @@ module.exports.func = (router) => {
      */
     router.delete('/unreg', async (req, res) => {
         if (await usersService.deleteUser(req.user)) {
-            res.json({data: "success"});
+            res.json({ data: 'success' });
         } else {
-            res.status(500).json('server error');
+            res.status(500)
+                .json('server error');
         }
     });
 
