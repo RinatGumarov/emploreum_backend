@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const passport = require('passport');
 const cors = require('./middlewares/cors');
+const cache = require('./middlewares/cache');
 const configUtil = require('../utils/config');
 const sessionStoreIniter = require('./sessionStoreIniter');
 
@@ -16,6 +17,7 @@ module.exports = class MiddlewaresIniter {
 
     correctRequest() {
         let configSession = configUtil.get("session");
+        this.server.use(cache);
         this.server.use(this.express.static('public'));
         this.server.use(cors);
         this.server.use(bodyParser.json({limit: '10mb'}));
