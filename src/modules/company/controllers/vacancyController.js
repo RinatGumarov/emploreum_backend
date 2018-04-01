@@ -36,7 +36,7 @@ module.exports.func = (router) => {
     router.get('/vacancy/info/:id([0-9]+)', async (req, res) => {
         try {
             let vacancy = await vacancyService.findById(req.params.id);
-            if (req.user.role === "EMPLOYEE") {
+            if (req.user && req.user.role === "EMPLOYEE") {
                 let available = await vacancyService.isAvailable(req.params.id, req.user.id);
                 vacancy.setDataValue("available", available);
             }
