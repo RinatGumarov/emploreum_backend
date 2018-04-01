@@ -59,7 +59,7 @@ class RegistrationUtil {
         let gasPrice = lastArgument.gasPrice || process.env.GAS_PRICE || config.gas_price;
         gasPrice = gasPrice * gasCoefficient;
 
-        let tx = {to, value, gas, data, gasPrice};
+        let tx = { to, value, gas, data, gasPrice };
 
         return web3.eth.accounts.signTransaction(tx, privateKey)
             .then(data => {
@@ -70,8 +70,10 @@ class RegistrationUtil {
                     // .on("confirmation", console.log)
                     .on('error', (error) => {
                         logger.error(error.stack);
-                        return self.sendTransaction(value, to, privateKey, callback, gasCoefficient * 1.5, lastArgument);
-                    }).once('receipt', callback);
+                        return self.sendTransaction(value, to, privateKey, callback, gasCoefficient * 1.5,
+                            lastArgument);
+                    })
+                    .once('receipt', callback);
             });
 
     }
@@ -88,10 +90,11 @@ class RegistrationUtil {
 
         return contractUtil.createContract(contractInfo, gas, 1, employee.firstName, employee.lastName,
             employee.email, employee.address
-        ).then(contract => {
-            logger.log(`Employee contract created: ${contract}`);
-            return contract;
-        });
+        )
+            .then(contract => {
+                logger.log(`Employee contract created: ${contract}`);
+                return contract;
+            });
     }
 
     /**
@@ -121,27 +124,28 @@ class RegistrationUtil {
 
     //TODO delete after investors review
     depositFromMain(receiver) {
-      let coinbase;
-      return web3.eth.getAccounts()
-          .then(accounts => {
-              if (accounts.length === 0)
-                  throw new Web3InitError('There is no any init accounts in web3.');
+        let coinbase;
+        return web3.eth.getAccounts()
+            .then(accounts => {
+                if (accounts.length === 0)
+                    throw new Web3InitError('There is no any init accounts in web3.');
 
-              let defaultAccount = process.env.DEFAULT_ACCOUNT || configBlockchain.defaultAccount;
-              let account_password = process.env.ACCOUNT_PASSWORD || confconfigBlockchainig.account_password;
-              let unlock_time = process.env.UNLOCK_TIME || configBlockchain.unlock_time;
-              coinbase = accounts[defaultAccount];
-              return web3.eth.personal.unlockAccount(coinbase, account_password,
-                  web3.utils.toHex(unlock_time));
-          })
-          .then(status => {
-              logger.log(`Is default account unlocked status: ${status}`);
+                let defaultAccount = process.env.DEFAULT_ACCOUNT || configBlockchain.defaultAccount;
+                let account_password = process.env.ACCOUNT_PASSWORD || configBlockchain.account_password;
+                let unlock_time = process.env.UNLOCK_TIME || configBlockchain.unlock_time;
+                coinbase = accounts[defaultAccount];
+                return web3.eth.personal.unlockAccount(coinbase, account_password,
+                    web3.utils.toHex(unlock_time));
+            })
+            .then(status => {
+                logger.log(`Is default account unlocked status: ${status}`);
 
-              if (!status)
-                  throw new Web3InitError('Can\'t unlock default account. Please check password.');
-
-              return web3.eth.personal.sendTransaction({from:coinbase, to:receiver, value: web3.toWei(0.01, "ether")});
-          });
+                if (!status)
+                    throw new Web3InitError('Can\'t unlock default account. Please check password.');
+                const value = web3.utils.toWei('0.01', 'ether');
+                web3.eth.sendTransaction(
+                    { from: coinbase, to: receiver, value });
+            });
     }
 }
 

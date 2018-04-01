@@ -12,12 +12,12 @@ class Logger {
         let logsDir = process.env.log_file || config.get("file").log_file;
         let errorDir = process.env.log_error_file || config.get("file").log_error_file;
         
-        let access = fs.createWriteStream(logsDir, {flags: 'a'});
-        let error = fs.createWriteStream(errorDir, {flags: 'a'});
-        
-        // redirect stdout / stderr
-        process.stdout.pipe(access);
-        process.stderr.pipe(error);
+        // let access = fs.createWriteStream(logsDir, {flags: 'a'});
+        // let error = fs.createWriteStream(errorDir, {flags: 'a'});
+        //
+        // // redirect stdout / stderr
+        // process.stdout.pipe(access);
+        // process.stderr.pipe(error);
         
     }
     
