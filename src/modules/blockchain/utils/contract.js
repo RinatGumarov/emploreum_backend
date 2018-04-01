@@ -83,7 +83,9 @@ class ContractUtil {
                     })
                     .catch((error) => {
                         logger.error(error.stack);
-                        return self.createContract.apply(self, [contractInfo, gas, gasCoefficient * 1.5].concat(args));
+                        gasCoefficient *= 1.5;
+                        logger.log(`Starting new contract creation with gasCoefficient: ${gasCoefficient}`);
+                        return self.createContract.apply(self, [contractInfo, gas, gasCoefficient].concat(args));
                     });
             });
     };
