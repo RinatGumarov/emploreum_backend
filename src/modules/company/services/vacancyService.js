@@ -11,7 +11,6 @@ const queryScanner = require('../../../core/queryScanner');
 const employeeService = require('../../employee/services/employeeService');
 const messageService = require('../../message/services/messageService');
 const companyService = require('./companyService');
-const skillService = require('../../specialisation/services/skillService');
 const socketSender = require('../../../core/socketSender');
 
 
@@ -44,30 +43,6 @@ class VacancyService {
         
         return await this.initSpecificationsFromVacancies(vacancies);
         
-    }
-    
-    /**
-     * метод получения рекомендуемых вакансий по профилю работника
-     * Добавить обработку в скрипте array_positions
-     * для выявления сходства направления скила работника и направления
-     * скила вакансии
-     * @returns {Promise<*>}
-     * @param employee
-     */
-    async getRecommendedVacancies(employee) {
-        let skills = await skillService.getEmployeeSkills(employee);
-        let skillsIds = skills.map((skill) => {
-            return skill.id;
-        });
-        let queryStr = queryScanner.company.recommended_vacancies;
-        let vacancies = await queryScanner.query(queryStr, {
-            model: models.vacancies,
-            include: [models.companies],
-            replacements: {
-                skillsString: skillsIds.join(",")
-            },
-        });
-        return await this.initSpecificationsFromVacancies(vacancies);
     }
     
     /**

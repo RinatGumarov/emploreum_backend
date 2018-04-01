@@ -28,7 +28,7 @@ module.exports.func = (router) => {
             res.json(result);
             
         } catch (err) {
-            logger.error(err.stack);
+            console.log(err.stack);
             return res.status(500).send({error: 'search error'});
         }
     });

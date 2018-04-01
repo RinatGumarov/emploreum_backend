@@ -12,11 +12,7 @@ SELECT
   "cvs->profile"."name"    AS "cvs.profile.name",
   "cvs->skills"."id"       AS "cvs.skills.id",
   "cvs->skills"."name"     AS "cvs.skills.name",
-  "works"."id"             AS "works.id",
-  "works->company"."id"    AS "works.company.id",
-  "works->company"."name"  AS "works.company.name",
-  "works->vacancy"."id"    AS "works.vacancy.id",
-  "works->vacancy"."name"  AS "works.vacancy.name"
+  "user"."created_at"      AS "user.createdAt"
 FROM "employees" AS "employees"
   LEFT OUTER JOIN "cvs" AS "cvs" ON "employees"."id" = "cvs"."employee_id"
   LEFT OUTER JOIN "profiles" AS "cvs->profile" ON "cvs"."profile_id" = "cvs->profile"."id"
@@ -26,9 +22,6 @@ FROM "employees" AS "employees"
   ("profile_skills" AS "cvs->skills->profiles->profileSkills" INNER JOIN "profiles" AS "cvs->skills->profiles"
       ON "cvs->skills->profiles"."id" = "cvs->skills->profiles->profileSkills"."profile_id")
     ON "cvs->skills"."id" = "cvs->skills->profiles->profileSkills"."skill_id"
-  LEFT OUTER JOIN "works" AS "works" ON "employees"."id" = "works"."employee_id"
-  LEFT OUTER JOIN "companies" AS "works->company" ON "works"."company_id" = "works->company"."id"
-  LEFT OUTER JOIN "vacancies" AS "works->vacancy" ON "works"."vacancy_id" = "works->vacancy"."id"
   LEFT OUTER JOIN "users" AS "user" ON "employees"."user_id" = "user"."id"
   LEFT OUTER JOIN ("user_languages" AS "user->languages->user_languages" INNER JOIN "languages" AS "user->languages"
       ON "user->languages"."id" = "user->languages->user_languages"."language_id")

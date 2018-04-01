@@ -63,15 +63,8 @@ class EmployeesSearchService {
                     }
                 ]
             }, {
-                model: models.works,
-                attributes: ['id'],
-                include: [{
-                    model: models.companies,
-                    attributes: ['name']
-                }, {
-                    model: models.vacancies,
-                    attributes: ['name']
-                }]
+                model: models.users,
+                attributes: ['createdAt']
             }]
         });
         employees = await this.changeEmployee(employees);

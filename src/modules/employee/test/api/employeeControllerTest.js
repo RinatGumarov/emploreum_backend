@@ -16,16 +16,4 @@ describe('employeeController', () => {
             });
     });
     
-    it('/vacancy/recommended', (done) => {
-        testIniter.getChaiRequest()
-            .get("/employee/vacancy/recommended")
-            .set("Content-Type", "application/json")
-            .set('Cookie', testIniter.getCookie())
-            .end(function (err, res) {
-                res.should.have.status(200);
-                done();
-            });
-    });
-    
-    
 });
