@@ -1,7 +1,6 @@
 "use strict";
 
 const express = require('express');
-const logger = require('../utils/logger');
 const config = require('../utils/config');
 const MiddlewaresIniter = require('./middlewaresIniter');
 const models = require("./models");
@@ -12,9 +11,12 @@ let appInstance;
 
 class Application {
     
-    
+    /**
+     *
+     * @param withFileSystemInit
+     */
     constructor() {
-        
+        fileSystem.init();
         this.config = config.get("server");
         this.express = express;
         this.server = this.express();
@@ -30,16 +32,13 @@ class Application {
     
     /**
      * аргумент withFileSystemInit нужен для тестов
-     * @param withFileSystemInit
      */
-    start(withFileSystemInit = true) {
-        if (withFileSystemInit) {
-            fileSystem.init();
-        }
+    start() {
+        let logger = require("../utils/logger");
         this.server = socketSender.init(this.server);
         this.server.listen(this.port, (err) => {
             if (err) {
-                return Logger.error(err.message);
+                logger.log(err)
             }
             logger.log("Server started");
             logger.log(`Localhost: http://${this.host}:${this.port}`);
