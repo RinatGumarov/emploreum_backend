@@ -149,6 +149,8 @@ module.exports.func = (router) => {
         try {
             switch (req.user.role) {
                 case 'EMPLOYEE':
+                    //костыль для одной компоненты регистрации
+                    req.body.logo = req.body.photoPath;
                     await employeesService.update(req.user.employee, req.body);
                     break;
                 case 'COMPANY':
