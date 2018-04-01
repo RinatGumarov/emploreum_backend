@@ -129,16 +129,17 @@ class WorkService {
                     type: 'ADD',
                     vacancy: result.address
                 });
-                
+
+
+                // Закрыть вакансию
+                vacancy.opened = false;
+                await vacancy.save();
+
                 return result;
             });
         
         workData.contract = contract.address;
         await this.save(workData);
-        
-        // Закрыть вакансию
-        vacancy.opened = false;
-        await vacancy.save();
         
         return contract;
     }
