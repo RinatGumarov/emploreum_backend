@@ -1,3 +1,5 @@
 {
-  "upload_dir": "public/upload"
+    "upload_dir": "public/upload",
+    "log_file": "logs/logs.txt",
+    "log_error_file": "logs/err.txt"
 }

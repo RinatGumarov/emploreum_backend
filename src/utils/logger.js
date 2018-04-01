@@ -1,12 +1,24 @@
 "use strict";
 
 const chalk = require('chalk');
+const fs = require('fs');
+const config = require('../utils/config');
+
 let loggerInstance;
 
 class Logger {
     
     constructor() {
-        console.log("Logger init " + chalk.green('✓'));
+        let logsDir = process.env.log_file || config.get("file").log_file;
+        let errorDir = process.env.log_error_file || config.get("file").log_error_file;
+        
+        let access = fs.createWriteStream(logsDir, {flags: 'a'});
+        let error = fs.createWriteStream(errorDir, {flags: 'a'});
+        
+        // redirect stdout / stderr
+        process.stdout.pipe(access);
+        process.stderr.pipe(error);
+        
     }
     
     /**
