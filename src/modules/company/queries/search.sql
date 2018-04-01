@@ -1,4 +1,4 @@
-SELECT vacancies
+SELECT vacancies.*
 FROM (SELECT vacancies.id
       FROM vacancies
         LEFT JOIN vacancy_profile_skills ON vacancies.id = vacancy_profile_skills.vacancy_id

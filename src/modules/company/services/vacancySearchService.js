@@ -5,6 +5,7 @@ let instance;
 
 class VacancySearchService {
     
+    //toDo
     async search(params) {
         
         let whereQuery = "";
@@ -27,7 +28,7 @@ class VacancySearchService {
         
         let queryStr = queryScanner.company.search;
         queryStr = queryStr.replace(':whereQuery', whereQuery);
-        let vacancies = await queryScanner.query(queryStr, {
+        let vacancies = await queryScanner.query(queryStr,  {
             model: models.vacancies
         });
         return vacancies;
