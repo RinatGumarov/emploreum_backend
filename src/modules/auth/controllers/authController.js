@@ -3,9 +3,11 @@ const passport = require('passport');
 module.exports.func = (router) => {
 
     router.post('/login', passport.authenticate('local'), function (req, res) {
+        
         if (req.user.status > 2) {
             let name;
             let photoPath;
+           
             if (req.user.role === 'EMPLOYEE') {
                 name = req.user.employee.name;
                 photoPath = req.user.employee.photo_path;
@@ -19,6 +21,7 @@ module.exports.func = (router) => {
                 name,
                 photoPath
             });
+        
         }
         else {
             res.json({

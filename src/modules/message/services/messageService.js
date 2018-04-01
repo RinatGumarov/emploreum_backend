@@ -14,6 +14,10 @@ let instance;
 
 class MessageService {
     
+    constructor() {
+        this.mailConfig = config.get('mail');
+    }
+    
     /**
      * все сообшения по чату и авторизированному юзеру
      * @param chatId
@@ -134,10 +138,10 @@ class MessageService {
      * @returns {number}
      */
     generateCode() {
+        let generate = this.mailConfig.generate;
         let max = 1000000;
         let min = 100000;
-        return 111111;
-        // return Math.floor(Math.random() * (max - min + 1)) + min
+        return (generate) ? (Math.floor(Math.random() * (max - min + 1)) + min) : 111111;
     }
     
 }

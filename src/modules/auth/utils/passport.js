@@ -24,7 +24,6 @@ class Passport {
             async (email, password, done) => {
                 try {
                     let user = await userService.getUserByEmail(email);
-
                     if (!user) {
                         return done(null, false, {message: 'Incorrect username.'});
                     }
