@@ -141,7 +141,7 @@ class MessageService {
         let generate = process.env.MAIL_GENERATE || this.mailConfig.generate;
         let max = 1000000;
         let min = 100000;
-        return (generate) ? (Math.floor(Math.random() * (max - min + 1)) + min) : 111111;
+        return (generate.toString() === 'true') ? (Math.floor(Math.random() * (max - min + 1)) + min) : 111111;
     }
     
 }
