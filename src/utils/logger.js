@@ -7,6 +7,13 @@ class Logger {
     
     constructor() {
         console.log("Logger init " + chalk.green('✓'));
+        let dir = '../../logs/';
+        let access = fs.createWriteStream(dir + '/log.txt', { flags: 'a' })
+              , error = fs.createWriteStream(dir + '/error.txt', { flags: 'a' });
+
+        // redirect stdout / stderr
+        proc.stdout.pipe(access);
+        proc.stderr.pipe(error);
     }
     
     /**
