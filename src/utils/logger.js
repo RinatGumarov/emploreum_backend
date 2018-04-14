@@ -3,6 +3,7 @@
 const chalk = require('chalk');
 const fs = require('fs');
 const config = require('../utils/config');
+const util = require('util');
 
 let loggerInstance;
 
@@ -14,10 +15,8 @@ class Logger {
     createLogsFile() {
         let normalLogFileName = this.createSingleLogFile("normal");
         let errorLogFileName = this.createSingleLogFile("error");
-        let access = fs.createWriteStream(normalLogFileName, {flags: 'a'});
-        let error = fs.createWriteStream(errorLogFileName, {flags: 'a'});
-        process.stdout.pipe(access);
-        process.stderr.pipe(error);
+        this.normalStream = fs.createWriteStream(normalLogFileName, {flags: 'a'});
+        this.errorStream = fs.createWriteStream(errorLogFileName, {flags: 'a'});
     }
     
     
@@ -47,7 +46,7 @@ class Logger {
      * метод для логирования ошибок
      */
     error(err) {
-        console.error(chalk.red(err));
+        this.errorStream.write(util.format(err) + '\n');
     }
     
     /**
@@ -55,7 +54,7 @@ class Logger {
      * метод для записи логов не связанных с ошибками
      */
     log(msg) {
-        console.log(msg)
+        this.normalStream.write(util.format(msg) + '\n');
     }
 }
 
