@@ -124,6 +124,7 @@ describe('module:auth', () => {
                     }]
                 })
                 .end(function (err, res) {
+                    console.log(err);
                     res.should.have.status(200);
                     done()
                 });

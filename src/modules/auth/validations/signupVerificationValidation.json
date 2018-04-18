@@ -1,0 +1,9 @@
+{
+    "type": "object",
+    "properties": {
+        "verifyCode": {
+            "type": "string",
+            "required": true
+        }
+    }
+}

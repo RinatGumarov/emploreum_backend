@@ -6,6 +6,8 @@ const logger = require('../../../utils/logger');
 const account = require('../../blockchain/utils/account');
 const web3 = require('../../blockchain/utils/web3');
 
+const validate = require('express-jsonschema').validate;
+const validationSchema = require("../validations/signupVerificationValidation");
 
 module.exports.func = (router) => {
     
@@ -14,44 +16,49 @@ module.exports.func = (router) => {
      * если пароль верный то регистрируем и аунтифицируем
      * пользователя
      */
-    router.post('/signup/verification', async (req, res) => {
-        try {
-            if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
-                
-                let user = await usersService.saveUser(
-                    req.session.email,
-                    req.session.password,
-                    req.session.role
-                );
-                
-                switch (req.session.role) {
-                    case 'EMPLOYEE':
-                        await employeesService.save(user.id);
-                        break;
-                    case 'COMPANY':
-                        await companiesService.save(user.id);
-                        break;
-                }
-                
-                req.login(user, (err) => {
-                    if (err) {
-                        res.status(401).json({error: 'Unauthorized'});
-                    } else {
-                        res.json({
-                            registrationStep: user.status,
-                            role: req.session.role,
-                            userId: req.user.id
-                        });
+    router.post(
+        '/signup/verification',
+        
+        validate({body: validationSchema}),
+        
+        async (req, res) => {
+            try {
+                if (req.session.verifyCode === parseInt(req.body.verifyCode)) {
+                    
+                    let user = await usersService.saveUser(
+                        req.session.email,
+                        req.session.password,
+                        req.session.role
+                    );
+                    
+                    switch (req.session.role) {
+                        case 'EMPLOYEE':
+                            await employeesService.save(user.id);
+                            break;
+                        case 'COMPANY':
+                            await companiesService.save(user.id);
+                            break;
                     }
-                });
-            } else {
-                res.status(400).json('code mismatch');
+                    
+                    req.login(user, (err) => {
+                        if (err) {
+                            res.status(401).json({error: 'Unauthorized'});
+                        } else {
+                            res.json({
+                                registrationStep: user.status,
+                                role: req.session.role,
+                                userId: req.user.id
+                            });
+                        }
+                    });
+                } else {
+                    res.status(400).json('code mismatch');
+                }
+            } catch (err) {
+                logger.error(err.stack);
+                res.status(500).json({error: err.message});
             }
-        } catch (err) {
-            logger.error(err.stack);
-            res.status(500).json({error: err.message});
-        }
-    });
+        });
     
     return router;
     

@@ -4,32 +4,38 @@ const companiesService = require('../../company/services/companyService');
 
 const logger = require('../../../utils/logger');
 const status = require('../utils/status');
+const validate = require('express-jsonschema').validate;
+const validationSchema = require("../validations/signupInfoValidation");
 
 module.exports.func = (router) => {
     
     /** шаг заполнения лично информации*/
-    router.post('/signup/info', async (req, res) => {
-        let user = req.user;
-        try {
-            switch (user.role) {
-                case 'EMPLOYEE':
-                    //костыль для одной компоненты регистрации
-                    req.body.photoPath = req.body.logo;
-                    await employeesService.update(user.employee, req.body);
-                    break;
-                case 'COMPANY':
-                    await companiesService.update(user.company, req.body);
-                    break;
+    router.post('/signup/info',
+        
+        validate({body: validationSchema}),
+        
+        async (req, res) => {
+            let user = req.user;
+            try {
+                switch (user.role) {
+                    case 'EMPLOYEE':
+                        //костыль для одной компоненты регистрации
+                        req.body.photoPath = req.body.logo;
+                        await employeesService.update(user.employee, req.body);
+                        break;
+                    case 'COMPANY':
+                        await companiesService.update(user.company, req.body);
+                        break;
+                }
+                await userService.addLanguages(user, req.body.languages);
+                let respObj = await status.incrementStatusAndReturnResponse(user);
+                res.status(200).json(respObj);
+                
+            } catch (err) {
+                logger.error(err.stack);
+                res.status(500).json({error: err.message});
             }
-            await userService.addLanguages(user, req.body.languages);
-            let respObj = await status.incrementStatusAndReturnResponse(user);
-            res.status(200).json(respObj);
-    
-        } catch (err) {
-            logger.error(err.stack);
-            res.status(500).json({error: err.message});
-        }
-    });
+        });
     
     return router;
     
