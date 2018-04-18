@@ -1,13 +1,17 @@
 let testIniter = require('../../../../core/tests/testIniter');
 let testHelpers = require('../../../../core/tests/testHelpers');
+let testModuleHelepr = require('./helpers/testModuleHelpers');
 
-describe('module:employee', () => {
+describe('module:test', () => {
+    
+    
+    testModuleHelepr.createVacancyWithTest();
     
     testHelpers.authTestEmployee();
     
-    it('employeeInfoController', (done) => {
+    it('getTestForEmployeeController', (done) => {
         testIniter.getChaiRequest()
-            .get("/employee/info/2")
+            .get(`/test/vacancy/${testIniter.getRequestSession("vacancyId")}`)
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {

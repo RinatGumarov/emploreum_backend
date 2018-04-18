@@ -1,7 +1,7 @@
 const models = require('../../../core/models');
 const Profiles = models.profiles;
 const Skills = models.skills;
-const vacancyService = require('../../company/services/vacancyService');
+const vacancyService = require('../../vacancy/services/vacancyService');
 const skillUtil = require('../utils/skillUtil');
 
 const Op = models.sequelize.Op;

@@ -1,15 +1,16 @@
 let testIniter = require('../../../../core/tests/testIniter');
 let testHelpers = require('../../../../core/tests/testHelpers');
 
-describe('module:employee', () => {
+describe('module:vacancy', () => {
     
-    testHelpers.authTestEmployee();
+    testHelpers.authTestCompany();
     
-    it('employeeInfoController', (done) => {
+    it('inviteEmployeeController', (done) => {
         testIniter.getChaiRequest()
-            .get("/employee/info/2")
+            .post("/vacancy/1/invite")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
+            .send({employeeId: 2})
             .end(function (err, res) {
                 res.should.have.status(200);
                 done();
@@ -17,5 +18,6 @@ describe('module:employee', () => {
     });
     
     testHelpers.logout();
+    
     
 });

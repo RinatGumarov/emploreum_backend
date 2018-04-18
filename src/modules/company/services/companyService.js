@@ -15,7 +15,7 @@ const Web3InitError = require('../../blockchain/utils/Web3Error');
 let instance;
 
 class CompaniesService {
-
+    
     /**
      * создание профиля для компании
      * @param companyId
@@ -27,7 +27,7 @@ class CompaniesService {
             profileId: profileId
         });
     }
-
+    
     async save(userId) {
         return (await Companies.findOrCreate({
             where: {
@@ -40,15 +40,11 @@ class CompaniesService {
             }
         }))[0];
     }
-
-    async update(user, params) {
-        return await Companies.update(params, {
-            where: {
-                userId: { [Op.eq]: user.id }
-            }
-        });
+    
+    async update(company, params) {
+        return await company.update(params);
     }
-
+    
     async findByUserId(userId) {
         return await Companies.findOne({
             where: {
@@ -59,7 +55,7 @@ class CompaniesService {
             include: [models.users]
         });
     }
-
+    
     async findByIdWithUser(id) {
         return await Companies.findOne({
             include: [{
@@ -72,7 +68,7 @@ class CompaniesService {
             }
         });
     }
-
+    
     createBlockchainAccountForCompany(companyUser) {
         let blockchainCompany = {
             name: companyUser.company.name,
@@ -82,13 +78,13 @@ class CompaniesService {
             .then(async (contract) => {
                 if (!contract)
                     throw new Web3InitError('Could not register company in blockchain');
-
+                
                 companyUser.company.contract = contract.address;
                 companyUser.company.save();
                 return contract;
             });
     }
-
+    
     async findByVacancyId(vacancyId) {
         return await Companies.findOne({
             include: [{
@@ -96,12 +92,12 @@ class CompaniesService {
                 required: true,
                 model: models.vacancies,
                 where: {
-                    id: { [Op.eq]: vacancyId }
+                    id: {[Op.eq]: vacancyId}
                 }
             }, models.users]
         });
     }
-
+    
     async findById(id) {
         return await Companies.findOne({
             where: {
@@ -111,11 +107,11 @@ class CompaniesService {
             }
         });
     }
-
+    
     async getAll() {
         return await Companies.findAll();
     }
-
+    
     async findAllEmployees(company) {
         let employees = await Works.findAll({
             attributes: [],
@@ -131,7 +127,7 @@ class CompaniesService {
         });
         return _.uniqBy(employees, 'employee.userId');
     }
-
+    
     async findAllTests(companyId) {
         let tests = await Tests.findAll({
             attributes: ['id', 'name'],
@@ -167,7 +163,7 @@ class CompaniesService {
         });
         return tests;
     }
-
+    
     async findAllActiveContracts(company) {
         let contracts = await Works.findAll({
             where: {
@@ -190,7 +186,7 @@ class CompaniesService {
         });
         return contracts;
     }
-
+    
     async countSpending(contracts) {
         let result = 0;
         let transactionFee = await balanceService.getSalaryFee();
@@ -200,11 +196,11 @@ class CompaniesService {
         }
         return parseFloat(result.toFixed(10));
     }
-
+    
     async countEmployees(contracts) {
         return await _.uniqBy(contracts, 'employeeId').length;
     }
-
+    
     async getAllTransactions(company) {
         let transactions = await WorkTransactions.findAll({
             include: {
@@ -227,8 +223,8 @@ class CompaniesService {
         });
         return transactions;
     }
-
-
+    
+    
     async getRating(company) {
         let rating = await comapanyUtil.getRating(company.contract);
         return rating;

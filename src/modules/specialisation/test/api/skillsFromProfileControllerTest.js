@@ -1,13 +1,13 @@
 let testIniter = require('../../../../core/tests/testIniter');
 let testHelpers = require('../../../../core/tests/testHelpers');
 
-describe('module:employee', () => {
+describe('module:specialisation', () => {
     
     testHelpers.authTestEmployee();
     
-    it('employeeInfoController', (done) => {
+    it('skillsFromProfileController', (done) => {
         testIniter.getChaiRequest()
-            .get("/employee/info/2")
+            .get("/specialisation/skills/1")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {
@@ -15,6 +15,7 @@ describe('module:employee', () => {
                 done();
             });
     });
+    
     
     testHelpers.logout();
     

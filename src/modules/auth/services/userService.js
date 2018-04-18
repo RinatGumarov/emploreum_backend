@@ -7,6 +7,9 @@ const rolesService = require('./roleService');
 const employeeService = require('../../employee/services/employeeService');
 const companyService = require('../../company/services/companyService');
 
+const account = require('../../blockchain/utils/account');
+const web3 = require('../../blockchain/utils/web3');
+
 let instance;
 
 class UsersService {
@@ -154,14 +157,16 @@ class UsersService {
      * @param email
      * @param password
      * @param roleName
-     * @param status
-     * @param encryptedKey
-     * @param keyPassword
-     * @param accountAddress
      * @returns {Promise<*>}
      */
-    async saveUser(email, password, roleName, status, encryptedKey, keyPassword, accountAddress) {
+    async saveUser(email, password, roleName) {
+       
         let roleId = (await rolesService.findByName(roleName)).id;
+        let keyPassword = web3.utils.randomHex(32);
+        let encryptedKey = JSON.stringify(account.generateAccount(keyPassword));
+        let accountAddress = account.decryptAccount(JSON.parse(encryptedKey), keyPassword).address;
+        let status = 1;
+        
         let user = await Users.create({
             email,
             password,

@@ -5,9 +5,9 @@ describe('module:employee', () => {
     
     testHelpers.authTestEmployee();
     
-    it('employeeInfoController', (done) => {
+    it('employeeAwaitedContractController', (done) => {
         testIniter.getChaiRequest()
-            .get("/employee/info/2")
+            .get("/employee/contracts/awaited")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
             .end(function (err, res) {

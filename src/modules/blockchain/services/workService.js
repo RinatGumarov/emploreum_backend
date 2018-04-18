@@ -5,7 +5,7 @@ const socketSender = require('../../../core/socketSender');
 const blockchainInfo = require('./blockchainEventService');
 
 const companyService = require('../../company/services/companyService');
-const vacancyService = require('../../company/services/vacancyService');
+const vacancyService = require('../../vacancy/services/vacancyService');
 const balanceService = require('../services/balanceService');
 const employeeService = require('../../employee/services/employeeService');
 const skillService = require('../../specialisation/services/skillService');

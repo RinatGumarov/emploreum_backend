@@ -5,11 +5,24 @@ describe('module:employee', () => {
     
     testHelpers.authTestEmployee();
     
-    it('employeeInfoController', (done) => {
+    it('updateEmployeeSkillsController', (done) => {
         testIniter.getChaiRequest()
-            .get("/employee/info/2")
+            .post("/employee/skills/update")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
+            .send([{
+                "id": 1,
+                "name": "web",
+                "skills": [
+                    {
+                        "id": 1
+                        
+                    }, {
+                        "id": 3
+                        
+                    }
+                ]
+            }])
             .end(function (err, res) {
                 res.should.have.status(200);
                 done();
@@ -17,5 +30,4 @@ describe('module:employee', () => {
     });
     
     testHelpers.logout();
-    
 });

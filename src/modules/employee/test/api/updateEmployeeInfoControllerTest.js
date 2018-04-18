@@ -5,11 +5,15 @@ describe('module:employee', () => {
     
     testHelpers.authTestEmployee();
     
-    it('employeeInfoController', (done) => {
+    it('updateEmployeeInfoController', (done) => {
         testIniter.getChaiRequest()
-            .get("/employee/info/2")
+            .post("/employee/info/update")
             .set("Content-Type", "application/json")
             .set('Cookie', testIniter.getCookie())
+            .send({
+                languages: [1],
+                name: "test2"
+            })
             .end(function (err, res) {
                 res.should.have.status(200);
                 done();
