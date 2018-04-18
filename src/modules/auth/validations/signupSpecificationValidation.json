@@ -1,0 +1,28 @@
+{
+    "type": "object",
+    "properties": {
+        "specifications": {
+            "type": "array",
+            "items": {
+                "properties": {
+                    "id": {
+                        "required": true,
+                        "type": "integer"
+                    },
+                    "skills": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "required": true,
+                                    "type": "integer"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

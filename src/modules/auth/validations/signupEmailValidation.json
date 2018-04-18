@@ -1,0 +1,30 @@
+{
+    "type": "object",
+    "properties": {
+        "password": {
+            "type": "string",
+            "minLength": 7,
+            "maxLength": 20
+        },
+        "passwordConfirmation": {
+            "type": "string",
+            "minLength": 7,
+            "maxLength": 20
+        },
+        "email": {
+            "type": "string"
+        },
+        "role": {
+            "enum": [
+                "EMPLOYEE",
+                "COMPANY"
+            ]
+        }
+    },
+    "required": [
+        "role",
+        "email",
+        "password",
+        "passwordConfirmation"
+    ]
+}
