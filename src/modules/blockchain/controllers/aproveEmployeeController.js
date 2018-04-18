@@ -1,11 +1,7 @@
 const workService = require('../services/workService');
 const employeeService = require('../../employee/services/employeeService');
-const configUtils = require('../../../utils/config');
 const logger = require('../../../utils/logger');
 const mutex = require('../utils/mutex');
-const employeeUtil = require('../utils/employee');
-const workUtil = require('../utils/work');
-const companyUtil = require('../utils/company');
 
 module.exports.func = (router) => {
 
@@ -40,34 +36,6 @@ module.exports.func = (router) => {
                 });
         }
 
-    });
-
-    router.post('/:workId([0-9]+)/start', async (req, res) => {
-        await workService.startWork(req.params.workId);
-        res.json({ data: 'successful' });
-    });
-
-    /**
-     * запуск начисления денег в котнракты между сотрудниками
-     * и компаниями и выплата зарплаты сотрудникам
-     */
-    router.get('/run/salary/:token', async (req, res) => {
-        let config = configUtils.get('server');
-        req.connection.setTimeout(1000 * 60 * 10);
-        let token = process.env.SALARY_TOKEN || config.token;
-        if (req.params.token === token) {
-            try {
-                await workService.sendWeekSalaryForAllCompanies();
-                res.send({ data: 'successful' });
-            } catch (err) {
-                logger.error(err.stack);
-                res.status(500)
-                    .send({ error: err });
-            }
-        } else {
-            res.status(500)
-                .send({ error: 'token not found' });
-        }
     });
 
     return router;
