@@ -4,7 +4,10 @@
   "company_create_gas_amount": "4500000",
   "create_work_gas_amount": "4500000",
   "send_transaction_gas_amount": "4500000",
-  "send_week_salary_gas_amount": "500000",
+  "send_week_salary_gas_amount": "4500000",
   "work_start_transaction_gas_amount": "4500000",
+  "create_dispute_gas_amount": "4500000",
+  "solve_dispute_gas_amount": "4500000",
+  "dispute_vote_gas_amount": "4500000",
   "gas_price": "1000000000"
 }

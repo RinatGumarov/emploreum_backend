@@ -11,9 +11,10 @@ class BalanceService {
         return parseFloat(balance);
     };
 
+    //TODO gas price and gas Amount
     async getSalaryFee() {
         const gasPrice = parseInt(blockchainConfig.gas_price);
-        const gas = parseInt(blockchainConfig.send_week_salary_gas_amount);
+        const gas = 500000;
         let fee = await web3.utils.fromWei(String(gasPrice * gas), 'ether');
         return parseFloat(fee);
     };
