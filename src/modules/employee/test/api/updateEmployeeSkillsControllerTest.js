@@ -5,7 +5,7 @@ describe('module:employee', () => {
     
     testHelpers.authTestEmployee();
     
-    it('updateEmployeeSkillsController', (done) => {
+    it('updateEmployeeSkillsController should update employee skills', (done) => {
         testIniter.getChaiRequest()
             .post("/employee/skills/update")
             .set("Content-Type", "application/json")

@@ -3,7 +3,7 @@ let testHelpers = require('../../../../core/tests/testHelpers');
 
 describe('module:company', () => {
     
-    it('companyVacanciesController', (done) => {
+    it('companyVacanciesController should return comapny\'s vacancies', (done) => {
         testIniter.getChaiRequest()
             .get("/company/1/vacancies")
             .set("Content-Type", "application/json")

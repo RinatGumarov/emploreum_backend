@@ -8,7 +8,7 @@ describe('module:test', () => {
     testModuleHelper.startTest();
     
     testHelpers.authTestEmployee();
-    it('saveAnswerController', (done) => {
+    it('saveAnswerController should save answer', (done) => {
         testIniter.getChaiRequest()
             .post(`/test/question/${testIniter.getRequestSession("questionId")}/answer`)
             .set("Content-Type", "application/json")

@@ -16,23 +16,25 @@ vacancyFilters.type = "vacancies";
 vacancyFilters = encodeURIComponent(JSON.stringify(vacancyFilters));
 
 describe('module:user', () => {
-    
+
     describe('userSearchController', () => {
-        it('employee search', (done) => {
+        it('should find employee by filters', (done) => {
             testIniter.getChaiRequest()
                 .get("/user/search?filters=" + employeeFilters)
                 .set("Content-Type", "application/json")
                 .end(function (err, res) {
                     res.should.have.status(200);
+                    res.body.should.be.a('array');
                     done();
                 });
         });
-        it('vacancy search ', (done) => {
+        it('should find vacancy by filters', (done) => {
             testIniter.getChaiRequest()
                 .get("/user/search?filters=" + vacancyFilters)
                 .set("Content-Type", "application/json")
                 .end(function (err, res) {
                     res.should.have.status(200);
+                    res.body.should.be.a('array');
                     done();
                 });
         });

@@ -4,7 +4,7 @@ let testHelpers = require('../../../../core/tests/testHelpers');
 describe('module:message', () => {
     
     testHelpers.authTestEmployee();
-    it('messageCreateController', (done) => {
+    it('messageCreateController should create new message', (done) => {
         testIniter.getChaiRequest()
             .post("/message/create")
             .set("Content-Type", "application/json")

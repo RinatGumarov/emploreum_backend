@@ -1,17 +1,24 @@
 let testIniter = require('../../../../core/tests/testIniter');
-var cookies;
+let cookies;
+let user;
+let userService = require('../../services/userService');
+const companyService = require('../../../company/services/companyService');
+const employeeService = require('../../../employee/services/employeeService');
+
+const assert = testIniter.getAssert();
 
 describe('module:auth', () => {
     /**
      * Один файл так как небоходим тестинг flow
      */
-    describe('company flow', () => {
-        it('signupEmailController', (done) => {
+    describe('signupEmailController company registration flow', () => {
+        it('should create new company', (done) => {
+            const email = "kzn.magomedov@gmail.com";
             testIniter.getChaiRequest()
                 .post("/auth/signup/email")
                 .set("Content-Type", "application/json")
                 .send({
-                    email: "kzn.magomedov@gmail.com",
+                    email,
                     password: "asdasd123",
                     passwordConfirmation: "asdasd123",
                     role: "COMPANY"
@@ -20,10 +27,13 @@ describe('module:auth', () => {
                     /** для того чтобы сессия всегда была одна и таже */
                     cookies = res.headers['set-cookie'].pop().split(';')[0];
                     res.should.have.status(200);
+                    user = userService.getUserByEmail(email);
+                    assert(user, 'User with role COMPANY wasn\'t created');
                     done();
                 });
         });
-        it('signupVerificationController', (done) => {
+
+        it('signupVerificationController should verify company', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/verification")
                 .set('Cookie', cookies)
@@ -31,11 +41,13 @@ describe('module:auth', () => {
                 .send({verifyCode: "111111"})
                 .end(function (err, res) {
                     res.should.have.status(200);
+                    const company = companyService.findByUserId(user.id);
+                    assert(company, 'Company wasn\'t created after verification');
                     done()
                 });
         });
-        
-        it('signupSpecificationController', (done) => {
+
+        it('signupSpecificationController should add specification to company', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/specification")
                 .set('Cookie', cookies)
@@ -54,7 +66,7 @@ describe('module:auth', () => {
                     done()
                 });
         });
-        it('signupInfoController', (done) => {
+        it('signupInfoController should add languages to company', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/info")
                 .set('Cookie', cookies)
@@ -69,15 +81,16 @@ describe('module:auth', () => {
                 });
         });
     });
-    
-    describe('employee flow', () => {
-        
-        it('signupEmailController', (done) => {
+
+    describe('employee registration flow', () => {
+
+        it('signupEmailController should create user', (done) => {
+            const email = "kzn.magomedov2@gmail.com";
             testIniter.getChaiRequest()
                 .post("/auth/signup/email")
                 .set("Content-Type", "application/json")
                 .send({
-                    email: "kzn.magomedov2@gmail.com",
+                    email,
                     password: "asdasd123",
                     passwordConfirmation: "asdasd123",
                     role: "EMPLOYEE"
@@ -86,11 +99,13 @@ describe('module:auth', () => {
                     /** для того чтобы сессия всегда была одна и таже */
                     cookies = res.headers['set-cookie'].pop().split(';')[0];
                     res.should.have.status(200);
+                    user = userService.getUserByEmail(email);
+                    assert(user, 'User with role EMPLOYEE wasn\'t created');
                     done();
                 });
-            
+
         });
-        
+
         it('signupVerificationController', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/verification")
@@ -99,10 +114,12 @@ describe('module:auth', () => {
                 .send({verifyCode: "111111"})
                 .end(function (err, res) {
                     res.should.have.status(200);
+                    const employee = employeeService.getByUserId(user.id);
+                    assert(employee, 'Employee wasn\'t created after verification');
                     done()
                 });
         });
-        
+
         it('signupSpecificationController', (done) => {
             testIniter.getChaiRequest()
                 .post("/auth/signup/specification")
@@ -115,10 +132,10 @@ describe('module:auth', () => {
                         "skills": [
                             {
                                 "id": 1
-                                
+
                             }, {
                                 "id": 3
-                                
+
                             }
                         ]
                     }]

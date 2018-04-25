@@ -5,7 +5,7 @@ describe('module:vacancy', () => {
     
     testHelpers.authTestCompany();
     
-    it('vacancyCreateController', (done) => {
+    it('vacancyCreateController should create new vacancy', (done) => {
         testIniter.getChaiRequest()
             .post("/vacancy/create")
             .set("Content-Type", "application/json")
